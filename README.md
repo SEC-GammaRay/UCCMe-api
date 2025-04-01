@@ -6,8 +6,8 @@
 ## UCCMe-API-0 
 
 ### 1. setup environment 
-- [] Gemfile 
-- [] Gemfile.lock 
+- [ ] Gemfile 
+- [ ] Gemfile.lock 
 
 
 ### 2. create dot files 
