@@ -10,11 +10,12 @@
 - [X] Gemfile.lock 
 
 ### 2. create dot files 
-- [ ] .gitignore
-- [ ] .rubocop.yml 
-- [ ] .ruby_version 
+- [X] .gitignore
+- [X] .rubocop.yml 
+- [X] .ruby_version 
 
-### 3. configure Roda 
+### 3. configure Roda
+- [ ] config.ru  
 
 ### 4. File Structure 
 
