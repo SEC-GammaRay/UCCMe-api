@@ -6,11 +6,13 @@
 ## UCCMe-API-0 
 
 ### 1. setup environment 
-- [ ] Gemfile 
-- [ ] Gemfile.lock 
-
+- [X] Gemfile 
+- [X] Gemfile.lock 
 
 ### 2. create dot files 
+- [ ] .gitignore
+- [ ] .rubocop.yml 
+- [ ] .ruby_version 
 
 ### 3. configure Roda 
 
