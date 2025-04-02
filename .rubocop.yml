@@ -11,7 +11,7 @@ Metrics/BlockLength:
   Exclude: 
     - spec/**/*
 
-Security/YAMLLOad:
+Security/YAMLLoad:
   Enabled: true
   Exclude: 
     - spec/**/* 
