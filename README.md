@@ -1,9 +1,6 @@
 # UCCMe-api 
 
-## 
-
-
-## UCCMe-API-0 
+## Build UCCMe-api 
 
 ### 1. setup environment 
 - [X] Gemfile 
@@ -21,22 +18,25 @@
 Follow the MVC(Model-View-Controller) architechture. 
 
 #### 4-1. app 
+Create basic domain resource entity class 
 **File structure**
-|-app 
-|--controllers
-|--models
+|-app  \
+|--controllers \
+|--models \
+|---- file.rb \ 
 
-- [] controllers/app.rb 
-- [] models/documents.rb
+- [ ] controllers/app.rb 
+- [X] models/file.rb (rubocop: 0 offense)
+
 
 #### 4-2. db 
-|-db
-|--local 
+|-db \
+|--local \  
 
 - [X] local/.gitignore
 
 #### 4-3. spec 
-|-spec 
-|-- 
+|-spec \
+|-- \
 
 - [ ] spec/api_spec.rb  
