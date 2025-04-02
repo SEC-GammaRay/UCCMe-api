@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'fileutils'
 require 'json'
 require 'base64'
 require 'rbnacl'
@@ -8,7 +9,7 @@ module UCCMe
     STORE_DIR = 'db/local'
 
     # store properties 
-    class File 
+    class Property 
         def initialize(new_file)
             @id = new_file['id'] || new_id
             @filename = new_file['filename']
@@ -40,13 +41,13 @@ module UCCMe
 
         # create
         def save 
-            File.write("#{UCCMe::STORE_DIR}/#{id}.txt", to_json)
+            ::File.write("#{UCCMe::STORE_DIR}/#{id}.txt", to_json)
         end 
 
         # read 1 file 
         def self.find(file_id)
-            temp_json = File.read("#{UCCMe::STORE_DIR}/#{file_id}.txt")
-            File.new JSON.parse(temp_json)
+            temp_json = ::File.read("#{UCCMe::STORE_DIR}/#{file_id}.txt")
+            Property.new JSON.parse(temp_json)
         end 
 
 
