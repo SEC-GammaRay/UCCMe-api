@@ -33,8 +33,10 @@ Follow the MVC(Model-View-Controller) architechture.
 |-db
 |--local 
 
-- [ ] local/.gitignore
+- [X] local/.gitignore
 
 #### 4-3. spec 
 |-spec 
 |-- 
+
+- [ ] spec/api_spec.rb  

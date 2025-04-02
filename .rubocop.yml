@@ -1,0 +1,17 @@
+---
+AllCops: 
+  TargetRubyVersion: 3.4
+  NewCops: enable
+
+plugins: 
+  - rubocop-minitest
+
+Metrics/BlockLength: 
+  Enabled: true
+  Exclude: 
+    - spec/**/*
+
+Security/YAMLLOad:
+  Enabled: true
+  Exclude: 
+    - spec/**/* 
