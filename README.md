@@ -4,11 +4,13 @@
 
 ### 01 Open Server 
 Install HTTPie if not yet installed 
+
 ```
 apt install httpie
 ```
 
 Run Puma server in one Terminal 
+
 ```
 puma
 ```
@@ -23,7 +25,8 @@ filename="UCCMe-README.md " description="This is a README file" content="UCCMe i
 ```
 
 Expected output: 
-```json
+
+```pgsql
 Content-Length: 46
 content-type: application/json
 
@@ -35,11 +38,14 @@ content-type: application/json
 
 ### 03 GET Request with Parameter
 Script: 
+
 ```bash
 http -v GET localhost:9292/api/folders/files/3nXdvjLZ8n # /[id]
 ```
 Expected output: 
-```json
+
+```pgsql
+
 HTTP/1.1 200 OK
 Content-Length: 181
 content-type: application/json
