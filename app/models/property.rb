@@ -45,8 +45,8 @@ module UCCMe
         end 
 
         # read 1 file 
-        def self.find(file_id)
-            temp_json = ::File.read("#{UCCMe::STORE_DIR}/#{file_id}.txt")
+        def self.find(id)
+            temp_json = ::File.read("#{UCCMe::STORE_DIR}/#{id}.txt")
             Property.new JSON.parse(temp_json)
         end 
 

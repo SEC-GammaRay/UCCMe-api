@@ -15,6 +15,8 @@ Run Puma server in one Terminal
 puma
 ```
 
+---
+
 ### 02 POST Request 
 Open up another Terminal 
 
@@ -35,6 +37,7 @@ content-type: application/json
     "message": "Document saved"
 }
 ```
+---
 
 ### 03 GET Request with Parameter
 Script: 
@@ -58,3 +61,10 @@ content-type: application/json
     "id": "3nXdvjLZ8n",
     "type": "file"
 }
+---
+
+### 04 Run spec 
+
+```bash
+bundle exec ruby spec/api_spec.rb
+```
