@@ -32,7 +32,7 @@ module UCCMe
 
                         # GET api/folders/files (safe & idempotent)
                         routing.get do 
-                            output = {file_id: File.all}
+                            output = {id: Property.all}
                             JSON.pretty_generate(output)
                         end 
 

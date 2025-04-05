@@ -17,7 +17,7 @@ describe 'Test UCCMe Web API' do
 
     # delete all data before each test 
     before do 
-        Dir.glob('db/store/*.txt').each { |filename| FileUtils.rm(filename) }
+        Dir.glob('db/local/*.txt').each { |filename| FileUtils.rm(filename) }
     end 
 
     # test GET request 
@@ -34,18 +34,19 @@ describe 'Test UCCMe Web API' do
             UCCMe::Property.new(DATA[0]).save
             UCCMe::Property.new(DATA[1]).save
 
-            get 'api/folders/files'
+            get "api/folders/files"
             result = JSON.parse last_response.body
+            puts "Result: #{result}"
             _(result['id'].count).must_equal 2
         end 
-    
+        
 
         # HAPPY TEST: fetch id 
         it 'HAPPY: should be able to get details of a single document' do 
             UCCMe::Property.new(DATA[1]).save
-            id = Dir.glob('db/store/*.txt').first.split(%r{[/\.]})[-2]
+            id = Dir.glob('db/local/*.txt').first.split(%r{[/\.]})[-2]
 
-            get 'api/folders/files/#{id}'
+            get "api/folders/files/#{id}"
             result = JSON.parse last_response.body 
 
             _(last_response.status).must_equal 200
@@ -56,9 +57,12 @@ describe 'Test UCCMe Web API' do
         it 'HAPPY: should be able to create new files' do 
             req_header = {'CONTENT_TYPE' => 'application/json'}
 
-            post 'api/folders/files', DATA[1].to_json, req_header 
+            post "api/folders/files", DATA[1].to_json, req_header 
 
             _(last_response.status).must_equal 201 
         end 
+
+        it 'HAPPY: should be 1 of 6 cc code types' do 
+            
     end
 end 
