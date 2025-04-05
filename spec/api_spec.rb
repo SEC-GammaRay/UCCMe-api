@@ -10,6 +10,15 @@ def app
     UCCMe::Api
 end 
 
+VALID_CC_TYPES = [
+    'CC BY',
+    'CC BY-SA',
+    'CC BY-ND',
+    'CC BY-NC',
+    'CC BY-NC-SA',
+    'CC BY-NC-ND'
+  ]
+
 DATA = YAML.safe_load File.read('db/seeds/document_seeds.yml')
 
 describe 'Test UCCMe Web API' do 
@@ -36,7 +45,7 @@ describe 'Test UCCMe Web API' do
 
             get "api/folders/files"
             result = JSON.parse last_response.body
-            puts "Result: #{result}"
+
             _(result['id'].count).must_equal 2
         end 
         
@@ -63,6 +72,24 @@ describe 'Test UCCMe Web API' do
         end 
 
         it 'HAPPY: should be 1 of 6 cc code types' do 
+            DATA.each do |data|
+                UCCMe::Property.new(data).save
+            end 
+
+            file_ids = Dir.glob('db/local/*.txt').map {|path| path.split(%r{[/\.]})[-2]}
             
-    end
+            file_ids.each do |id|
+                get "api/folders/files/#{id}"
+                result = JSON.parse last_response.body 
+                _(VALID_CC_TYPES).must_include result['cc_types'].first
+            end
+        end 
+
+        # SAD: request file not exist
+        it 'SAD: should return error if unknown document requested' do
+            get "api/folders/files/foobar"
+
+            _(last_response.status).must_equal 404 
+        end 
+    end 
 end 
