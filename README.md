@@ -14,8 +14,14 @@ All routes return Json
 
 ## Install 
 
-Install this API by cloning the repository and installing 'HTTPie' (if not already installed):
+Install this API by cloning the repository and following these steps:
 
+1. Install required gems from Gemfile.lock:
+```shell
+bundle install
+```
+
+2. Install HTTPie (HTTP client tool) if not already installed:
 ```shell
 apt install httpie
 ```
@@ -24,7 +30,7 @@ apt install httpie
 
 Run the test script:
 ```shell
-bundle exec ruby spec/api_spec.rb
+ruby spec/api_spec.rb
 ```
 
 ## Execute
@@ -34,10 +40,6 @@ Run this API using:
 ```shell
 puma
 ```
-
-
----
-
 
 ## Usage Examples
 
@@ -50,7 +52,7 @@ filename="UCCMe-README.md " description="This is a README file" content="UCCMe i
 
 Expected output: 
 
-```pgsql
+```http
 Content-Length: 46
 content-type: application/json
 
@@ -59,7 +61,7 @@ content-type: application/json
     "message": "Document saved"
 }
 ```
----
+
 
 ### Retrieving a Document (GET)
 
@@ -69,7 +71,7 @@ http -v GET localhost:9292/api/folders/files/3nXdvjLZ8n # /[id]
 
 Expected output: 
 
-```pgsql
+```http
 
 HTTP/1.1 200 OK
 Content-Length: 181
