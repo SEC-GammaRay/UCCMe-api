@@ -1,27 +1,49 @@
 # UCCMe-api 
 
-## API Instruction 
+API for sharing documents with specific individuals using CC codes defined by the author.
 
-### 01 Open Server 
-Install HTTPie if not yet installed 
+## Routes
 
-```
+All routes return Json
+
+- GET `/`: Root route shows if Web API is running
+- GET `api/folders/files/`: returns all document IDs
+- GET `api/folders/files/[ID]`: returns details about a single document with given ID
+- POST `api/folders/files/`: creates a new document
+
+
+## Install 
+
+Install this API by cloning the repository and installing 'HTTPie' (if not already installed):
+
+```shell
 apt install httpie
 ```
 
-Run Puma server in one Terminal 
+## Test
 
+Run the test script:
+```shell
+bundle exec ruby spec/api_spec.rb
 ```
+
+## Execute
+
+Run this API using:
+
+```shell
 puma
 ```
 
+
 ---
 
-### 02 POST Request 
-Open up another Terminal 
 
-Script: 
-```bash
+## Usage Examples
+
+### Creating a Document (POST) 
+
+```shell
 http -v --json POST localhost:9292/api/folders/files/ \
 filename="UCCMe-README.md " description="This is a README file" content="UCCMe is an app for you to share ips with cc codes!"
 ```
@@ -39,12 +61,12 @@ content-type: application/json
 ```
 ---
 
-### 03 GET Request with Parameter
-Script: 
+### Retrieving a Document (GET)
 
-```bash
+```shell
 http -v GET localhost:9292/api/folders/files/3nXdvjLZ8n # /[id]
 ```
+
 Expected output: 
 
 ```pgsql
@@ -61,10 +83,4 @@ content-type: application/json
     "id": "3nXdvjLZ8n",
     "type": "file"
 }
----
-
-### 04 Run spec 
-
-```bash
-bundle exec ruby spec/api_spec.rb
 ```
