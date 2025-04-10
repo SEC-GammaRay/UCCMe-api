@@ -28,9 +28,9 @@ apt install httpie
 
 ## Test
 
-Run the test script:
+Run the test specification script in `rakefile`:
 ```shell
-ruby spec/api_spec.rb
+rake spec
 ```
 
 ## Execute
