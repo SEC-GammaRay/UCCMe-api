@@ -43,7 +43,7 @@ describe 'Test UCCMe Web API' do
       UCCMe::Property.new(DATA[0]).save
       UCCMe::Property.new(DATA[1]).save
 
-      get 'api/folders/files'
+      get 'api/v1/files'
       result = JSON.parse last_response.body
 
       _(result['id'].count).must_equal 2
@@ -54,7 +54,7 @@ describe 'Test UCCMe Web API' do
       UCCMe::Property.new(DATA[1]).save
       id = Dir.glob('db/local/*.txt').first.split(%r{[/\.]})[-2]
 
-      get "api/folders/files/#{id}"
+      get "api/v1/files/#{id}"
       result = JSON.parse last_response.body
 
       _(last_response.status).must_equal 200
@@ -65,7 +65,7 @@ describe 'Test UCCMe Web API' do
     it 'HAPPY: should be able to create new files' do
       req_header = { 'CONTENT_TYPE' => 'application/json' }
 
-      post 'api/folders/files', DATA[1].to_json, req_header
+      post 'api/v1/files', DATA[1].to_json, req_header
 
       _(last_response.status).must_equal 201
     end
@@ -78,7 +78,7 @@ describe 'Test UCCMe Web API' do
       file_ids = Dir.glob('db/local/*.txt').map { |path| path.split(%r{[/\.]})[-2] }
 
       file_ids.each do |id|
-        get "api/folders/files/#{id}"
+        get "api/v1/files/#{id}"
         result = JSON.parse last_response.body
         _(VALID_CC_TYPES).must_include result['cc_types'].first
       end
@@ -86,7 +86,7 @@ describe 'Test UCCMe Web API' do
 
     # SAD: request file not exist
     it 'SAD: should return error if unknown document requested' do
-      get 'api/folders/files/foobar'
+      get 'api/v1/files/foobar'
 
       _(last_response.status).must_equal 404
     end

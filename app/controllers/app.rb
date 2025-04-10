@@ -19,26 +19,26 @@ module UCCMe
       response['Content-Type'] = 'application/json' # set http header
 
       routing.root do
-        { message: 'UCCMeAPI up at /api/folders' }.to_json
+        { message: 'UCCMeAPI up at /api/v1' }.to_json
       end
 
       routing.on 'api' do
-        routing.on 'folders' do
+        routing.on 'v1' do
           routing.on 'files' do
-            # GET api/folders/files/[id] (safe & idempotent)
+            # GET api/v1/files/[id] (safe & idempotent)
             routing.get String do |id|
               Property.find(id).to_json
             rescue StandardError
               routing.halt 404, { message: 'File not found' }.to_json
             end
 
-            # GET api/folders/files (safe & idempotent)
+            # GET api/v1/files (safe & idempotent)
             routing.get do
               output = { id: Property.all }
               JSON.pretty_generate(output)
             end
 
-            # POST api/folders/files (not safe & not idempotent)
+            # POST api/v1/files (not safe & not idempotent)
             routing.post do
               new_data = JSON.parse(routing.body.read)
               new_file = Property.new(new_data)
