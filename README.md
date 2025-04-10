@@ -7,9 +7,9 @@ API for sharing documents with specific individuals using CC codes defined by th
 All routes return Json
 
 - GET `/`: Root route shows if Web API is running
-- GET `api/folders/files/`: returns all document IDs
-- GET `api/folders/files/[ID]`: returns details about a single document with given ID
-- POST `api/folders/files/`: creates a new document
+- GET `api/v1/files/`: returns all document IDs
+- GET `api/v1/files/[ID]`: returns details about a single document with given ID
+- POST `api/v1/files/`: creates a new document
 
 
 ## Install 
@@ -28,9 +28,9 @@ apt install httpie
 
 ## Test
 
-Run the test script:
+Run the test specification script in `rakefile`:
 ```shell
-ruby spec/api_spec.rb
+rake spec
 ```
 
 ## Execute
@@ -46,7 +46,7 @@ puma
 ### Creating a Document (POST) 
 
 ```shell
-http -v --json POST localhost:9292/api/folders/files/ \
+http -v --json POST localhost:9292/api/v1/files/ \
 filename="UCCMe-README.md " description="This is a README file" content="UCCMe is an app for you to share ips with cc codes!"
 ```
 
@@ -66,7 +66,7 @@ content-type: application/json
 ### Retrieving a Document (GET)
 
 ```shell
-http -v GET localhost:9292/api/folders/files/3nXdvjLZ8n # /[id]
+http -v GET localhost:9292/api/v1/files/3nXdvjLZ8n # /[id]
 ```
 
 Expected output: 
