@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+require 'rake/testtask'
+require_relative 'require_app'
+
+# List all rake tasks
+task :default do
+  puts `rake -T`
+end
+
+desc 'run tests'
+task :spec do
+  sh 'ruby spec/api_spec.rb'
+end
