@@ -27,16 +27,13 @@ module UCCMe
     # Class method to access the database
     def self.db = DB
 
+    configure :development, :production do
+      plugin :common_logger, $stderr
+    end
+
     # Development and test configurations
     configure :development, :test do
       require 'pry'
-    end
-
-    # Load models
-    configure do
-      Dir.glob("#{File.dirname(__FILE__)}/../app/models/*.rb").each do |file|
-        require file
-      end
     end
   end
 end
