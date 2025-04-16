@@ -6,6 +6,11 @@ require_relative 'require_app'
 # List all rake tasks
 task default: :spec
 
+desc 'List all rake task'
+task :list do
+  sh 'rake -T'
+end
+
 desc 'Tests API specs only'
 task :api_spec do
   sh 'ruby spec/api_spec.rb'
@@ -55,7 +60,7 @@ namespace :db do
   end
 
   desc 'Run migrations'
-  task migration: %i[load print_env] do
+  task migrate: %i[load print_env] do
     puts 'Migrating database to latest'
     Sequel::Migrator.run(@app.DB, 'db/migrations')
   end
