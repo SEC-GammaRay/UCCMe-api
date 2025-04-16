@@ -12,47 +12,35 @@ All routes return Json
 - POST `api/v1/files/`: creates a new document
 
 
-## Install 
+## API Instruction 
 
-Install this API by cloning the repository and following these steps:
+### 01 Open Server 
+Install HTTPie if not yet installed 
 
-1. Install required gems from Gemfile.lock:
-```shell
-bundle install
 ```
-
-2. Install HTTPie (HTTP client tool) if not already installed:
-```shell
 apt install httpie
 ```
 
-## Test
+Run Puma server in one Terminal 
 
-Run the test specification script in `rakefile`:
-```shell
-rake spec
 ```
-
-## Execute
-
-Run this API using:
-
-```shell
 puma
 ```
 
-## Usage Examples
+---
 
-### Creating a Document (POST) 
+### 02 POST Request 
+Open up another Terminal 
 
-```shell
+Script: 
+```bash
 http -v --json POST localhost:9292/api/v1/files/ \
 filename="UCCMe-README.md " description="This is a README file" content="UCCMe is an app for you to share ips with cc codes!"
 ```
 
 Expected output: 
 
-```http
+```pgsql
 Content-Length: 46
 content-type: application/json
 
@@ -61,17 +49,17 @@ content-type: application/json
     "message": "Document saved"
 }
 ```
+---
 
+### 03 GET Request with Parameter
+Script: 
 
-### Retrieving a Document (GET)
-
-```shell
+```bash
 http -v GET localhost:9292/api/v1/files/3nXdvjLZ8n # /[id]
 ```
-
 Expected output: 
 
-```http
+```pgsql
 
 HTTP/1.1 200 OK
 Content-Length: 181
@@ -85,4 +73,11 @@ content-type: application/json
     "id": "3nXdvjLZ8n",
     "type": "file"
 }
+```
+---
+
+### 04 Run spec 
+
+```bash
+bundle exec ruby spec/api_spec.rb
 ```
