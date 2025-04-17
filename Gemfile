@@ -23,3 +23,14 @@ gem 'pry'
 gem 'rerun'
 gem 'rubocop'
 gem 'rubocop-minitest'
+
+# Configuration
+gem 'figaro' 
+gem 'rake'
+
+# Database
+gem 'hirb'
+gem 'sequel'
+group :development, :test do
+  gem 'sqlite3'
+end
