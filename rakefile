@@ -67,7 +67,8 @@ namespace :db do
 
   desc 'Destroy data in database; maintain tables'
   task delete: :load_models do
-    UCCMe::Property.dataset.destroy
+    UCCMe::Filee.dataset.destroy
+    UCCMe::Folder.dataset.destroy
   end
 
   desc 'Delete dev or test database file'
@@ -77,7 +78,7 @@ namespace :db do
       return
     end
 
-    db_filename = "db/local/#{UCCMe::Api.enviroment}.db"
+    db_filename = "db/local/#{UCCMe::Api.environment}.db"
     FileUtils.rm(db_filename)
     puts "Deleted #{db_filename}"
   end

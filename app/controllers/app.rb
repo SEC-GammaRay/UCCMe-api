@@ -16,7 +16,7 @@ module UCCMe
       Filee.locate # config file storing
     end
 
-    route do |routing| # rubocop:disable Metrics/BlockLength
+    route do |routing|
       response['Content-Type'] = 'application/json' # set http header
 
       routing.root do

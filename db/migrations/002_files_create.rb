@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sequel'
 
 Sequel.migration do
@@ -11,10 +13,10 @@ Sequel.migration do
       String :cc_types, null: false
       DateTime :created_at, default: Sequel::CURRENT_TIMESTAMP
       DateTime :updated_at, default: Sequel::CURRENT_TIMESTAMP, on_update: Sequel::CURRENT_TIMESTAMP
-      unique [ :folder_id, :filename ]
+      unique %i[folder_id filename]
     end
 
-    # add index to filename 
-    add_index(:files, :filename)
+    # add index to filename
+    add_index(:files, :filename) # rubocop:disable Sequel/ConcurrentIndex
   end
 end

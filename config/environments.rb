@@ -25,7 +25,7 @@ module UCCMe
     DB = Sequel.connect("#{db_url}?encoding=utf8")
 
     # Class method to access the database
-    def self.db = DB
+    def self.DB = DB # rubocop:disable Naming/MethodName
 
     configure :development, :production do
       plugin :common_logger, $stderr
