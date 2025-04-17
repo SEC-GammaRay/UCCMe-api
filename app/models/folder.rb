@@ -7,12 +7,11 @@ require 'rbnacl'
 require 'sequel'
 
 module UCCMe
-  class Folder < Sequel::Model(:folders)
+  class Folder < Sequel::Model
     one_to_many :stored_files
     plugin :association_dependencies, stored_files: :destroy
     plugin :timestamps, update_on_create: true
 
-    # 建議保留 Sequel 自己的欄位處理，這邊只要轉換 json
     def to_json(options = {})
       JSON({
         type: 'folder',

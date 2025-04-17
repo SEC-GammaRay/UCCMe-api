@@ -5,10 +5,9 @@ require 'json'
 require 'base64'
 require 'rbnacl'
 require 'sequel'
-require 'pry'
 
 module UCCMe
-  class StoredFile < Sequel::Model(:files)
+  class StoredFile < Sequel::Model
     many_to_one :folder
     plugin :timestamps, update_on_create: true
 
@@ -57,5 +56,3 @@ module UCCMe
     end
   end
 end
-
-binding.pry

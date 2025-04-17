@@ -17,10 +17,11 @@ module UCCMe
             response['Content-Type'] = 'application/json' # set http header
 
             routing.root do 
-                {message: 'UCCMeAPI up at /api/folders'}.to_json
+                {message: 'UCCMeAPI up at /api/v1/folders'}.to_json
             end 
 
             routing.on 'api' do 
+              routning on 'v1' do
                 routing.on 'folders' do 
                     routing.on 'files' do 
 
