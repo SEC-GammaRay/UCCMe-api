@@ -21,7 +21,7 @@ module UCCMe
             end 
 
             routing.on 'api' do 
-              routning on 'v1' do
+              routning.on 'v1' do
                 routing.on 'folders' do 
                     routing.on 'files' do 
 
