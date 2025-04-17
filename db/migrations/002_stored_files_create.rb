@@ -1,8 +1,9 @@
+# db/migrations/002_stored_file_create.rb
 require 'sequel'
 
 Sequel.migration do
   change do
-    create_table(:files) do
+    create_table(:stored_files) do
       primary_key :id
       foreign_key :folder_id, table: :folders
       String :filename, unique: true, null: false
@@ -11,10 +12,10 @@ Sequel.migration do
       String :cc_types, null: false
       DateTime :created_at, default: Sequel::CURRENT_TIMESTAMP
       DateTime :updated_at, default: Sequel::CURRENT_TIMESTAMP, on_update: Sequel::CURRENT_TIMESTAMP
-      unique [ :folder_id, :filename ]
+
+      unique [:folder_id, :filename]
     end
 
-    # add index to filename 
-    add_index(:files, :filename)
+    add_index(:stored_files, :filename)
   end
 end

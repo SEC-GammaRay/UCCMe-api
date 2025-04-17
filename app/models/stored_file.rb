@@ -5,26 +5,27 @@ require 'json'
 require 'base64'
 require 'rbnacl'
 require 'sequel'
+require 'pry'
 
 module UCCMe
-  class Folder < Sequel::Model(:folders)
-    one_to_many :stored_files
-    plugin :association_dependencies, stored_files: :destroy
+  class StoredFile < Sequel::Model(:files)
+    many_to_one :folder
     plugin :timestamps, update_on_create: true
-
-    # 建議保留 Sequel 自己的欄位處理，這邊只要轉換 json
-    def to_json(options = {})
-      JSON({
-        type: 'folder',
-        id: id,
-        foldername: foldername,
-        description: description
-      }, options)
-    end
 
     def before_create
       self.id ||= new_id
       super
+    end
+
+    def to_json(options = {})
+      JSON({
+        type: 'file',
+        id: id,
+        filename: filename,
+        description: description,
+        content: content,
+        cc_types: cc_types
+      }, options)
     end
 
     def self.locate
@@ -39,7 +40,7 @@ module UCCMe
     def self.load_from_file(id)
       temp_json = ::File.read("#{UCCMe::STORE_DIR}/#{id}.txt")
       parsed = JSON.parse(temp_json)
-      new(parsed) # 用 Sequel.new（記住這不會儲存進 DB）
+      new(parsed) # 注意：這不會寫入 DB
     end
 
     def self.all_ids
@@ -56,3 +57,5 @@ module UCCMe
     end
   end
 end
+
+binding.pry
