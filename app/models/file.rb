@@ -4,19 +4,23 @@ require 'fileutils'
 require 'json'
 require 'base64'
 require 'rbnacl'
+require 'sequel'
 
 module UCCMe
   STORE_DIR = 'db/local'
 
-  # store properties
-  class Property
-    def initialize(new_file)
-      @id = new_file['id'] || new_id
-      @filename = new_file['filename']
-      @description = new_file['description']
-      @content = new_file['content']
-      @cc_types = new_file['cc_types']
-    end
+    # store properties 
+    class Filee < Sequel::Model(:files) 
+        many_to_one :folder
+        plugin :timestamps, update_on_create: true
+
+        def initialize(new_file)
+            @id = new_file['id'] || new_id
+            @filename = new_file['filename']
+            @description = new_file['description']
+            @content = new_file['content']
+            @cc_types = new_file['cc_types']
+        end 
 
     attr_reader :id, :filename, :description, :content, :cc_types
 
