@@ -40,8 +40,8 @@ describe 'Test UCCMe Web API' do
   describe 'Handle files' do
     # HAPPT TEST: files counts
     it 'HAPPY: should be able to list all documents' do
-      UCCMe::Property.new(DATA[0]).save
-      UCCMe::Property.new(DATA[1]).save
+      UCCMe::StoredFile.new(DATA[0]).save
+      UCCMe::StoredFile.new(DATA[1]).save
 
       get 'api/v1/files'
       result = JSON.parse last_response.body
@@ -51,7 +51,7 @@ describe 'Test UCCMe Web API' do
 
     # HAPPY TEST: fetch id
     it 'HAPPY: should be able to get details of a single document' do
-      UCCMe::Property.new(DATA[1]).save
+      UCCMe::StoredFile.new(DATA[1]).save
       id = Dir.glob('db/local/*.txt').first.split(%r{[/\.]})[-2]
 
       get "api/v1/files/#{id}"
@@ -72,7 +72,7 @@ describe 'Test UCCMe Web API' do
 
     it 'HAPPY: should be 1 of 6 cc code types' do
       DATA.each do |data|
-        UCCMe::Property.new(data).save
+        UCCMe::StoredFile.new(data).save
       end
 
       file_ids = Dir.glob('db/local/*.txt').map { |path| path.split(%r{[/\.]})[-2] }
