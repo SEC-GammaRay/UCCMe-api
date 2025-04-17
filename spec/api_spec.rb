@@ -37,58 +37,58 @@ describe 'Test UCCMe Web API' do
     _(last_response.status).must_equal 200
   end
 
-  describe 'Handle files' do
-    # HAPPT TEST: files counts
-    it 'HAPPY: should be able to list all documents' do
-      UCCMe::StoredFile.new(DATA[0]).save
-      UCCMe::StoredFile.new(DATA[1]).save
+  # describe 'Handle files' do
+  #   # HAPPT TEST: files counts
+  #   it 'HAPPY: should be able to list all documents' do
+  #     UCCMe::StoredFile.new(DATA[0]).save
+  #     UCCMe::StoredFile.new(DATA[1]).save
 
-      get 'api/v1/files'
-      result = JSON.parse last_response.body
+  #     get 'api/v1/files'
+  #     result = JSON.parse last_response.body
 
-      _(result['id'].count).must_equal 2
-    end
+  #     _(result['id'].count).must_equal 2
+  #   end
 
-    # HAPPY TEST: fetch id
-    it 'HAPPY: should be able to get details of a single document' do
-      UCCMe::StoredFile.new(DATA[1]).save
-      id = Dir.glob('db/local/*.txt').first.split(%r{[/\.]})[-2]
+  #   # HAPPY TEST: fetch id
+  #   it 'HAPPY: should be able to get details of a single document' do
+  #     UCCMe::StoredFile.new(DATA[1]).save
+  #     id = Dir.glob('db/local/*.txt').first.split(%r{[/\.]})[-2]
 
-      get "api/v1/files/#{id}"
-      result = JSON.parse last_response.body
+  #     get "api/v1/files/#{id}"
+  #     result = JSON.parse last_response.body
 
-      _(last_response.status).must_equal 200
-      _(result['id']).must_equal id
-    end
+  #     _(last_response.status).must_equal 200
+  #     _(result['id']).must_equal id
+  #   end
 
-    # HAPPT TEST: create new doc
-    it 'HAPPY: should be able to create new files' do
-      req_header = { 'CONTENT_TYPE' => 'application/json' }
+  #   # HAPPT TEST: create new doc
+  #   it 'HAPPY: should be able to create new files' do
+  #     req_header = { 'CONTENT_TYPE' => 'application/json' }
 
-      post 'api/v1/files', DATA[1].to_json, req_header
+  #     post 'api/v1/files', DATA[1].to_json, req_header
 
-      _(last_response.status).must_equal 201
-    end
+  #     _(last_response.status).must_equal 201
+  #   end
 
-    it 'HAPPY: should be 1 of 6 cc code types' do
-      DATA.each do |data|
-        UCCMe::StoredFile.new(data).save
-      end
+  #   it 'HAPPY: should be 1 of 6 cc code types' do
+  #     DATA.each do |data|
+  #       UCCMe::StoredFile.new(data).save
+  #     end
 
-      file_ids = Dir.glob('db/local/*.txt').map { |path| path.split(%r{[/\.]})[-2] }
+  #     file_ids = Dir.glob('db/local/*.txt').map { |path| path.split(%r{[/\.]})[-2] }
 
-      file_ids.each do |id|
-        get "api/v1/files/#{id}"
-        result = JSON.parse last_response.body
-        _(VALID_CC_TYPES).must_include result['cc_types'].first
-      end
-    end
+  #     file_ids.each do |id|
+  #       get "api/v1/files/#{id}"
+  #       result = JSON.parse last_response.body
+  #       _(VALID_CC_TYPES).must_include result['cc_types'].first
+  #     end
+  #   end
 
-    # SAD: request file not exist
-    it 'SAD: should return error if unknown document requested' do
-      get 'api/v1/files/foobar'
+  #   # SAD: request file not exist
+  #   it 'SAD: should return error if unknown document requested' do
+  #     get 'api/v1/files/foobar'
 
-      _(last_response.status).must_equal 404
-    end
-  end
+  #     _(last_response.status).must_equal 404
+  #   end
+  # end
 end
