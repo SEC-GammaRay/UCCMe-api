@@ -9,13 +9,29 @@ gem 'logger', '~>1.0'
 gem 'puma', '~>6.0'
 gem 'roda', '~>3.0'
 
+# Configuration
+gem 'figaro', '~>1.2'
+gem 'rake'
+
 # securirty
-gem 'rbnacl', '~> 7.0'
+gem 'rbnacl', '~> 7.1'
+
+# Database
+gem 'hirb'
+gem 'sequel', '~>5.55'
+group :development, :test do
+  gem 'sqlite3', '~> 2.6'
+end
+
+# Performance
+gem 'rubocop-performance'
 
 # testing
-gem 'minitest'
-gem 'minitest-rg'
-gem 'rack-test'
+group :test do
+  gem 'minitest'
+  gem 'minitest-rg'
+  gem 'rack-test'
+end
 
 # development
 gem 'bundler-audit'
@@ -23,14 +39,5 @@ gem 'pry'
 gem 'rerun'
 gem 'rubocop'
 gem 'rubocop-minitest'
-
-# Configuration
-gem 'figaro' 
-gem 'rake'
-
-# Database
-gem 'hirb'
-gem 'sequel'
-group :development, :test do
-  gem 'sqlite3'
-end
+gem 'rubocop-rake'
+gem 'rubocop-sequel'
