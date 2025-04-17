@@ -4,13 +4,17 @@ require 'fileutils'
 require 'json'
 require 'base64'
 require 'rbnacl'
+require 'sequel'
 
 module UCCMe
   STORE_DIR = 'db/local'
 
   # store properties
-  class Property
-    def initialize(new_file)
+  class Filee < Sequel::Model(:files)
+    many_to_one :folder
+    plugin :timestamps, update_on_create: true
+
+    def initialize(new_file) # rubocop:disable Lint/MissingSuper
       @id = new_file['id'] || new_id
       @filename = new_file['filename']
       @description = new_file['description']
