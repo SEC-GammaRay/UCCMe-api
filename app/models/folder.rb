@@ -15,11 +15,11 @@ module UCCMe
 
     def to_json(options = {})
       JSON({
-        type: 'folder',
-        id: id,
-        foldername: foldername,
-        description: description
-      }, options)
+             type: 'folder',
+             id: id,
+             foldername: foldername,
+             description: description
+           }, options)
     end
 
     # def before_create

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'roda'
 require 'json'
 
@@ -5,6 +7,7 @@ require_relative '../models/stored_file'
 require_relative '../models/folder'
 
 module UCCMe
+  # top-level
   class Api < Roda
     plugin :environments
     plugin :halt
@@ -42,7 +45,7 @@ module UCCMe
                 new_data = JSON.parse(routing.body.read)
                 new_file = StoredFile.new(new_data)
 
-                if new_file.save
+                if new_file.save_changes
                   response.status = 201
                   { message: 'Document saved', id: new_file.id }.to_json
                 else

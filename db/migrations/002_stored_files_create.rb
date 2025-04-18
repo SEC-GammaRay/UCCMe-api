@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # db/migrations/002_stored_file_create.rb
 require 'sequel'
 
@@ -13,7 +15,7 @@ Sequel.migration do
       DateTime :created_at, default: Sequel::CURRENT_TIMESTAMP
       DateTime :updated_at, default: Sequel::CURRENT_TIMESTAMP, on_update: Sequel::CURRENT_TIMESTAMP
 
-      unique [:folder_id, :filename]
+      unique %i[folder_id filename]
     end
 
     add_index(:stored_files, :filename)

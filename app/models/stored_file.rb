@@ -7,7 +7,6 @@ require 'rbnacl'
 require 'sequel'
 
 module UCCMe
-
   class StoredFile < Sequel::Model
     many_to_one :folder
     plugin :timestamps, update_on_create: true
@@ -19,13 +18,13 @@ module UCCMe
 
     def to_json(options = {})
       JSON({
-        type: 'file',
-        id: id,
-        filename: filename,
-        description: description,
-        content: content,
-        cc_types: cc_types
-      }, options)
+             type: 'file',
+             id: id,
+             filename: filename,
+             description: description,
+             content: content,
+             cc_types: cc_types
+           }, options)
     end
 
     def self.locate
