@@ -55,7 +55,7 @@ namespace :db do
     @app = UCCMe::Api
   end
 
-  ask :load_models do
+  task :load_models do
     require_app('models')
   end
 
