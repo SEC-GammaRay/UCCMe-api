@@ -8,6 +8,7 @@ require 'sequel'
 
 module UCCMe
   STORE_DIR = 'db/store'
+  # top level
   class Folder < Sequel::Model
     one_to_many :stored_files
     plugin :association_dependencies, stored_files: :destroy

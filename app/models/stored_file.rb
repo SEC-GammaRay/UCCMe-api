@@ -7,6 +7,7 @@ require 'rbnacl'
 require 'sequel'
 
 module UCCMe
+  # top level
   class StoredFile < Sequel::Model
     many_to_one :folder
     plugin :timestamps, update_on_create: true

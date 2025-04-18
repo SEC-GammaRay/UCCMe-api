@@ -18,6 +18,6 @@ Sequel.migration do
       unique %i[folder_id filename]
     end
 
-    add_index(:stored_files, :filename)
+    add_index(:stored_files, :filename) # rubocop:disable Sequel/ConcurrentIndex
   end
 end
