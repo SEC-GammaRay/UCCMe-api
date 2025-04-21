@@ -1,1 +1,0 @@
-{"type":"file","id":"testfile1","filename":"document1.txt","description":"First test document","content":"This is the content of the first document","cc_types":["CC BY-SA"]}

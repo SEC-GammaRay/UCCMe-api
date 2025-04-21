@@ -27,10 +27,10 @@ require_relative 'spec_helper'
 describe 'Test UCCMe Web API' do
   # include Rack::Test::Methods
 
-  # # delete all data before each test
-  # before do
-  #   Dir.glob('db/local/*.txt').each { |filename| FileUtils.rm(filename) }
-  # end
+  # delete all data before each test
+  before do
+    Dir.glob('db/local/*.txt').each { |filename| FileUtils.rm(filename) }
+  end
 
   # test GET request
   it 'should find the root route' do
