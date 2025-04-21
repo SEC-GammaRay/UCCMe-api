@@ -21,7 +21,7 @@ module UCCMe
     def self.config = Figaro.env
 
     # Connect and make the database accessible to other classes
-    db_url = ENV.delete('DATABASE_URL') || "sqlite://db/#{ENV.fetch('RACK_ENV', nil)}.db"
+    db_url = ENV.delete('DATABASE_URL')
     DB = Sequel.connect("#{db_url}?encoding=utf8")
 
     # Class method to access the database
@@ -30,13 +30,6 @@ module UCCMe
     # Development and test configurations
     configure :development, :test do
       require 'pry'
-    end
-
-    # Load models
-    configure do
-      Dir.glob("#{File.dirname(__FILE__)}/../app/models/*.rb").each do |file|
-        require file
-      end
     end
   end
 end

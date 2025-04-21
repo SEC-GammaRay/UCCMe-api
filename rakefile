@@ -79,7 +79,7 @@ namespace :db do
       return
     end
 
-    db_filename = "db/local/#{UCCMe::Api.enviroment}.db"
+    db_filename = "db/local/#{UCCMe::Api.environment}.db"
     FileUtils.rm(db_filename)
     puts "Deleted #{db_filename}"
   end
