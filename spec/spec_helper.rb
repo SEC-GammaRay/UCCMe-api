@@ -11,7 +11,7 @@ def wipe_database
   app.DB[:folders].delete
 end
 
-DATA ={}
-DATA[:stored_files] = YAML.safe_load_file('./db/seeds/stored_files_seeds.yml')
-DATA[:folders] = YAML.safe_load_file('./db/seeds/folders_seeds.yml')
-DATA = {}.freeze
+DATA = {
+  stored_files: YAML.safe_load_file('./db/seeds/stored_files_seeds.yml'),
+  folders: YAML.safe_load_file('./db/seeds/folders_seeds.yml')
+}.freeze
