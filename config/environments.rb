@@ -4,7 +4,7 @@ require 'roda'
 require 'figaro'
 require 'sequel'
 
-# require_relative 'app/lib/secure_db'
+require_relative '../app/lib/secure_db'
 
 # Configuration for the API
 module UCCMe
@@ -34,7 +34,7 @@ module UCCMe
       require 'pry'
 
       # Database key setup
-      # SecureDB.setup(ENV.delete('DB_KEY'))
+      SecureDB.setup(ENV.delete('DB_KEY'))
     end
   end
 end
