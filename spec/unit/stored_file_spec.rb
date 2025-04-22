@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../spec/integration/spec_helper'
+require_relative '../integration/spec_helper'
 
 describe 'Test Stored File Handling' do
   include Rack::Test::Methods
@@ -12,6 +12,16 @@ describe 'Test Stored File Handling' do
       UCCMe::Folder.create(folder_data).save_to_file
     end
   end
+
+  # it 'SECURITY: should secure sensitive attributes' do
+  #   stored_file_data = DATA[:files][1]
+  #   folder = UCCMe::Folder.first
+  #   new_file = folder.add_stored_file(stored_file_data)
+  #   new_file_secure = app.DB[:stored_files].first
+
+  #   _(new_file_secure[:filename_secure]).wont_equal new_file.filename
+  #   _(new_file_secure[:cc_types_secure]).wont_equal new_file.cc_types
+  # end
 
   # it 'HAPPY: should be able to get list of all stored files in a folder' do
   #   folder = UCCMe::Folder.first

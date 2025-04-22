@@ -27,7 +27,7 @@ class SecureDB
   end
 
   def self.decrypt(ciphertext)
-    return nil unless ciphertext64
+    return nil unless ciphertext
 
     ciphertext = Base64.strict_decode64(ciphertext)
     simple_box = RbNaCl::SimpleBox.from_secret_key(@key)

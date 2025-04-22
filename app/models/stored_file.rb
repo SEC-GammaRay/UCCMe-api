@@ -41,9 +41,29 @@ module UCCMe
            }, options)
     end
 
+    def self.setup
+      Dir.mkdir_p(UCCMe::STORE_DIR)
+    end
+
     def self.locate
       FileUtils.mkdir_p(UCCMe::STORE_DIR)
     end
+
+    # CREATE
+    def self.create(filename:, cc_types:, description: nil, content: nil)
+      new_file = new(
+        filename: filename,
+        description: description,
+        content: content,
+        cc_types: cc_types
+      )
+      new_file.id = new_id
+      new_file.save_changes
+      new_file
+    end
+
+    # INDEX
+    def self.all; end
 
     # def save_to_file
     #   self.class.locate
@@ -53,20 +73,14 @@ module UCCMe
     # def self.load_from_file(id)
     #   temp_json = ::File.read("#{UCCMe::STORE_DIR}/#{id}.txt")
     #   parsed = JSON.parse(temp_json)
-    #   new(parsed) # 注意：這不會寫入 DB
+    #   new(parsed) # 用 Sequel.new（記住這不會儲存進 DB）
     # end
 
-    # def self.all_ids
-    #   Dir.glob("#{UCCMe::STORE_DIR}/*.txt").map do |file|
-    #     file.match(%r{#{Regexp.quote(UCCMe::STORE_DIR)}/(.*)\.txt})[1]
-    #   end
-    # end
+    private
 
-    # private
-
-    # def new_id
-    #   timestamp = Time.now.to_f.to_json
-    #   Base64.urlsafe_encode64(RbNaCl::Hash.sha256(timestamp))[0..9]
-    # end
+    def new_id
+      timestamp = Time.now.to_f.to_s
+      Base64.urlsafe_encode64(RbNaCl::Hash.sha256(timestamp))[0..9]
+    end
   end
 end

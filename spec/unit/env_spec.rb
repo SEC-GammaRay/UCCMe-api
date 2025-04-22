@@ -6,7 +6,7 @@ require 'minitest/autorun'
 require 'minitest/rg'
 require 'sequel'
 
-require_relative '../config/environments'
+require_relative '../../config/environments'
 
 describe 'Test environment configuration' do
   it 'HAPPY: should have correct test database url' do

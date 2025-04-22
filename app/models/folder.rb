@@ -41,10 +41,9 @@ module UCCMe
            }, options)
     end
 
-    # def before_create
-    #   self.id ||= new_id
-    #   super
-    # end
+    def self.setup
+      Dir.mkdir_p(UCCMe::STORE_DIR)
+    end
 
     def self.locate
       FileUtils.mkdir_p(UCCMe::STORE_DIR)

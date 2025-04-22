@@ -85,11 +85,10 @@ describe 'Test UCCMe Web API' do
   #     end
   #   end
 
-  #   # SAD: request file not exist
-  #   it 'SAD: should return error if unknown document requested' do
-  #     get 'api/v1/files/foobar'
+  # SAD: request file not exist
+  it 'SAD: should return error if unknown document requested' do
+    get 'api/v1/files/foobar'
 
-  #     _(last_response.status).must_equal 404
-  #   end
-  # end
+    _(last_response.status).must_equal 404
+  end
 end

@@ -1,4 +1,4 @@
-require_relative '../spec/integration/spec_helper'
+require_relative '../integration/spec_helper'
 
 describe 'Test SecureDB class' do 
     it 'SECURITY: should encrypt text' do
