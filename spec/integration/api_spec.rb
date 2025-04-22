@@ -91,4 +91,18 @@ describe 'Test UCCMe Web API' do
 
     _(last_response.status).must_equal 404
   end
-end
+end 
+
+  # describe 'Creating New Folder' do
+  #   before do 
+  #     @request_header = { 'CONTENT_TYPE' => 'application/json' }
+  #     @folder_data = DATA[:folders][0] 
+  #   end 
+
+  #   it 'SECURITY: should not create project with mass assignment' do 
+  #   bad_data = @folder_data.clone
+  #   bad_data[:id] = 9999
+  #   post 'api/v1/folders', bad_data.to_json, @request_header
+  #   _(last_response.status).must_equal 400
+  # end
+# end 
