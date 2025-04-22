@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'spec_helper'
+require_relative '../spec/integration/spec_helper'
 
 describe 'Test Folder Handling' do
   include Rack::Test::Methods
