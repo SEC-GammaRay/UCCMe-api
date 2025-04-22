@@ -49,28 +49,39 @@ module UCCMe
       FileUtils.mkdir_p(UCCMe::STORE_DIR)
     end
 
-    # def save_to_file
-    #   self.class.locate
-    #   ::File.write("#{UCCMe::STORE_DIR}/#{id}.txt", to_json)
-    # end
+    # CREATE (Create a new folder)
+    def self.create(foldername:, description: nil)
+      folder = new
+      folder.foldername = foldername
+      folder.description = description
+      folder.save_changes
+      folder
+    end
 
-    # def self.load_from_file(id)
-    #   temp_json = ::File.read("#{UCCMe::STORE_DIR}/#{id}.txt")
-    #   parsed = JSON.parse(temp_json)
-    #   new(parsed) # 用 Sequel.new（記住這不會儲存進 DB）
-    # end
+    # INDEX (Get all folders)
+    def self.index
+      all
+    end
 
-    # def self.all_ids
-    #   Dir.glob("#{UCCMe::STORE_DIR}/*.txt").map do |file|
-    #     file.match(%r{#{Regexp.quote(UCCMe::STORE_DIR)}/(.*)\.txt})[1]
-    #   end
-    # end
+    # READ (Get a folder by ID)
+    def self.read(id)
+      find(id: id)
+    end
 
-    # private
+    # UPDATE (Update a folder)
+    def update(foldername: nil, description: nil)
+      self.foldername = foldername if foldername
+      self.description = description if description
+      save_changes
+    end
 
-    # def new_id
-    #   timestamp = Time.now.to_f.to_json
-    #   Base64.urlsafe_encode64(RbNaCl::Hash.sha256(timestamp))[0..9]
-    # end
+    # DESTROY (Delete a folder)
+
+    private
+
+    def new_id
+      timestamp = Time.now.to_f.to_json
+      Base64.urlsafe_encode64(RbNaCl::Hash.sha256(timestamp))[0..9]
+    end
   end
 end
