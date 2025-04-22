@@ -12,10 +12,10 @@ module UCCMe
     many_to_one :folder
     plugin :timestamps, update_on_create: true
     plugin :whitelist_security
-    set_allowed_columns :filename, :description, :content
+    set_allowed_columns :filename, :description, :content, :cc_types
 
     def filename=(name)
-      self.filename_secure = SecureDB.encrypt(name)
+      SecureDB.encrypt(name)
     end
 
     def filename
@@ -23,7 +23,7 @@ module UCCMe
     end
 
     def cc_types=(types)
-      self.cc_types_secure = SecureDB.encrypt(types)
+      SecureDB.encrypt(types)
     end
 
     def cc_types
@@ -50,14 +50,12 @@ module UCCMe
     end
 
     # CREATE (Create a new file)
-    def self.create(filename:, cc_types:, description: nil, content: nil)
-      new_file = new(
-        filename: filename,
-        description: description,
-        content: content,
-        cc_types: cc_types
-      )
-      new_file.id = new_id
+    def self.create(_file_data = {})
+      # Initialize new file with provided or default values
+      new_file = new(filename: filename, description: description, content: content,
+                     cc_types: cc_types, folder_id: folder_id,
+                     created_at: created_at, updated_at: updated_at)
+      # Save and return the file
       new_file.save_changes
       new_file
     end

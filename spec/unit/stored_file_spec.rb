@@ -3,25 +3,14 @@
 require_relative '../integration/spec_helper'
 
 describe 'Test Stored File Handling' do
-  include Rack::Test::Methods
-
   before do
     wipe_database
-    FileUtils.rm_rf(UCCMe::STORE_DIR) # Clean up filesystem
-    DATA[:folders].each do |folder_data|
-      UCCMe::Folder.create(folder_data).save_to_file
+
+    DATA[:stored_files].each do |file_data|
+      print(file_data)
+      UCCMe::StoredFile.create(file_data)
     end
   end
-
-  # it 'SECURITY: should secure sensitive attributes' do
-  #   stored_file_data = DATA[:files][1]
-  #   folder = UCCMe::Folder.first
-  #   new_file = folder.add_stored_file(stored_file_data)
-  #   new_file_secure = app.DB[:stored_files].first
-
-  #   _(new_file_secure[:filename_secure]).wont_equal new_file.filename
-  #   _(new_file_secure[:cc_types_secure]).wont_equal new_file.cc_types
-  # end
 
   # it 'HAPPY: should be able to get list of all stored files in a folder' do
   #   folder = UCCMe::Folder.first
@@ -75,7 +64,14 @@ describe 'Test Stored File Handling' do
   #   _(created['description']).must_equal file_data['description']
   #   _(created['cc_types']).must_equal file_data['cc_types']
 
-  #   # Verify filesystem storage
-  #   _(File.exist?("#{UCCMe::STORE_DIR}/#{file.id}.txt")).must_equal true
+  # it 'SECURITY: should secure sensitive attributes' do
+  #   stored_file_data = DATA[:files][0]
+  #   folder = UCCMe::Folder.first
+  #   new_file = folder.add_stored_file(filename: stored_file_data[:filename],
+  #                                     cc_types: stored_file_data[:cc_types])
+  #   new_file_secure = app.DB[:stored_files].first
+
+  #   _(new_file_secure[:filename_secure]).wont_equal new_file.filename
+  #   _(new_file_secure[:cc_types_secure]).wont_equal new_file.cc_types
   # end
 end
