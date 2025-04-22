@@ -49,7 +49,7 @@ module UCCMe
       FileUtils.mkdir_p(UCCMe::STORE_DIR)
     end
 
-    # CREATE
+    # CREATE (Create a new file)
     def self.create(filename:, cc_types:, description: nil, content: nil)
       new_file = new(
         filename: filename,
@@ -62,19 +62,30 @@ module UCCMe
       new_file
     end
 
-    # INDEX
-    def self.all; end
+    # INDEX (optional filter by foldername)
+    def self.all(foldername = nil)
+      if foldername
+        where(foldername: foldername)
+      else
+        where(foldername: nil)
+      end
+    end
 
-    # def save_to_file
-    #   self.class.locate
-    #   ::File.write("#{UCCMe::STORE_DIR}/#{id}.txt", to_json)
-    # end
+    # READ (get file by id)
+    def self.read(id)
+      find(id: id)
+    end
 
-    # def self.load_from_file(id)
-    #   temp_json = ::File.read("#{UCCMe::STORE_DIR}/#{id}.txt")
-    #   parsed = JSON.parse(temp_json)
-    #   new(parsed) # 用 Sequel.new（記住這不會儲存進 DB）
-    # end
+    # UPDATE (Update file attributes)
+    def update(filename: nil, cc_types: nil, description: nil, content: nil)
+      self.filename = filename if filename
+      self.cc_types = cc_types if cc_types
+      self.description = description if description
+      self.content = content if content
+      save_changes
+    end
+
+    # DESTROY (Delete file)
 
     private
 
