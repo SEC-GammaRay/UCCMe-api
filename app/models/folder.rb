@@ -58,6 +58,16 @@ module UCCMe
       folder
     end
 
+    # CREATE (Add a file to a folder)
+    def add_stored_file(filename:, cc_types:, content: nil, description: nil)
+      StoredFile.create(
+        filename: filename,
+        cc_types: cc_types,
+        description: description,
+        content: content
+      )
+    end
+
     # INDEX (Get all folders)
     def self.index
       all
