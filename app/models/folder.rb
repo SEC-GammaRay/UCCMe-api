@@ -13,6 +13,24 @@ module UCCMe
     one_to_many :stored_files
     plugin :association_dependencies, stored_files: :destroy
     plugin :timestamps, update_on_create: true
+    plugin :whitelist_security
+    set_allowed_columns :foldername, :description
+
+    def foldername=(name)
+      self.foldername_secure = SecureDB.encrypt(name)
+    end
+
+    def foldername
+      SecureDB.decrypt(foldername_secure)
+    end
+
+    def description=(plaintext)
+      self.description_secure = SecureDB.encrypt(plaintext)
+    end
+
+    def description
+      SecureDB.decrypt(description_secure)
+    end
 
     def to_json(options = {})
       JSON({

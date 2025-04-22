@@ -11,10 +11,23 @@ module UCCMe
   class StoredFile < Sequel::Model
     many_to_one :folder
     plugin :timestamps, update_on_create: true
+    plugin :whitelist_security
+    set_allowed_columns :filename, :description, :content
 
-    def before_create
-      self.id ||= new_id
-      super
+    def filename=(name)
+      self.filename_secure = SecureDB.encrypt(name)
+    end
+
+    def filename
+      SecureDB.decrypt(filename_secure)
+    end
+
+    def cc_types=(types)
+      self.cc_types_secure = SecureDB.encrypt(types)
+    end
+
+    def cc_types
+      SecureDB.decrypt(cc_types_secure)
     end
 
     def to_json(options = {})
