@@ -4,6 +4,8 @@ require 'roda'
 require 'figaro'
 require 'sequel'
 
+# require_relative 'app/lib/secure_db'
+
 # Configuration for the API
 module UCCMe
   # Api class handles environment configuration and database connections
@@ -30,6 +32,9 @@ module UCCMe
     # Development and test configurations
     configure :development, :test do
       require 'pry'
+
+      # Database key setup
+      # SecureDB.setup(ENV.delete('DB_KEY'))
     end
   end
 end

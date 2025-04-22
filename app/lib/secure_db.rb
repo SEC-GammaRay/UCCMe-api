@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'rbnabl'
+require 'rbnacl'
+require 'base64'
 
 # SecureDB, library for encrypt and decrypt database
 class SecureDB
