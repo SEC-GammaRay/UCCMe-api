@@ -17,15 +17,16 @@ module UCCMe
     set_allowed_columns :foldername, :description
 
     def foldername=(name)
-      self.foldername_secure = SecureDB.encrypt(name)
+      SecureDB.encrypt(name)
     end
 
     def foldername
       SecureDB.decrypt(foldername_secure)
+      puts "Setting foldername: #{name}, encrypted: #{foldername_secure}"
     end
 
     def description=(plaintext)
-      self.description_secure = SecureDB.encrypt(plaintext)
+      SecureDB.encrypt(plaintext)
     end
 
     def description
@@ -50,21 +51,21 @@ module UCCMe
     end
 
     # CREATE (Create a new folder)
-    def self.create(foldername:, description: nil)
+    def self.create(foldername: nil, description: nil)
       folder = new
       folder.foldername = foldername
       folder.description = description
-      folder.save_changes
       folder
     end
 
     # CREATE (Add a file to a folder)
-    def add_stored_file(filename:, cc_types:, content: nil, description: nil)
+    def add_stored_file(filename: nil, cc_types: nil, content: nil, description: nil)
       StoredFile.create(
         filename: filename,
         cc_types: cc_types,
         description: description,
-        content: content
+        content: content,
+        folder_id: id
       )
     end
 
@@ -82,7 +83,6 @@ module UCCMe
     def update(foldername: nil, description: nil)
       self.foldername = foldername if foldername
       self.description = description if description
-      save_changes
     end
 
     # DESTROY (Delete a folder)

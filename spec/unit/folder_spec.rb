@@ -7,9 +7,15 @@ describe 'Test Folder Handling' do
 
   before do
     wipe_database
-    FileUtils.rm_rf(UCCMe::STORE_DIR) # Clean up filesystem
+    FileUtils.rm_rf(UCCMe::STORE_DIR)
+    # puts Sequel::Model.db.schema(:folders).inspect
+    # puts DATA[:folders].inspect
     DATA[:folders].each do |folder_data|
-      UCCMe::Folder.create(folder_data).save_to_file
+      # unpack folder_data from hash to key value pairs
+      UCCMe::Folder.create(
+        foldername: folder_data[:foldername],
+        description: folder_data[:description]
+      )
     end
   end
 

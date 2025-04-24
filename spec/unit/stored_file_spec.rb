@@ -13,11 +13,11 @@ describe 'Test Stored File Handling' do
   end
 
   # it 'HAPPY: should be able to get list of all stored files in a folder' do
-  #   folder = UCCMe::Folder.first
-  #   DATA[:files].each do |file_data|
+  #   files = UCCMe::Folder.first
+  #   DATA[:stored_files].each do |file_data|
   #     folder.add_stored_file(file_data)
   #   end
-
+  # end
   #   get "api/v1/folders/file/#{file.id}"
   #   _(last_response.status).must_equal 200
 

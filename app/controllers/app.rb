@@ -26,6 +26,25 @@ module UCCMe
       routing.on 'api' do
         routing.on 'v1' do
           routing.on 'folders' do
+            # # GET api/v1/folders
+            # routing.get do
+            #   output = { folders: Folder.all }
+            #   JSON.pretty_generate(output)
+            # end
+
+            # # POST api/v1/folders
+            # routing.post do
+            #   new_data = JSON.parse(routing.body.read)
+            #   new_folder = Folder.new(new_data)
+
+            #   if new_folder.save_changes
+            #     response.status = 201
+            #     { message: 'Document saved', id: new_folder.id }.to_json
+            #   else
+            #     routing.halt 400, { message: 'Could not save folder' }.to_json
+            #   end
+            # end
+
             routing.on 'files' do
               # GET api/v1/folders/files/:id
               routing.get String do |id|

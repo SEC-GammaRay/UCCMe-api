@@ -15,9 +15,9 @@ Sequel.migration do
       DateTime :created_at, default: Sequel::CURRENT_TIMESTAMP
       DateTime :updated_at, default: Sequel::CURRENT_TIMESTAMP, on_update: Sequel::CURRENT_TIMESTAMP
 
-      unique %i[folder_id filename]
+      unique %i[folder_id filename_secure]
     end
 
-    add_index(:stored_files, :filename) # rubocop:disable Sequel/ConcurrentIndex
+    add_index(:stored_files, :filename_secure) # rubocop:disable Sequel/ConcurrentIndex
   end
 end
