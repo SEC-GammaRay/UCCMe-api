@@ -13,6 +13,26 @@ module UCCMe
     one_to_many :stored_files
     plugin :association_dependencies, stored_files: :destroy
     plugin :timestamps, update_on_create: true
+    plugin :whitelist_security
+    plugin :prepared_statements # Add prepared statement support for extra security
+    set_allowed_columns :foldername, :description
+
+    def foldername=(name)
+      SecureDB.encrypt(name)
+    end
+
+    def foldername
+      SecureDB.decrypt(foldername_secure)
+      puts "Setting foldername: #{name}, encrypted: #{foldername_secure}"
+    end
+
+    def description=(plaintext)
+      SecureDB.encrypt(plaintext)
+    end
+
+    def description
+      SecureDB.decrypt(description_secure)
+    end
 
     def to_json(options = {})
       JSON({
@@ -23,37 +43,56 @@ module UCCMe
            }, options)
     end
 
-    # def before_create
-    #   self.id ||= new_id
-    #   super
-    # end
+    def self.setup
+      Dir.mkdir_p(UCCMe::STORE_DIR)
+    end
 
     def self.locate
       FileUtils.mkdir_p(UCCMe::STORE_DIR)
     end
 
-    # def save_to_file
-    #   self.class.locate
-    #   ::File.write("#{UCCMe::STORE_DIR}/#{id}.txt", to_json)
-    # end
+    # CREATE (Create a new folder)
+    def self.create(foldername: nil, description: nil)
+      folder = new
+      folder.foldername = foldername
+      folder.description = description
+      folder
+    end
 
-    # def self.load_from_file(id)
-    #   temp_json = ::File.read("#{UCCMe::STORE_DIR}/#{id}.txt")
-    #   parsed = JSON.parse(temp_json)
-    #   new(parsed) # 用 Sequel.new（記住這不會儲存進 DB）
-    # end
+    # CREATE (Add a file to a folder)
+    def add_stored_file(filename: nil, cc_types: nil, content: nil, description: nil)
+      StoredFile.create(
+        filename: filename,
+        cc_types: cc_types,
+        description: description,
+        content: content,
+        folder_id: id
+      )
+    end
 
-    # def self.all_ids
-    #   Dir.glob("#{UCCMe::STORE_DIR}/*.txt").map do |file|
-    #     file.match(%r{#{Regexp.quote(UCCMe::STORE_DIR)}/(.*)\.txt})[1]
-    #   end
-    # end
+    # INDEX (Get all folders)
+    def self.index
+      all
+    end
 
-    # private
+    # READ (Get a folder by ID)
+    def self.read(id)
+      find(id: id)
+    end
 
-    # def new_id
-    #   timestamp = Time.now.to_f.to_json
-    #   Base64.urlsafe_encode64(RbNaCl::Hash.sha256(timestamp))[0..9]
-    # end
+    # UPDATE (Update a folder)
+    def update(foldername: nil, description: nil)
+      self.foldername = foldername if foldername
+      self.description = description if description
+    end
+
+    # DESTROY (Delete a folder)
+
+    private
+
+    def new_id
+      timestamp = Time.now.to_f.to_json
+      Base64.urlsafe_encode64(RbNaCl::Hash.sha256(timestamp))[0..9]
+    end
   end
 end

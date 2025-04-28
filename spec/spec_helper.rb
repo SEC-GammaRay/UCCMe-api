@@ -12,6 +12,6 @@ def wipe_database
 end
 
 DATA = {
-  stored_files: YAML.safe_load_file('./db/seeds/stored_files_seeds.yml'),
-  folders: YAML.safe_load_file('./db/seeds/folders_seeds.yml')
+  stored_files: YAML.safe_load_file('db/seeds/stored_files_seeds.yml'),
+  folders: YAML.safe_load_file('db/seeds/folders_seeds.yml')
 }.freeze

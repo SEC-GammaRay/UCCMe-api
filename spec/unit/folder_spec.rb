@@ -1,15 +1,21 @@
 # frozen_string_literal: true
 
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 describe 'Test Folder Handling' do
   include Rack::Test::Methods
 
   before do
     wipe_database
-    FileUtils.rm_rf(UCCMe::STORE_DIR) # Clean up filesystem
+    FileUtils.rm_rf(UCCMe::STORE_DIR)
+    # puts Sequel::Model.db.schema(:folders).inspect
+    # puts DATA[:folders].inspect
     DATA[:folders].each do |folder_data|
-      UCCMe::Folder.create(folder_data).save_to_file
+      # unpack folder_data from hash to key value pairs
+      UCCMe::Folder.create(
+        foldername: folder_data['foldername'],
+        description: folder_data['description']
+      )
     end
   end
 
@@ -38,22 +44,7 @@ describe 'Test Folder Handling' do
   #   _(last_response.status).must_equal 404
   # end
 
-  # it 'HAPPY: should be able to create new folders' do
-  #   folder_data = DATA[:folders][0]
+  # it 'SECUTIRY: should secure sensitive attributes' do
 
-  #   req_header = { 'CONTENT_TYPE' => 'application/json' }
-  #   post 'api/v1/folders', folder_data.to_json, req_header
-  #   _(last_response.status).must_equal 201
-  #   _(last_response.headers['Location'].size).must_be :>, 0
-
-  #   created = JSON.parse(last_response.body)['data']['attributes']
-  #   folder = UCCMe::Folder.last
-
-  #   _(created['id']).must_equal folder.id
-  #   _(created['foldername']).must_equal folder_data['foldername']
-  #   _(created['description']).must_equal folder_data['description']
-
-  #   # Verify filesystem storage
-  #   _(File.exist?("#{UCCMe::STORE_DIR}/#{folder.id}.txt")).must_equal true
   # end
 end
