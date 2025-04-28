@@ -12,6 +12,7 @@ module UCCMe
     many_to_one :folder
     plugin :timestamps, update_on_create: true
     plugin :whitelist_security
+    plugin :prepared_statements # Add prepared statement support for extra security
     set_allowed_columns :filename, :description, :content, :cc_types
 
     def filename=(name)
@@ -28,6 +29,11 @@ module UCCMe
 
     def cc_types
       SecureDB.decrypt(cc_types_secure)
+    end
+
+    def before_create
+      self.id ||= new_id
+      super
     end
 
     def to_json(options = {})

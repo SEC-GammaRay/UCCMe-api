@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../integration/spec_helper'
+require_relative '../spec_helper'
 
 describe 'Test Folder Handling' do
   include Rack::Test::Methods
@@ -13,8 +13,8 @@ describe 'Test Folder Handling' do
     DATA[:folders].each do |folder_data|
       # unpack folder_data from hash to key value pairs
       UCCMe::Folder.create(
-        foldername: folder_data[:foldername],
-        description: folder_data[:description]
+        foldername: folder_data['foldername'],
+        description: folder_data['description']
       )
     end
   end

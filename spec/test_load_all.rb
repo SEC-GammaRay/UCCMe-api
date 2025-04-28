@@ -2,7 +2,7 @@
 
 # run pry -r <path/to/this/file>
 
-require_relative '../../require_app'
+require_relative '../require_app'
 require_app
 
 def app = UCCMe::Api

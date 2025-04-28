@@ -14,6 +14,7 @@ module UCCMe
     plugin :association_dependencies, stored_files: :destroy
     plugin :timestamps, update_on_create: true
     plugin :whitelist_security
+    plugin :prepared_statements # Add prepared statement support for extra security
     set_allowed_columns :foldername, :description
 
     def foldername=(name)

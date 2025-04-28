@@ -4,7 +4,7 @@
 # require 'minitest/rg'
 # require 'rack/test'
 # require 'yaml'
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 # require_relative '../app/controllers/app'
 # require_relative '../app/models/property'
@@ -104,13 +104,13 @@ describe 'Creating New Folder' do
     bad_data[:id] = 9999
     post 'api/v1/folders', bad_data.to_json, @request_header
 
-    _(last_response.status).must_equal 400 # should be 404
+    _(last_response.status).must_equal 400 # should be 400
   end
 
   it 'SECUTIRY: should prevent basic SQL injection to get index' do
     get 'api/v1/folders/2%20or%20id%3D1'
 
-    _(last_response.status).must_equal 200 # should be 404
+    _(last_response.status).must_equal 404 # should be 404
     # _(last_response.body).must_be_nil
   end
 end
