@@ -17,30 +17,37 @@ module UCCMe
     plugin :prepared_statements # Add prepared statement support for extra security
     set_allowed_columns :foldername, :description
 
+    def_column_accessor :foldername_secure, :description_secure
+        
     def foldername=(name)
-      SecureDB.encrypt(name)
+      self.foldername_secure = SecureDB.encrypt(name)
     end
 
     def foldername
       SecureDB.decrypt(foldername_secure)
-      puts "Setting foldername: #{name}, encrypted: #{foldername_secure}"
     end
 
     def description=(plaintext)
-      SecureDB.encrypt(plaintext)
+      self.description_secure = SecureDB.encrypt(plaintext)
     end
 
     def description
       SecureDB.decrypt(description_secure)
     end
-
+    
     def to_json(options = {})
-      JSON({
+      JSON(
+        {
+          data: {
              type: 'folder',
-             id: id,
-             foldername: foldername,
-             description: description
-           }, options)
+             attributes: {
+              id: id,
+              foldername: foldername,
+              description: description
+            }
+          }
+        }, options
+      )
     end
 
     def self.setup
@@ -52,20 +59,21 @@ module UCCMe
     end
 
     # CREATE (Create a new folder)
-    def self.create(foldername: nil, description: nil)
+    def self.create(attributes = {})
       folder = new
-      folder.foldername = foldername
-      folder.description = description
+      folder.foldername = attributes[:foldername] || attributes['foldername'] 
+      folder.description = attributes[:description] || attributes['description']
+      folder.save
       folder
     end
 
     # CREATE (Add a file to a folder)
-    def add_stored_file(filename: nil, cc_types: nil, content: nil, description: nil)
+    def add_stored_file(data = {})
       StoredFile.create(
-        filename: filename,
-        cc_types: cc_types,
-        description: description,
-        content: content,
+        filename: data[:filename],
+        cc_types: data[:cc_types],
+        description: data[:description],
+        content: data[:content],
         folder_id: id
       )
     end

@@ -15,8 +15,10 @@ module UCCMe
     plugin :prepared_statements # Add prepared statement support for extra security
     set_allowed_columns :filename, :description, :content, :cc_types
 
+    def_column_accessor :filename_secure, :cc_types_secure
+
     def filename=(name)
-      SecureDB.encrypt(name)
+      self.filename_secure = SecureDB.encrypt(name)
     end
 
     def filename
@@ -24,27 +26,34 @@ module UCCMe
     end
 
     def cc_types=(types)
-      SecureDB.encrypt(types)
+      self.cc_types_secure = SecureDB.encrypt(types.join(','))
     end
 
     def cc_types
-      SecureDB.decrypt(cc_types_secure)
+      value = SecureDB.decrypt(cc_types_secure)
+      value&.include?(',') ? value.split(',') : value
     end
 
-    def before_create
-      self.id ||= new_id
-      super
-    end
+    # def before_create
+    #   self.id ||= new_id
+    #   super
+    # end
 
     def to_json(options = {})
-      JSON({
+      JSON(
+        {
+          data: {
              type: 'file',
-             id: id,
-             filename: filename,
-             description: description,
-             content: content,
-             cc_types: cc_types
-           }, options)
+             attributes: {
+              id: id,
+              filename: filename,
+              description: description,
+              content: content,
+              cc_types: cc_types
+            }
+          }
+        }, options
+      )
     end
 
     def self.setup
@@ -56,11 +65,14 @@ module UCCMe
     end
 
     # CREATE (Create a new file)
-    def self.create(_file_data = {})
+    def self.create(file_data = {})
       # Initialize new file with provided or default values
-      new_file = new(filename: filename, description: description, content: content,
-                     cc_types: cc_types, folder_id: folder_id,
-                     created_at: created_at, updated_at: updated_at)
+      new_file = new
+      new_file.filename = file_data[:filename]
+      new_file.description = file_data[:description]
+      new_file.content = file_data[:content]
+      new_file.cc_types = file_data[:cc_types]
+      new_file.folder_id = file_data[:folder_id]
       # Save and return the file
       new_file.save_changes
       new_file
