@@ -4,7 +4,7 @@
 # require 'minitest/rg'
 # require 'rack/test'
 # require 'yaml'
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 # require_relative '../app/controllers/app'
 # require_relative '../app/models/property'
@@ -85,7 +85,6 @@ describe 'Test UCCMe Web API' do
   #     end
   #   end
 
-<<<<<<< HEAD
   # SAD: request file not exist
   it 'SAD: should return error if unknown document requested' do
     get 'api/v1/files/foobar'
@@ -114,13 +113,4 @@ describe 'Creating New Folder' do
     _(last_response.status).must_equal 200 # should be 404
     # _(last_response.body).must_be_nil
   end
-=======
-  #   # SAD: request file not exist
-  #   it 'SAD: should return error if unknown document requested' do
-  #     get 'api/v1/files/foobar'
-
-  #     _(last_response.status).must_equal 404
-  #   end
-  # end
->>>>>>> e06fe38 (add: spec/integration/api_files_spec.rb spec/integration/api_folders_spec.rb)
 end

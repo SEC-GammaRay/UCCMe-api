@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../integration/spec_helper'
+require_relative '../spec_helper'
 
 describe 'Test SecureDB class' do
   it 'SECURITY: should encrypt text' do

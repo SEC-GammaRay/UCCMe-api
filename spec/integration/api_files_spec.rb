@@ -21,7 +21,7 @@ describe 'Test File Handling' do
 
     get "api/v1/folders/#{folder.id}/files"
     _(last_response.status).must_equal 200
-    
+
     result = JSON.parse last_response.body
     _(result['data'].count).must_equal DATA[:stored_files].count
   end
@@ -33,7 +33,7 @@ describe 'Test File Handling' do
 
     get "/api/v1/folders/#{folder.id}/files/#{file.id}"
     _(last_response.status).must_equal 200
-    
+
     result = JSON.parse last_response.body
     _(result['id']).must_equal file.id
     _(result['filename']).must_equal file_data['filename']
