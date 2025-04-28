@@ -68,7 +68,7 @@ module UCCMe
                 Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
                 routing.halt 400, { message: 'Illegal Attributes' }.to_json
               rescue StandardError
-                routing.halt 500, { message: 'Unknow server error' }.to_json
+                routing.halt 500, { message: 'Unknown server error' }.to_json
               end
             end
 

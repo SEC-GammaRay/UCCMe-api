@@ -13,8 +13,8 @@ describe 'Test Folder Handling' do
     DATA[:folders].each do |folder_data|
       # unpack folder_data from hash to key value pairs
       UCCMe::Folder.create(
-        foldername: folder_data[:foldername],
-        description: folder_data[:description]
+        foldername: folder_data['foldername'],
+        description: folder_data['description']
       )
     end
   end

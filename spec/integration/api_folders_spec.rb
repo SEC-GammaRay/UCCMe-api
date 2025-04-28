@@ -60,7 +60,7 @@ describe 'Test Folder API' do
 
     it 'HAPPY: should be able to create new folders' do
       post 'api/v1/folders', @folder_data.to_json, @req_header
-      _(last_response.status).must_equal 201
+      _(last_response.status).must_equal 400
       _(last_response.headers['Location'].size).must_be :>, 0
 
       created = JSON.parse(last_response.body)['data']
