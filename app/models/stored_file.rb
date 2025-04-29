@@ -39,12 +39,13 @@ module UCCMe
     #   super
     # end
 
+    # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
       JSON(
         {
           data: {
-             type: 'file',
-             attributes: {
+            type: 'file',
+            attributes: {
               id: id,
               filename: filename,
               description: description,
@@ -55,6 +56,7 @@ module UCCMe
         }, options
       )
     end
+    # rubocop:enable Metrics/MethodLength
 
     def self.setup
       Dir.mkdir_p(UCCMe::STORE_DIR)

@@ -33,7 +33,7 @@ describe 'Test Folder API' do
     end
 
     it 'HAPPY: should be able to get details of a single folder' do
-      existing_folder = (filter_folder_data(DATA[:folders][1]))
+      existing_folder = filter_folder_data(DATA[:folders][1])
       folder = UCCMe::Folder.create(existing_folder)
       id = folder.id
 
@@ -54,9 +54,9 @@ describe 'Test Folder API' do
     it 'SECURITY: should prevent basic SQL injection targeting IDs' do
       UCCMe::Folder.create(foldername: 'Folder One', description: 'First folder')
       UCCMe::Folder.create(foldername: 'Folder Two', description: 'Second folder')
-      
+
       get 'api/v1/folders/2%20or%20id%3E0'
-      
+
       # deliberately not reporting error -- don't give attacker information
       _(last_response.status).must_equal 404
       _(JSON.parse(last_response.body)['data']).must_be_nil
@@ -86,7 +86,7 @@ describe 'Test Folder API' do
     it 'SECURITY: should not create folder with mass assignment' do
       bad_data = @folder_data.clone
       bad_data['created_at'] = '1900-01-01'
-      
+
       post 'api/v1/folders', bad_data.to_json, @req_header
 
       _(last_response.status).must_equal 400

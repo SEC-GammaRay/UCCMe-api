@@ -18,7 +18,7 @@ module UCCMe
     set_allowed_columns :foldername, :description
 
     def_column_accessor :foldername_secure, :description_secure
-        
+
     def foldername=(name)
       self.foldername_secure = SecureDB.encrypt(name)
     end
@@ -34,13 +34,14 @@ module UCCMe
     def description
       SecureDB.decrypt(description_secure)
     end
-    
+
+    # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
       JSON(
         {
           data: {
-             type: 'folder',
-             attributes: {
+            type: 'folder',
+            attributes: {
               id: id,
               foldername: foldername,
               description: description
@@ -49,6 +50,7 @@ module UCCMe
         }, options
       )
     end
+    # rubocop:enable Metrics/MethodLength
 
     def self.setup
       Dir.mkdir_p(UCCMe::STORE_DIR)
@@ -61,9 +63,9 @@ module UCCMe
     # CREATE (Create a new folder)
     def self.create(attributes = {})
       folder = new
-      folder.foldername = attributes[:foldername] || attributes['foldername'] 
+      folder.foldername = attributes[:foldername] || attributes['foldername']
       folder.description = attributes[:description] || attributes['description']
-      folder.save
+      folder.save_changes
       folder
     end
 

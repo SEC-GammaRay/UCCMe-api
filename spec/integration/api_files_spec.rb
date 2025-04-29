@@ -4,6 +4,7 @@ require_relative '../spec_helper'
 
 def filter_folder_data(data)
   return {} if data.nil?
+
   # Add explicit handling for converting string/symbol keys
   {
     foldername: data['foldername'] || data[:foldername],
@@ -13,6 +14,7 @@ end
 
 def filter_file_data(data)
   return {} if data.nil?
+
   # Add explicit handling for converting string/symbol keys
   result = {}
   result[:filename] = data['filename'] || data[:filename]
@@ -76,13 +78,13 @@ describe 'Test File Handling' do
 
     it 'HAPPY: should be able to create new files' do
       post "api/v1/folders/#{@folder.id}/files",
-          filter_file_data(@file_data).to_json, @req_header
+           filter_file_data(@file_data).to_json, @req_header
       _(last_response.status).must_equal 201
-      
+
       created = JSON.parse(last_response.body)
       _(created['message']).must_equal 'Document saved'
       _(created['id']).wont_be_nil
-      
+
       file = UCCMe::StoredFile.last
       _(file.filename).must_equal @file_data['filename']
       _(file.description).must_equal @file_data['description']
@@ -94,7 +96,7 @@ describe 'Test File Handling' do
       bad_data = @file_data.clone
       bad_data['created_at'] = '1900-01-01'
       bad_data['id'] = 'hacked_id'
-      
+
       post "api/v1/folders/#{@folder.id}/files",
            bad_data.to_json, @req_header
       _(last_response.status).must_equal 400
@@ -102,13 +104,12 @@ describe 'Test File Handling' do
     end
 
     it 'SAD: should return error for non-existent folder' do
-
-      post "api/v1/folders/non_existent_folder/files",
+      post 'api/v1/folders/non_existent_folder/files',
            @file_data.to_json, @req_header
-      
-      _(last_response.status).must_equal 500  # Based on your controller's error handling
+
+      _(last_response.status).must_equal 500 # Based on your controller's error handling
       result = JSON.parse(last_response.body)
-      _(result['message']).must_equal 'Unknow server error'  # Note: typo in your controller
+      _(result['message']).must_equal 'Unknow server error' # NOTE: typo in your controller
     end
   end
 
@@ -116,10 +117,10 @@ describe 'Test File Handling' do
     it 'should correctly build file route paths' do
       folder = UCCMe::Folder.first
       file = folder.add_stored_file(filter_file_data(DATA[:stored_files][0]))
-      
+
       get "api/v1/folders/#{folder.id}/files"
       _(last_response.status).must_equal 200
-      
+
       get "api/v1/folders/#{folder.id}/files/#{file.id}"
       _(last_response.status).must_equal 200
     end
