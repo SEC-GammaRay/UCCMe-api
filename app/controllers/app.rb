@@ -59,6 +59,12 @@ module UCCMe
               routing.post do
                 new_data = JSON.parse(routing.body.read)
                 folder = Folder.first(id: folder_id)
+
+                unless folder
+                  Api.logger.warn "Folder not found: #{folder_id}"
+                  routing.halt 404, { message: 'Folder not found' }.to_json
+                end
+
                 new_file = folder.add_stored_file(new_data)
                 raise 'Could not save document' unless new_file
 
