@@ -109,7 +109,7 @@ describe 'Test File Handling' do
 
       _(last_response.status).must_equal 500 # Based on your controller's error handling
       result = JSON.parse(last_response.body)
-      _(result['message']).must_equal 'Unknow server error' # NOTE: typo in your controller
+      _(result['message']).must_equal 'Unknown server error' # NOTE: typo in your controller
     end
   end
 
