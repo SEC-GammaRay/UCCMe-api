@@ -56,11 +56,11 @@ describe 'Test File Handling' do
     get "/api/v1/folders/#{folder.id}/files/#{file.id}"
     _(last_response.status).must_equal 200
     result = JSON.parse last_response.body
-    _(result['id']).must_equal file.id
-    _(result['filename']).must_equal file_data['filename']
-    _(result['description']).must_equal file_data['description']
-    _(result['content']).must_equal file_data['content']
-    _(result['cc_types']).must_equal file_data['cc_types']
+    _(result['data']['attributes']['id']).must_equal file.id
+    _(result['data']['attributes']['filename']).must_equal file_data['filename']
+    _(result['data']['attributes']['description']).must_equal file_data['description']
+    _(result['data']['attributes']['content']).must_equal file_data['content']
+    _(result['data']['attributes']['cc_types']).must_equal file_data['cc_types']
   end
 
   it 'SAD: should return error if unknown file requested' do

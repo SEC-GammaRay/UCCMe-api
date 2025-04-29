@@ -1,0 +1,15 @@
+
+[1mFrom:[0m /home/poyasharonlin/SEC/uccme/UCCMe-api/spec/integration/api_folders_spec.rb:72 :
+
+    [1;34m67[0m:   describe [31m[1;31m'[0m[31mCreating New Folders[1;31m'[0m[31m[0m [32mdo[0m
+    [1;34m68[0m:     before [32mdo[0m
+    [1;34m69[0m:       @req_header = { [31m[1;31m'[0m[31mCONTENT_TYPE[1;31m'[0m[31m[0m => [31m[1;31m'[0m[31mapplication/json[1;31m'[0m[31m[0m }
+    [1;34m70[0m:       @folder_data = filter_folder_data([1;36mDATA[0m[[33m:folders[0m][[1;34m1[0m])
+    [1;34m71[0m:     [32mend[0m
+ => [1;34m72[0m:     binding.pry
+    [1;34m73[0m: 
+    [1;34m74[0m:     it [31m[1;31m'[0m[31mHAPPY: should be able to create new folders[1;31m'[0m[31m[0m [32mdo[0m
+    [1;34m75[0m:       post [31m[1;31m'[0m[31mapi/v1/folders[1;31m'[0m[31m[0m, @folder_data.to_json, @req_header
+    [1;34m76[0m:       _(last_response.status).must_equal [1;34m201[0m
+    [1;34m77[0m:       _(last_response.headers[[31m[1;31m'[0m[31mLocation[1;31m'[0m[31m[0m]).wont_be_nil
+

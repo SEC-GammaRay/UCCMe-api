@@ -61,7 +61,7 @@ module UCCMe
     end
 
     # CREATE (Create a new folder)
-    def self.create(attributes = {})
+    def self.create(attributes = nil)
       folder = new
       folder.foldername = attributes[:foldername] || attributes['foldername']
       folder.description = attributes[:description] || attributes['description']
