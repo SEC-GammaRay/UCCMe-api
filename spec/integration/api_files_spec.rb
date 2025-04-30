@@ -15,13 +15,10 @@ end
 def filter_file_data(data)
   return {} if data.nil?
 
-  # Add explicit handling for converting string/symbol keys
-  result = {}
-  result[:filename] = data['filename'] || data[:filename]
-  result[:description] = data['description'] || data[:description]
-  result[:content] = data['content'] || data[:content]
-  result[:cc_types] = data['cc_types'] || data[:cc_types]
-  result
+  keys = %i[id filename description content cc_types folder_id created_at updated_at]
+  keys.each_with_object({}) do |key, result|
+    result[key] = data[key.to_s] || data[key]
+  end
 end
 
 describe 'Test File Handling' do
@@ -107,7 +104,7 @@ describe 'Test File Handling' do
       post 'api/v1/folders/non_existent_folder/files',
            @file_data.to_json, @req_header
 
-      _(last_response.status).must_equal 404 
+      _(last_response.status).must_equal 404
       result = JSON.parse(last_response.body)
       _(result['message']).must_equal 'Folder not found'
     end

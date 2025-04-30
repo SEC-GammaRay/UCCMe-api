@@ -72,11 +72,14 @@ module UCCMe
     # CREATE (Add a file to a folder)
     def add_stored_file(data = {})
       StoredFile.create(
+        id: data[:id],
         filename: data[:filename],
-        cc_types: data[:cc_types],
         description: data[:description],
         content: data[:content],
-        folder_id: id
+        cc_types: data[:cc_types],
+        folder_id: data[:folder_id],
+        created_at: data[:created_at],
+        updated_at: data[:updated_at]
       )
     end
 
