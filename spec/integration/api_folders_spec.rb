@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'pry'
 
 require_relative '../spec_helper'
 
@@ -74,9 +75,12 @@ describe 'Test Folder API' do
       _(last_response.status).must_equal 201
       _(last_response.headers['Location']).wont_be_nil
       _(last_response.headers['Location'].size).must_be :>, 0
+      
 
-      created = JSON.parse(last_response.body)['data']
+      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      puts created
       folder = UCCMe::Folder.first
+      # puts folder
 
       _(created['id']).must_equal folder.id
       _(created['foldername']).must_equal @folder_data[:foldername]
