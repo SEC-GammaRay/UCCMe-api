@@ -13,8 +13,8 @@ module UCCMe
 
     # destroy or delete when owner is deleted
     plugin :association_dependencies,
-          owned_storedfiles: :destroy,
-          shared_storedfiles: :delete
+          owned_storedfiles: :destroy
+          # shared_storedfiles: :delete
           # teams: :nullify
 
     # attributes that can be written to

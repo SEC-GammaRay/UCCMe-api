@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+require 'sequel'
+
+Sequel.migration do
+  change do
+    create_table(:owners) do
+      primary_key :id
+
+      String :ownername, null: false, unique: true
+      String :email, null: false, unique: true
+      String :password_digest
+
+      DateTime :created_at
+      DateTime :updated_at
+    end
+  end
+end
