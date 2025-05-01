@@ -17,6 +17,11 @@ module UCCMe
 
     def_column_accessor :filename_secure, :cc_types_secure
 
+    def before_create
+      self.id ||= new_id
+      super
+    end
+
     def filename=(name)
       self.filename_secure = SecureDB.encrypt(name)
     end
@@ -33,11 +38,6 @@ module UCCMe
       value = SecureDB.decrypt(cc_types_secure)
       value&.include?(',') ? value.split(',') : value
     end
-
-    # def before_create
-    #   self.id ||= new_id
-    #   super
-    # end
 
     # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
@@ -105,7 +105,7 @@ module UCCMe
 
     # DESTROY (Delete file)
 
-    private
+    # private
 
     def new_id
       timestamp = Time.now.to_f.to_s

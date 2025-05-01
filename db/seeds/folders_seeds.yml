@@ -1,14 +1,11 @@
-- id: "Z2FudHJ5MQ"
-  foldername: "Project Documents"
+- foldername: "Project Documents"
   description: "Contains all project-related documents"
   created_at: "2025-04-17T10:00:00Z"
 
-- id: "Z2FudHJ5Mg"
-  foldername: "Meeting Notes"
+- foldername: "Meeting Notes"
   description: "Notes from team meetings"
   created_at: "2025-04-17T10:05:00Z"
 
-- id: "Z2FudHJ5Mw"
-  foldername: "Archives"
+- foldername: "Archives"
   description: "Old project files"
   created_at: "2025-04-17T10:10:00Z"

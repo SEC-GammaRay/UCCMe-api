@@ -6,8 +6,8 @@ require 'sequel'
 Sequel.migration do
   change do
     create_table(:stored_files) do
-      primary_key :id
-      foreign_key :folder_id, table: :folders
+      String :id, primary_key: true
+      foreign_key :folder_id, table: :folders, type: String
       String :filename_secure, unique: true, null: false
       String :description, null: false
       String :content, null: false
