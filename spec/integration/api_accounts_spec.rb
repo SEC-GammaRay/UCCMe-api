@@ -11,7 +11,7 @@ describe 'Test Account Handling' do
 
     describe 'Account Information' do 
         it 'HAPPY: should be able to get details of a single owner' do
-            owner_data = DATA[:owner][1]
+            owner_data = DATA[:accounts][1]
             owner = UCCMe::Account.create(owner_data)
 
             get "api/v1/owners/#{owner.name}"

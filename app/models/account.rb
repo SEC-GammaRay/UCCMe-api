@@ -10,18 +10,27 @@ module UCCMe
     one_to_many :owned_storedfiles, class: :'UCCMe::StoredFile', key: :owner_id
     # one_to_many :shared_storedfiles, class: :'UCCMe::ShareFile', key: :sharer_id, conditions: { sharer_type: 'Account' }
     # many_to_many :teams, class: :'UCCMe::Team', join_table: :team_members, left_key: :owner_id, right_key: :team_id
+    many_to_many :collaborations, # Removed extra colon after many_to_many
+      class: :'UCCMe::StoredFile',
+      join_table: :accounts_stored_files,
+      left_key: :collaborator_id,
+      right_key: :file_id
 
     # destroy or delete when owner is deleted
     plugin :association_dependencies,
-          owned_storedfiles: :destroy
+          owned_storedfiles: :destroy,
           # shared_storedfiles: :delete
-          # teams: :nullify
+          collaborations: :nullify
 
     # attributes that can be written to
     plugin :whitelist_security
     set_allowed_columns :ownername, :email, :password
 
     plugin :timestamps, update_on_create: true
+
+    def all_files
+      owned_storedfiles + collaborations
+    end
 
     def password=(new_password)
       self.password_digest = Password.digest(new_password)
@@ -33,7 +42,7 @@ module UCCMe
     end
 
     def to_json(options = {})
-      JSON(
+      JSON.generate( # Changed JSON() to JSON.generate for proper JSON serialization
         {
           type: 'owner',
           id: id,
