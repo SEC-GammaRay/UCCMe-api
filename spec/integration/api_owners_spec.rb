@@ -2,17 +2,17 @@
 
 require_relative '../spec_helper'
 
-describe 'Test Owner Handling' do 
+describe 'Test Account Handling' do 
     include Rack::Test::Methods
 
     before do 
         wipe_database
     end 
 
-    describe 'Owner Information' do 
+    describe 'Account Information' do 
         it 'HAPPY: should be able to get details of a single owner' do
             owner_data = DATA[:owner][1]
-            owner = UCCMe::Owner.create(owner_data)
+            owner = UCCMe::Account.create(owner_data)
 
             get "api/v1/owners/#{owner.name}"
             _(last_response.status).must_equal 200
@@ -26,7 +26,7 @@ describe 'Test Owner Handling' do
         end
     end
 
-    describe 'Owner Creation' do
+    describe 'Account Creation' do
         before do 
             @req_header = {'CONTENT_TYPE' => 'application/json'}
             @owner_data = DATA[:owners][1]
@@ -38,7 +38,7 @@ describe 'Test Owner Handling' do
             _(last_repsonse.headers['Location'].size).must_be :>, 0
 
             created = JSON.parse(last_response.body)['data']['attributes']
-            owner = UCCMe::Owner.first
+            owner = UCCMe::Account.first
 
             _(created['id']).must_equal @owner_data['id']
             _(created['ownername']).must_equal @owner_data['ownername']

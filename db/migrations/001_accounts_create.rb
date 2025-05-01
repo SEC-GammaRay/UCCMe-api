@@ -4,7 +4,7 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_table(:owners) do
+    create_table(:accounts) do
       primary_key :id
 
       String :ownername, null: false, unique: true
