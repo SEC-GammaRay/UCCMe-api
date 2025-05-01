@@ -15,9 +15,9 @@ end
 def filter_file_data(data)
   return {} if data.nil?
 
-  keys = %i[id filename description content cc_types folder_id created_at updated_at]
+  keys = %i[filename description content cc_types]
   keys.each_with_object({}) do |key, result|
-    result[key] = data[key.to_s] || data[key]
+    result[key] = data[key.to_s] || data[key] if data.key?(key.to_s) || data.key?(key)
   end
 end
 

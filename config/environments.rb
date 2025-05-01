@@ -28,6 +28,7 @@ module UCCMe
       # Connect and make the database accessible to other classes
       db_url = ENV.delete('DATABASE_URL')
       DB = Sequel.connect("#{db_url}?encoding=utf8")
+      DB.run('PRAGMA foreign_keys = ON') # Ensure SQLite has foreign key constraints enabled
 
       # Class method to access the database
       def self.DB = DB # rubocop:disable Naming/MethodName

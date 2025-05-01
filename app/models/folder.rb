@@ -19,6 +19,11 @@ module UCCMe
 
     def_column_accessor :foldername_secure, :description_secure
 
+    def before_create
+      self.id ||= new_id
+      super
+    end
+
     def foldername=(name)
       self.foldername_secure = SecureDB.encrypt(name)
     end
@@ -71,16 +76,21 @@ module UCCMe
 
     # CREATE (Add a file to a folder)
     def add_stored_file(data = {})
-      StoredFile.create(
-        id: data[:id],
-        filename: data[:filename],
-        description: data[:description],
-        content: data[:content],
-        cc_types: data[:cc_types],
-        folder_id: data[:folder_id],
-        created_at: data[:created_at],
-        updated_at: data[:updated_at]
-      )
+      # StoredFile.create(
+      #   # id: data[:id],
+      #   filename: data[:filename],
+      #   description: data[:description],
+      #   content: data[:content],
+      #   cc_types: data[:cc_types],
+      #   folder_id: id,
+      #   # created_at: data[:created_at],
+      #   # updated_at: data[:updated_at]
+      # )
+      file = StoredFile.new
+      file.set(data)
+      file.folder_id = id
+      file.save_changes
+      file
     end
 
     # INDEX (Get all folders)
@@ -97,6 +107,7 @@ module UCCMe
     def update(foldername: nil, description: nil)
       self.foldername = foldername if foldername
       self.description = description if description
+      save_changes
     end
 
     # DESTROY (Delete a folder)
@@ -104,7 +115,7 @@ module UCCMe
     private
 
     def new_id
-      timestamp = Time.now.to_f.to_json
+      timestamp = Time.now.to_f.to_s
       Base64.urlsafe_encode64(RbNaCl::Hash.sha256(timestamp))[0..9]
     end
   end
