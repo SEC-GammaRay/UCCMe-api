@@ -78,7 +78,7 @@ describe 'Test Folder API' do
       _(last_response.headers['Location'].size).must_be :>, 0
 
       created = JSON.parse(last_response.body)['data']['data']['attributes']
-      puts created
+      # puts created
       folder = UCCMe::Folder.first
       # puts folder
 

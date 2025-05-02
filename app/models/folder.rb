@@ -11,13 +11,15 @@ module UCCMe
   # top level
   class Folder < Sequel::Model
     one_to_many :stored_files
-    plugin :association_dependencies, stored_files: :destroy
+
+    plugin :association_dependencies,
+           stored_files: :destroy
     plugin :timestamps, update_on_create: true
     plugin :whitelist_security
     plugin :prepared_statements # Add prepared statement support for extra security
     set_allowed_columns :foldername, :description
 
-    def_column_accessor :foldername_secure, :description_secure
+    # def_column_accessor :foldername_secure, :description_secure
 
     def before_create
       self.id ||= new_id
@@ -66,32 +68,32 @@ module UCCMe
     end
 
     # CREATE (Create a new folder)
-    def self.create(attributes = nil)
-      folder = new
-      folder.foldername = attributes[:foldername] || attributes['foldername']
-      folder.description = attributes[:description] || attributes['description']
-      folder.save_changes
-      folder
-    end
+    # def self.create(attributes = nil)
+    #   folder = new
+    #   folder.foldername = attributes[:foldername] || attributes['foldername']
+    #   folder.description = attributes[:description] || attributes['description']
+    #   folder.save_changes
+    #   folder
+    # end
 
     # CREATE (Add a file to a folder)
-    def add_stored_file(data = {})
-      # StoredFile.create(
-      #   # id: data[:id],
-      #   filename: data[:filename],
-      #   description: data[:description],
-      #   content: data[:content],
-      #   cc_types: data[:cc_types],
-      #   folder_id: id,
-      #   # created_at: data[:created_at],
-      #   # updated_at: data[:updated_at]
-      # )
-      file = StoredFile.new
-      file.set(data)
-      file.folder_id = id
-      file.save_changes
-      file
-    end
+    # def add_stored_file(data = {})
+    #   # StoredFile.create(
+    #   #   # id: data[:id],
+    #   #   filename: data[:filename],
+    #   #   description: data[:description],
+    #   #   content: data[:content],
+    #   #   cc_types: data[:cc_types],
+    #   #   folder_id: id,
+    #   #   # created_at: data[:created_at],
+    #   #   # updated_at: data[:updated_at]
+    #   # )
+    #   file = StoredFile.new
+    #   file.set(data)
+    #   file.folder_id = id
+    #   file.save_changes
+    #   file
+    # end
 
     # INDEX (Get all folders)
     def self.index

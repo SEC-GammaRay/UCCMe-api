@@ -24,7 +24,7 @@ module UCCMe
 
     # attributes that can be written to
     plugin :whitelist_security
-    set_allowed_columns :ownername, :email, :password
+    set_allowed_columns :username, :email, :password
 
     plugin :timestamps, update_on_create: true
 
@@ -46,7 +46,7 @@ module UCCMe
         {
           type: 'owner',
           id: id,
-          ownername: ownername,
+          username: username,
           email: email
         }, options
       )

@@ -4,6 +4,6 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_join_table(collaborator_id: :accounts, file_id: :storedfiles)
+    create_join_table(collaborator_id: :accounts, file_id: :stored_files)
   end
 end
