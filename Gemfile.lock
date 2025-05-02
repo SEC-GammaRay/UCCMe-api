@@ -90,6 +90,8 @@ GEM
     ruby-progressbar (1.13.0)
     sequel (5.91.0)
       bigdecimal
+    sequel-seed (1.1.2)
+      sequel (>= 4.49.0)
     sqlite3 (2.6.0-aarch64-linux-gnu)
     sqlite3 (2.6.0-aarch64-linux-musl)
     sqlite3 (2.6.0-arm-linux-gnu)
@@ -139,6 +141,7 @@ DEPENDENCIES
   rubocop-rake
   rubocop-sequel
   sequel (~> 5.55)
+  sequel-seed
   sqlite3 (~> 2.6)
 
 BUNDLED WITH

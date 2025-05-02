@@ -8,23 +8,23 @@ module UCCMe
   # Models the owner of the file
   class Account < Sequel::Model
     one_to_many :owned_storedfiles, class: :'UCCMe::StoredFile', key: :owner_id
-    # one_to_many :shared_storedfiles, class: :'UCCMe::ShareFile', key: :sharer_id, conditions: { sharer_type: 'Account' }
+    # one_to_many :shared_storedfiles, class: :'UCCMe::ShareFile', key: :sharer_id, conditions: { sharer_type: 'Account'} # rubocop:disable Layout/LineLength
     # many_to_many :teams, class: :'UCCMe::Team', join_table: :team_members, left_key: :owner_id, right_key: :team_id
     many_to_many :collaborations, # Removed extra colon after many_to_many
-      class: :'UCCMe::StoredFile',
-      join_table: :accounts_stored_files,
-      left_key: :collaborator_id,
-      right_key: :file_id
+                 class: :'UCCMe::StoredFile',
+                 join_table: :accounts_stored_files,
+                 left_key: :collaborator_id,
+                 right_key: :file_id
 
     # destroy or delete when owner is deleted
     plugin :association_dependencies,
-          owned_storedfiles: :destroy,
-          # shared_storedfiles: :delete
-          collaborations: :nullify
+           owned_storedfiles: :destroy,
+           # shared_storedfiles: :delete
+           collaborations: :nullify
 
     # attributes that can be written to
     plugin :whitelist_security
-    set_allowed_columns :ownername, :email, :password
+    set_allowed_columns :username, :email, :password
 
     plugin :timestamps, update_on_create: true
 
@@ -46,7 +46,7 @@ module UCCMe
         {
           type: 'owner',
           id: id,
-          ownername: ownername,
+          username: username,
           email: email
         }, options
       )

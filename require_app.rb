@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-def require_app(folders = %w[models controllers])
+def require_app(folders = %w[models controllers], config: true)
   app_list = Array(folders).map { |folder| "app/#{folder}" }
-  full_list = ['config', app_list].flatten.join(',')
+  app_list = ['config', app_list] if config
+  full_list = app_list.flatten.join(',')
 
   Dir.glob("./{#{full_list}}/**/*.rb").each do |file|
     require file
