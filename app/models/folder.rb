@@ -21,10 +21,10 @@ module UCCMe
 
     # def_column_accessor :foldername_secure, :description_secure
 
-    def before_create
-      self.id ||= new_id
-      super
-    end
+    # def before_create
+    #   self.id ||= new_id
+    #   super
+    # end
 
     def foldername=(name)
       self.foldername_secure = SecureDB.encrypt(name)
@@ -95,30 +95,30 @@ module UCCMe
     #   file
     # end
 
-    # INDEX (Get all folders)
-    def self.index
-      all
-    end
+    # # INDEX (Get all folders)
+    # def self.index
+    #   all
+    # end
 
-    # READ (Get a folder by ID)
-    def self.read(id)
-      find(id: id)
-    end
+    # # READ (Get a folder by ID)
+    # def self.read(id)
+    #   find(id: id)
+    # end
 
-    # UPDATE (Update a folder)
-    def update(foldername: nil, description: nil)
-      self.foldername = foldername if foldername
-      self.description = description if description
-      save_changes
-    end
+    # # UPDATE (Update a folder)
+    # def update(foldername: nil, description: nil)
+    #   self.foldername = foldername if foldername
+    #   self.description = description if description
+    #   save_changes
+    # end
 
     # DESTROY (Delete a folder)
 
-    private
+    # private
 
-    def new_id
-      timestamp = Time.now.to_f.to_s
-      Base64.urlsafe_encode64(RbNaCl::Hash.sha256(timestamp))[0..9]
-    end
+    # def new_id
+    #   timestamp = Time.now.to_f.to_s
+    #   Base64.urlsafe_encode64(RbNaCl::Hash.sha256(timestamp))[0..9]
+    # end
   end
 end
