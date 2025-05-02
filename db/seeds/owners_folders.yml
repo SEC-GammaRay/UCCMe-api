@@ -1,9 +1,11 @@
 ---
-- username: shou
-  folder_name:
-    - "Project Documents"
-    - "Meeting Notes"
-- username: bella
-  folder_name:
-    - "Archives"
+  - username: shou
+    folder_name:
+      - "Project Documents"
+  - username: bella
+    folder_name:
+      - "Archives"
+  - username: sharon
+    folder_name:
+      - "Meeting Notes"
     

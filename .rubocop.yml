@@ -13,10 +13,16 @@ Metrics/BlockLength:
   Enabled: true
   Exclude: 
     - spec/**/* # Minitest's nested test structure requires large blocks
-    - app/controllers/**/*.rb # Roda's nested controllers require large blocks
+    - app/controllers/*.rb # Roda's nested controllers require large blocks
     - rakefile # Rake namespaces produce large blocks
 
 Security/YAMLLoad:
   Enabled: true
   Exclude: 
     - spec/**/* 
+
+Metrics/ClassLength:
+  Enabled: true
+  Max: 200
+  Exclude: 
+    - app/controllers/*.rb # Roda's nested controllers require large classes

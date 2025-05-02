@@ -54,7 +54,7 @@ describe 'Test File Handling' do
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    _(result['data'].count).must_equal 3
+    _(result['data'].count).must_equal 4
   end
 
   it 'HAPPY: should be able to get details of a single file' do
