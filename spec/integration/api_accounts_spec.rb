@@ -2,59 +2,59 @@
 
 require_relative '../spec_helper'
 
-describe 'Test Account Handling' do 
-    include Rack::Test::Methods
+describe 'Test Account Handling' do
+  include Rack::Test::Methods
 
-    before do 
-        wipe_database
-    end 
+  before do
+    wipe_database
+  end
 
-    describe 'Account Information' do 
-        it 'HAPPY: should be able to get details of a single owner' do
-            owner_data = DATA[:accounts][1]
-            owner = UCCMe::Account.create(owner_data)
+  describe 'Account Information' do
+    it 'HAPPY: should be able to get details of a single owner' do
+      owner_data = DATA[:accounts][1]
+      owner = UCCMe::Account.create(owner_data)
 
-            get "api/v1/owners/#{owner.name}"
-            _(last_response.status).must_equal 200
+      get "api/v1/owners/#{owner.name}"
+      _(last_response.status).must_equal 200
 
-            result = JSON.parse(last_response.body)['data']['attributes']
-            _(result['id']).must_equal owner.id
-            _(result['ownername']).must_equal owner.ownername
-            _(result['salt']).must_be_nil
-            _(result['password']).must_be_nil
-            _(result['password_hash']).must_be_nil
-        end
+      result = JSON.parse(last_response.body)['data']['attributes']
+      _(result['id']).must_equal owner.id
+      _(result['ownername']).must_equal owner.ownername
+      _(result['salt']).must_be_nil
+      _(result['password']).must_be_nil
+      _(result['password_hash']).must_be_nil
+    end
+  end
+
+  describe 'Account Creation' do
+    before do
+      @req_header = { 'CONTENT_TYPE' => 'application/json' }
+      @owner_data = DATA[:owners][1]
     end
 
-    describe 'Account Creation' do
-        before do 
-            @req_header = {'CONTENT_TYPE' => 'application/json'}
-            @owner_data = DATA[:owners][1]
-        end 
+    it 'HAPPY: should be able to create new owners' do
+      post 'api/v1/owners', @owner_data.to_json, @req_header
+      _(last_response.status).must_equal 201
+      _(last_repsonse.headers['Location'].size).must_be :>, 0
 
-        it 'HAPPY: should be able to create new owners' do
-            post 'api/v1/owners', @owner_data.to_json, @req_header
-            _(last_response.status).must_equal 201
-            _(last_repsonse.headers['Location'].size).must_be :>, 0
+      created = JSON.parse(last_response.body)['data']['attributes']
+      UCCMe::Account.first
 
-            created = JSON.parse(last_response.body)['data']['attributes']
-            owner = UCCMe::Account.first
-
-            _(created['id']).must_equal @owner_data['id']
-            _(created['ownername']).must_equal @owner_data['ownername']
-            _(created['email']).must_equal @owner_data['email']
-            _(account.password?(@owner_data['password'])).must_equal true
-            _(account.password?('not_really_the_password')).must_equal false
-        end 
-
-        it 'BAD: should not create owner with illegal attributes' do
-            bad_data = @owner_data.clone
-            bad_data['ownername'] = 'WHOAMI'
-
-            post 'api/v1/owners', bad_data.to_json, @req_header 
-
-            _(last_response.status).must_equal 400
-            _(last_response.headers['Location']).must_be_nil
-        end
+      _(created['id']).must_equal @owner_data['id']
+      _(created['ownername']).must_equal @owner_data['ownername']
+      _(created['email']).must_equal @owner_data['email']
+      _(account.password?(@owner_data['password'])).must_equal true
+      _(account.password?('not_really_the_password')).must_equal false
     end
+
+    it 'BAD: should not create owner with illegal attributes' do
+      bad_data = @owner_data.clone
+      bad_data['ownername'] = 'WHOAMI'
+
+      post 'api/v1/owners', bad_data.to_json, @req_header
+
+      _(last_response.status).must_equal 400
+      _(last_response.headers['Location']).must_be_nil
+    end
+  end
 end
