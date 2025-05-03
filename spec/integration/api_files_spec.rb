@@ -27,15 +27,27 @@ describe 'Test File Handling' do
   before do
     wipe_database
     # Create folders first since files belong to folders
+    owner = UCCMe::Account.create(DATA[:accounts][0])
+
     DATA[:folders].each do |folder_data|
-      UCCMe::Folder.create(filter_folder_data(folder_data))
+      UCCMe::CreateFolderForOwner.call(
+        owner_id: owner.id,
+        folder_data: {
+          foldername: folder_data['foldername'] || folder_data[:foldername],
+          description: folder_data['description'] || folder_data[:description]
+        }
+      )
     end
   end
 
   it 'HAPPY: should be able to get list of all files in a folder' do
     folder = UCCMe::Folder.first
     DATA[:stored_files].each do |file_data|
-      folder.add_stored_file(filter_file_data(file_data))
+      # folder.add_stored_file(filter_file_data(file_data))
+      UCCMe::CreateFileForFolder.call(
+        folder_id: folder.id, 
+        file_data: filter_file_data(file_data)
+      )
     end
 
     get "api/v1/folders/#{folder.id}/files"
@@ -48,7 +60,11 @@ describe 'Test File Handling' do
   it 'HAPPY: should be able to get details of a single file' do
     file_data = DATA[:stored_files][0]
     folder = UCCMe::Folder.first
-    file = folder.add_stored_file(filter_file_data(file_data))
+    # file = folder.add_stored_file(filter_file_data(file_data))
+    file = UCCMe::CreateFileForFolder.call(
+      folder_id: folder.id, 
+      file_data: filter_file_data(file_data)
+    )
 
     get "/api/v1/folders/#{folder.id}/files/#{file.id}"
     _(last_response.status).must_equal 200
@@ -113,7 +129,11 @@ describe 'Test File Handling' do
   describe 'File Route Structures' do
     it 'should correctly build file route paths' do
       folder = UCCMe::Folder.first
-      file = folder.add_stored_file(filter_file_data(DATA[:stored_files][0]))
+      # file = folder.add_stored_file(filter_file_data(DATA[:stored_files][0]))
+      file = UCCMe::CreateFileForFolder.call(
+        folder_id: folder.id, 
+        file_data: filter_file_data(DATA[:stored_files][0])
+      )
 
       get "api/v1/folders/#{folder.id}/files"
       _(last_response.status).must_equal 200

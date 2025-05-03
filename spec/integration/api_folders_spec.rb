@@ -4,16 +4,6 @@ require 'pry'
 
 require_relative '../spec_helper'
 
-def filter_folder_data(data)
-  return {} if data.nil?
-
-  # Add explicit handling for converting string/symbol keys
-  {
-    foldername: data['foldername'] || data[:foldername],
-    description: data['description'] || data[:description]
-  }
-end
-
 describe 'Test Folder API' do
   include Rack::Test::Methods
 
@@ -23,9 +13,18 @@ describe 'Test Folder API' do
 
   describe 'Getting folders' do
     it 'HAPPY: should be able to get list of all folders' do
-      UCCMe::Folder.create(filter_folder_data(DATA[:folders][0]))
-      UCCMe::Folder.create(filter_folder_data(DATA[:folders][1]))
-      UCCMe::Folder.create(filter_folder_data(DATA[:folders][2]))
+      # Create owner first
+      owner = UCCMe::Account.create(DATA[:accounts][0])
+      
+      DATA[:folders].each do |folder_data|
+        UCCMe::CreateFolderForOwner.call(
+          owner_id: owner.id,
+          folder_data: {
+            foldername: folder_data['foldername'] || folder_data[:foldername],
+            description: folder_data['description'] || folder_data[:description]
+          }
+        )
+      end
 
       get 'api/v1/folders'
       _(last_response.status).must_equal 200
@@ -35,8 +34,18 @@ describe 'Test Folder API' do
     end
 
     it 'HAPPY: should be able to get details of a single folder' do
-      existing_folder = filter_folder_data(DATA[:folders][1])
-      folder = UCCMe::Folder.create(existing_folder)
+      # Create owner first
+      owner = UCCMe::Account.create(DATA[:accounts][0])
+      
+      folder_data = {
+        foldername: DATA[:folders][1]['foldername'] || DATA[:folders][1][:foldername],
+        description: DATA[:folders][1]['description'] || DATA[:folders][1][:description]
+      }
+      
+      folder = UCCMe::CreateFolderForOwner.call(
+        owner_id: owner.id,
+        folder_data: folder_data
+      )
       id = folder.id
 
       get "/api/v1/folders/#{id}"
@@ -44,8 +53,8 @@ describe 'Test Folder API' do
 
       result = JSON.parse(last_response.body)
       _(result['data']['attributes']['id']).must_equal id
-      _(result['data']['attributes']['foldername']).must_equal existing_folder[:foldername]
-      _(result['data']['attributes']['description']).must_equal existing_folder[:description]
+      _(result['data']['attributes']['foldername']).must_equal folder_data[:foldername]
+      _(result['data']['attributes']['description']).must_equal folder_data[:description]
     end
 
     it 'SAD: should return error if unknown folder requested' do
@@ -54,8 +63,24 @@ describe 'Test Folder API' do
     end
 
     it 'SECURITY: should prevent basic SQL injection targeting IDs' do
-      UCCMe::Folder.create(foldername: 'Folder One', description: 'First folder')
-      UCCMe::Folder.create(foldername: 'Folder Two', description: 'Second folder')
+      # Create owner first
+      owner = UCCMe::Account.create(DATA[:accounts][0])
+      
+      UCCMe::CreateFolderForOwner.call(
+        owner_id: owner.id,
+        folder_data: {
+          foldername: 'Folder One', 
+          description: 'First folder'
+        }
+      )
+      
+      UCCMe::CreateFolderForOwner.call(
+        owner_id: owner.id,
+        folder_data: {
+          foldername: 'Folder Two', 
+          description: 'Second folder'
+        }
+      )
 
       get 'api/v1/folders/2%20or%20id%3E0'
 
@@ -68,19 +93,26 @@ describe 'Test Folder API' do
   describe 'Creating New Folders' do
     before do
       @req_header = { 'CONTENT_TYPE' => 'application/json' }
-      @folder_data = filter_folder_data(DATA[:folders][1])
+      @folder_data = {
+        foldername: DATA[:folders][1]['foldername'] || DATA[:folders][1][:foldername],
+        description: DATA[:folders][1]['description'] || DATA[:folders][1][:description]
+      }
     end
 
     it 'HAPPY: should be able to create new folders' do
-      post 'api/v1/folders', @folder_data.to_json, @req_header
+      # Create owner first
+      owner = UCCMe::Account.create(DATA[:accounts][0])
+      
+      # Add owner_id to the request data
+      @folder_data_with_owner = @folder_data.merge(owner_id: owner.id)
+      
+      post 'api/v1/folders', @folder_data_with_owner.to_json, @req_header
       _(last_response.status).must_equal 201
       _(last_response.headers['Location']).wont_be_nil
       _(last_response.headers['Location'].size).must_be :>, 0
 
       created = JSON.parse(last_response.body)['data']['data']['attributes']
-      # puts created
       folder = UCCMe::Folder.first
-      # puts folder
 
       _(created['id']).must_equal folder.id
       _(created['foldername']).must_equal @folder_data[:foldername]
@@ -88,8 +120,12 @@ describe 'Test Folder API' do
     end
 
     it 'SECURITY: should not create folder with mass assignment' do
+      # Create owner first
+      owner = UCCMe::Account.create(DATA[:accounts][0])
+      
       bad_data = @folder_data.clone
       bad_data['created_at'] = '1900-01-01'
+      bad_data['owner_id'] = owner.id
 
       post 'api/v1/folders', bad_data.to_json, @req_header
 
@@ -98,8 +134,12 @@ describe 'Test Folder API' do
     end
 
     it 'BAD: should not create folder without required attributes' do
+      # Create owner first
+      owner = UCCMe::Account.create(DATA[:accounts][0])
+      
       bad_data = {
-        description: 'Missing foldername'
+        description: 'Missing foldername',
+        owner_id: owner.id
       }
 
       post 'api/v1/folders', bad_data.to_json, @req_header
