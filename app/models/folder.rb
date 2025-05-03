@@ -11,13 +11,18 @@ module UCCMe
   # top level
   class Folder < Sequel::Model
     one_to_many :stored_files
-
+    many_to_one :owner, class: :'UCCMe::Account'
+    many_to_many :collaborators,
+                 class: :'UCCMe::Account',
+                 join_table: :accounts_folders,
+                 left_key: :folder_id, right_key: :collaborator_id
     plugin :association_dependencies,
-           stored_files: :destroy
+           stored_files: :destroy,
+           collaborators: :nullify
     plugin :timestamps, update_on_create: true
     plugin :whitelist_security
     plugin :prepared_statements # Add prepared statement support for extra security
-    set_allowed_columns :foldername, :description
+    set_allowed_columns :foldername, :description, :owner_id
 
     # def_column_accessor :foldername_secure, :description_secure
 
@@ -51,7 +56,8 @@ module UCCMe
             attributes: {
               id: id,
               foldername: foldername,
-              description: description
+              description: description,
+              owner_id: owner_id
             }
           }
         }, options

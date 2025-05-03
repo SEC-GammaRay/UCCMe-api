@@ -1,0 +1,9 @@
+---
+- folder_name: "SEC Folder"
+  collaborator_email:
+    - "bella.yiao@gmail.com"
+    - "sharon.lin@gmail.com"
+- folder_name: "Meeting Notes"
+  collaborator_email:
+    - "sharon.lin@gmail.com"
+    
