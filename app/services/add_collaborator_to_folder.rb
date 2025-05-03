@@ -16,7 +16,7 @@ module UCCMe
     def self.call(email:, folder_id:)
       collaborator = Account.first(email:)
       folder = Folder.first(id: folder_id)
-      
+
       raise FolderNotFoundError unless folder
       raise(OwnerNotCollaboratorError) if folder.owner&.id == collaborator.id
 

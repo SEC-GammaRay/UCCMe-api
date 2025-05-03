@@ -15,7 +15,7 @@ describe 'Test Folder API' do
     it 'HAPPY: should be able to get list of all folders' do
       # Create owner first
       owner = UCCMe::Account.create(DATA[:accounts][0])
-      
+
       DATA[:folders].each do |folder_data|
         UCCMe::CreateFolderForOwner.call(
           owner_id: owner.id,
@@ -36,12 +36,12 @@ describe 'Test Folder API' do
     it 'HAPPY: should be able to get details of a single folder' do
       # Create owner first
       owner = UCCMe::Account.create(DATA[:accounts][0])
-      
+
       folder_data = {
         foldername: DATA[:folders][1]['foldername'] || DATA[:folders][1][:foldername],
         description: DATA[:folders][1]['description'] || DATA[:folders][1][:description]
       }
-      
+
       folder = UCCMe::CreateFolderForOwner.call(
         owner_id: owner.id,
         folder_data: folder_data
@@ -65,19 +65,19 @@ describe 'Test Folder API' do
     it 'SECURITY: should prevent basic SQL injection targeting IDs' do
       # Create owner first
       owner = UCCMe::Account.create(DATA[:accounts][0])
-      
+
       UCCMe::CreateFolderForOwner.call(
         owner_id: owner.id,
         folder_data: {
-          foldername: 'Folder One', 
+          foldername: 'Folder One',
           description: 'First folder'
         }
       )
-      
+
       UCCMe::CreateFolderForOwner.call(
         owner_id: owner.id,
         folder_data: {
-          foldername: 'Folder Two', 
+          foldername: 'Folder Two',
           description: 'Second folder'
         }
       )
@@ -102,10 +102,10 @@ describe 'Test Folder API' do
     it 'HAPPY: should be able to create new folders' do
       # Create owner first
       owner = UCCMe::Account.create(DATA[:accounts][0])
-      
+
       # Add owner_id to the request data
       @folder_data_with_owner = @folder_data.merge(owner_id: owner.id)
-      
+
       post 'api/v1/folders', @folder_data_with_owner.to_json, @req_header
       _(last_response.status).must_equal 201
       _(last_response.headers['Location']).wont_be_nil
@@ -122,7 +122,7 @@ describe 'Test Folder API' do
     it 'SECURITY: should not create folder with mass assignment' do
       # Create owner first
       owner = UCCMe::Account.create(DATA[:accounts][0])
-      
+
       bad_data = @folder_data.clone
       bad_data['created_at'] = '1900-01-01'
       bad_data['owner_id'] = owner.id
@@ -136,7 +136,7 @@ describe 'Test Folder API' do
     it 'BAD: should not create folder without required attributes' do
       # Create owner first
       owner = UCCMe::Account.create(DATA[:accounts][0])
-      
+
       bad_data = {
         description: 'Missing foldername',
         owner_id: owner.id

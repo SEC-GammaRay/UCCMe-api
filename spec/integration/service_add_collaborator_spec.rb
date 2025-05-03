@@ -15,7 +15,7 @@ describe 'Test AddCollaboratorToFolder service' do
 
     @owner = UCCMe::Account.all[0]
     @collaborator = UCCMe::Account.all[1]
-    
+
     # Create folder with owner - fixed parameter structure
     @folder = UCCMe::CreateFolderForOwner.call(
       owner_id: @owner.id,

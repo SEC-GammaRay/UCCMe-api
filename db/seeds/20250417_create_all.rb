@@ -25,9 +25,10 @@ def create_accounts
   end
 end
 
+# rubocop:disable Metrics/MethodLength
 def create_owned_folders
   OWNER_INFO.each do |owner|
-    account = UCCMe::Account.first(username: owner['username'])
+    UCCMe::Account.first(username: owner['username'])
     owner['folder_name'].each do |folder_name|
       folder_data = FOLDER_INFO.find { |folder| folder['foldername'] == folder_name }
       UCCMe::CreateFolderForOwner.call(
@@ -39,7 +40,9 @@ def create_owned_folders
     end
   end
 end
+# rubocop:enable Metrics/MethodLength
 
+# rubocop:disable Metrics/MethodLength
 def create_stored_files
   file_info_each = FILE_INFO.each
   folders_cycle = UCCMe::Folder.all.cycle
@@ -47,7 +50,7 @@ def create_stored_files
     file_info = file_info_each.next
     folder = folders_cycle.next
     UCCMe::CreateFileForFolder.call(
-      folder_id: folder.id, 
+      folder_id: folder.id,
       file_data: {
         filename: file_info['filename'],
         description: file_info['description'],
@@ -57,6 +60,7 @@ def create_stored_files
     )
   end
 end
+# rubocop:enable Metrics/MethodLength
 
 def add_collaborators
   collab_info = COLLAB_INFO
@@ -64,7 +68,7 @@ def add_collaborators
     folder = UCCMe::Folder.first(foldername: collab['folder_name'])
     collab['collaborator_email'].each do |email|
       UCCMe::AddCollaboratorToFolder.call(
-        email: email, 
+        email: email,
         folder_id: folder.id
       )
     end

@@ -45,7 +45,7 @@ describe 'Test File Handling' do
     DATA[:stored_files].each do |file_data|
       # folder.add_stored_file(filter_file_data(file_data))
       UCCMe::CreateFileForFolder.call(
-        folder_id: folder.id, 
+        folder_id: folder.id,
         file_data: filter_file_data(file_data)
       )
     end
@@ -62,7 +62,7 @@ describe 'Test File Handling' do
     folder = UCCMe::Folder.first
     # file = folder.add_stored_file(filter_file_data(file_data))
     file = UCCMe::CreateFileForFolder.call(
-      folder_id: folder.id, 
+      folder_id: folder.id,
       file_data: filter_file_data(file_data)
     )
 
@@ -131,7 +131,7 @@ describe 'Test File Handling' do
       folder = UCCMe::Folder.first
       # file = folder.add_stored_file(filter_file_data(DATA[:stored_files][0]))
       file = UCCMe::CreateFileForFolder.call(
-        folder_id: folder.id, 
+        folder_id: folder.id,
         file_data: filter_file_data(DATA[:stored_files][0])
       )
 

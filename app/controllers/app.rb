@@ -11,6 +11,7 @@ require_relative '../services/create_folder_for_owner'
 
 module UCCMe
   # top-level
+  # rubocop:disable Metrics/ClassLength
   class Api < Roda
     plugin :environments
     plugin :halt
@@ -35,6 +36,37 @@ module UCCMe
 
       @api_root = 'api/v1'
       routing.on @api_root do
+        routing.on 'accounts' do
+          @account_route = "#{@api_root}/accounts"
+
+          routing.on String do |username|
+            # GET api/v1/accounts/[username]
+            routing.get do
+              account = Account.first(username:)
+              account ? account.to_json : raise('Account not found')
+            rescue StandardError
+              routing.halt 404, { message: error.message }.to_json
+            end
+          end
+
+          # POST api/v1/accounts
+          routing.post do
+            new_data = JSON.parse(routing.body.read)
+            new_account = Account.new(new_data)
+            raise('Could not save account') unless new_account.save_changes
+
+            response.status = 201
+            response['Location'] = "#{@account_route}/#{new_account.id}"
+            { message: 'Account created', data: new_account }.to_json
+          rescue Sequel::MassAssignmentRestriction
+            Api.logger.warn "MASS-ASSIGNMENT:: #{new_data.keys}"
+            routing.halt 400, { message: 'Illegal Request' }.to_json
+          rescue StandardError => e
+            Api.logger.error 'Unknown error saving account'
+            routing.halt 500, { message: e.message }.to_json
+          end
+        end
+
         routing.on 'folders' do
           @folder_route = "#{@api_root}/folders"
 
@@ -60,24 +92,25 @@ module UCCMe
               # POST api/v1/folders/:folder_id/files
               routing.post do
                 new_data = JSON.parse(routing.body.read)
-                # folder = Folder.first(id: folder_id)
+                folder = Folder.first(id: folder_id)
 
-                # unless folder
-                #   Api.logger.warn "Folder not found: #{folder_id}"
-                #   routing.halt 404, { message: 'Folder not found' }.to_json
-                # end
+                unless folder
+                  Api.logger.warn "Folder not found: #{folder_id}"
+                  routing.halt 404, { message: 'Folder not found' }.to_json
+                end
 
-                # new_file = folder.add_stored_file(new_data)
-                # raise 'Could not save document' unless new_file
-                new_file = UCCMe::CreateFileForFolder.call(
-                  folder_id: folder_id,
-                  file_data: new_data
-                )
+                new_file = folder.add_stored_file(new_data)
+                raise 'Could not save document' unless new_file
+
+                # new_file = UCCMe::CreateFileForFolder.call(
+                #   folder_id: folder_id,
+                #   file_data: new_data
+                # )
 
                 response.status = 201
                 { message: 'Document saved', id: new_file.id }.to_json
-              rescue UCCMe::CreateFileForFolder::FolderNotFoundError => e
-                routing.halt 404, { message: e.message }.to_json
+              # rescue UCCMe::CreateFileForFolder::FolderNotFoundError => e
+              #   routing.halt 404, { message: e.message }.to_json
               rescue Sequel::MassAssignmentRestriction
                 Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
                 routing.halt 400, { message: 'Illegal Attributes' }.to_json
@@ -107,15 +140,16 @@ module UCCMe
           # POST api/v1/folders
           routing.post do
             new_data = JSON.parse(routing.body.read)
-            # new_folder = Folder.new(new_data)
-            # raise('Could not save project') unless new_folder.save_changes
+            new_folder = Folder.new(new_data)
+            raise('Could not save project') unless new_folder.save_changes
+
             # new_folder = UCCMe::CreateFolderForOwner.call(new_data)
-            owner_id = new_data.delete('owner_id') 
-  
-            new_folder = UCCMe::CreateFolderForOwner.call(
-              owner_id: owner_id,
-              folder_data: new_data
-            )
+            # owner_id = new_data.delete('owner_id')
+
+            # new_folder = UCCMe::CreateFolderForOwner.call(
+            #   owner_id: owner_id,
+            #   folder_data: new_data
+            # )
 
             response.status = 201
             response['Location'] = "#{@folder_route}/#{new_folder.id}"
@@ -131,4 +165,5 @@ module UCCMe
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

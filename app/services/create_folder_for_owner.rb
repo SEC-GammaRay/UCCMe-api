@@ -11,7 +11,7 @@ module UCCMe
     def self.call(owner_id:, folder_data:)
       owner = Account.find(id: owner_id)
       raise OwnerNotFoundError unless owner
-      
+
       owner.add_owned_folder(folder_data)
     end
   end

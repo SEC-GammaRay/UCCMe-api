@@ -3,10 +3,11 @@
 module UCCMe
   # Service to add a file to a folder
   class CreateFileForFolder
+    # Folder not found error
     class FolderNotFoundError < StandardError
       def message = 'Folder not found'
     end
-    
+
     def self.call(folder_id:, file_data:)
       folder = Folder.first(id: folder_id)
       raise FolderNotFoundError unless folder
