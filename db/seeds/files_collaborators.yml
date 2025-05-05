@@ -1,8 +1,0 @@
----
-- file_name: "secret_plan.pdf"
-  collaborator_email:
-    - "bella.yiao@gmail.com"
-    - "sharon.lin@gmail.com"
-- file_name: "secret_budget.xlsx"
-  collaborator_email:
-    - "sharon.lin@gmail.com"

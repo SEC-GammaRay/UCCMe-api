@@ -9,16 +9,16 @@ Sequel.migration do
       primary_key :id
       foreign_key :folder_id, table: :folders, type: String
       foreign_key :owner_id, :accounts
-      String :filename_secure, unique: true, null: false
+      String :filename, unique: true, null: false
       String :description, null: false
       String :content, null: false
       String :cc_types_secure, null: false
       DateTime :created_at, default: Sequel::CURRENT_TIMESTAMP
       DateTime :updated_at, default: Sequel::CURRENT_TIMESTAMP, on_update: Sequel::CURRENT_TIMESTAMP
 
-      unique %i[folder_id filename_secure]
+      unique %i[folder_id filename]
     end
 
-    add_index(:stored_files, :filename_secure) # rubocop:disable Sequel/ConcurrentIndex
+    add_index(:stored_files, :filename) # rubocop:disable Sequel/ConcurrentIndex
   end
 end

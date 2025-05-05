@@ -11,7 +11,6 @@ require_relative '../services/create_folder_for_owner'
 
 module UCCMe
   # top-level
-  # rubocop:disable Metrics/ClassLength
   class Api < Roda
     plugin :environments
     plugin :halt
@@ -165,5 +164,4 @@ module UCCMe
       end
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

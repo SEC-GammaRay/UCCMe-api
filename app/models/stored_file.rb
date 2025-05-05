@@ -29,13 +29,13 @@ module UCCMe
     #   super
     # end
 
-    def filename=(name)
-      self.filename_secure = SecureDB.encrypt(name)
-    end
+    # def filename=(name)
+    #   self.filename_secure = SecureDB.encrypt(name)
+    # end
 
-    def filename
-      SecureDB.decrypt(filename_secure)
-    end
+    # def filename
+    #   SecureDB.decrypt(filename_secure)
+    # end
 
     def cc_types=(types)
       self.cc_types_secure = SecureDB.encrypt(types.join(','))
