@@ -38,13 +38,13 @@ module UCCMe
         routing.on 'auth' do
           routing.on 'authenticate' do
             # POST /api/v1/auth/authenticate
-            routing.post do 
+            routing.post do
               credentials = HttpRequest.new(routing).body_data
               auth_account = AuthenticateAccount.call(credentials)
               auth_account.to_json
             rescue UnauthorizedError => e
               puts [e.class, e.message].join ':'
-              routing.helt '403', {message: 'Invalid credentials'}.to_json
+              routing.helt '403', { message: 'Invalid credentials' }.to_json
             end
           end
         end
