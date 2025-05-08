@@ -6,7 +6,7 @@ require_relative 'app'
 module UCCMe
   # Web controller for UCCMe API
   class Api < Roda
-    route('auth') do
+    route('auth') do |routing|
       routing.is 'authenticate' do
         # POST /api/v1/auth/authenticate
         routing.post do

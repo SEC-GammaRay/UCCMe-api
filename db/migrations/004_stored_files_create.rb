@@ -7,7 +7,7 @@ Sequel.migration do
   change do
     create_table(:stored_files) do
       primary_key :id
-      foreign_key :folder_id, table: :folders, type: String
+      foreign_key :folder_id, :folders
       foreign_key :owner_id, :accounts
       String :filename, unique: true, null: false
       String :description, null: false
