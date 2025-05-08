@@ -28,7 +28,7 @@ def create_owned_folders
   OWNERS_INFO.each do |owner|
     account = UCCMe::Account.first(username: owner['username'])
     owner['folder_name'].each do |folder_name|
-      folder_data = FOLDER_INFO.find { |folder| folder['foldername'] == folder_name }
+      folder_data = FOLDERS_INFO.find { |folder| folder['foldername'] == folder_name }
       UCCMe::CreateFolderForOwner.call(
         owner_id: account.id, folder_data: folder_data
       )
