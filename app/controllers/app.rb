@@ -5,7 +5,7 @@ require 'json'
 require 'logger'
 
 module UCCMe
-  # main entry point 
+  # main entry point
   class Api < Roda
     # plugin :environments
     plugin :halt
@@ -26,18 +26,18 @@ module UCCMe
       response['Content-Type'] = 'application/json'
 
       HttpRequest.new(routing).secure? ||
-        routing.halt(403, {message: 'TLS/SSL Required'}).to_json
+        routing.halt(403, { message: 'TLS/SSL Required' }).to_json
 
       routing.root do
         { message: 'UCCMeAPI up at /api/v1/' }.to_json
       end
-      
-      routing.on 'api' do 
-        routing.on 'v1' do 
+
+      routing.on 'api' do
+        routing.on 'v1' do
           @api_root = 'api/v1'
           routing.multi_route
         end
-      end 
-    end 
-  end 
+      end
+    end
+  end
 end
