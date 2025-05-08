@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module UCCMe
-  # Handles HTTP requests 
+  # Handles HTTP requests
   class HttpRequest
     def initialize(roda_routing)
       @routing = roda_routing
@@ -18,4 +18,3 @@ module UCCMe
     end
   end
 end
-     
