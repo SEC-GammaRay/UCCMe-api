@@ -4,7 +4,7 @@ require 'roda'
 require_relative 'app'
 
 module UCCMe
-  # Web controller for UCCMe API 
+  # Web controller for UCCMe API
   class Api < Roda
     route('accounts') do |routing|
       @account_route = "#{@api_root}/accounts"
