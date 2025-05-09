@@ -18,7 +18,7 @@ describe 'Test Authentication Routes' do
 
     it 'HAPPY: should authenticate valid credentials' do
       credentials = { username: @account_data['username'],
-                     password: @account_data['password'] }
+                      password: @account_data['password'] }
       post 'api/v1/auth/authenticate', credentials.to_json, @req_header
 
       auth_account = JSON.parse(last_response.body)
@@ -30,8 +30,8 @@ describe 'Test Authentication Routes' do
 
     it 'BAD: should not authenticate invalid password' do
       credentials = { username: @account_data['username'],
-                     password: 'wrongpassword' }
-      
+                      password: 'wrongpassword' }
+
       assert_output(/invalid/i, '') do
         post 'api/v1/auth/authenticate', credentials.to_json, @req_header
       end
@@ -47,8 +47,8 @@ describe 'Test Authentication Routes' do
 
     it 'BAD: should not authenticate unknown account' do
       credentials = { username: 'unknown',
-                     password: 'password' }
-      
+                      password: 'password' }
+
       post 'api/v1/auth/authenticate', credentials.to_json, @req_header
 
       result = JSON.parse(last_response.body)

@@ -22,6 +22,11 @@ Rake::TestTask.new(:spec) do |t|
   t.warning = false
 end
 
+desc 'Rerun tests on live code changes'
+task :respec do
+  sh 'rerun -c rake spec'
+end
+
 desc 'Runs rubocop on tested code'
 task style: %i[spec audit] do
   sh 'rubocop .'
@@ -33,7 +38,7 @@ task :audit do
 end
 
 desc 'Checks for release'
-task release_check: %i[spec style audit] do
+task release?: %i[spec style audit] do
   puts "\nReady for release!"
 end
 
@@ -61,9 +66,7 @@ namespace :db do
 
   desc 'Delete database'
   task :delete do
-    app.DB[:folders].delete
-    app.DB[:stored_files].delete
-    puts 'Deleted all data in database'
+    UCCMe::Account.dataset.destroy
   end
 
   desc 'Delete dev or test database file'
@@ -104,5 +107,13 @@ namespace :newkey do
   task :db do
     require_app('lib', config: false)
     puts "DB_KEY:#{SecureDB.generate_key}"
+  end
+end
+
+namespace :run do
+  # Run in development mode
+  desc 'Run API in development mode'
+  task :dev do
+    sh 'puma -p 3000'
   end
 end
