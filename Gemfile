@@ -31,6 +31,7 @@ gem 'rubocop-performance'
 group :test do
   gem 'minitest'
   gem 'minitest-rg'
+  gem 'rack', '>= 3.1.14'
   gem 'rack-test'
 end
 
