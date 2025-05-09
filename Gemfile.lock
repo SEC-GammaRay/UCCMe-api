@@ -21,7 +21,8 @@ GEM
     figaro (1.2.0)
       thor (>= 0.14.0, < 2)
     hirb (0.7.3)
-    json (2.10.2)
+    io-console (0.8.0)
+    json (2.11.3)
     language_server-protocol (3.17.0.4)
     lint_roller (1.1.0)
     listen (3.9.0)
@@ -37,6 +38,7 @@ GEM
     parser (3.3.8.0)
       ast (~> 2.4.1)
       racc
+    pg (1.5.9)
     prism (1.4.0)
     pry (0.15.2)
       coderay (~> 1.1)
@@ -55,11 +57,13 @@ GEM
     rbnacl (7.1.2)
       ffi (~> 1)
     regexp_parser (2.10.0)
+    reline (0.6.1)
+      io-console (~> 0.5)
     rerun (0.14.0)
       listen (~> 3.0)
     roda (3.91.0)
       rack
-    rubocop (1.75.2)
+    rubocop (1.75.5)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -88,7 +92,7 @@ GEM
       lint_roller (~> 1.1)
       rubocop (>= 1.72.1, < 2)
     ruby-progressbar (1.13.0)
-    sequel (5.91.0)
+    sequel (5.92.0)
       bigdecimal
     sequel-seed (1.1.2)
       sequel (>= 4.49.0)
@@ -128,12 +132,14 @@ DEPENDENCIES
   logger (~> 1.0)
   minitest
   minitest-rg
+  pg
   pry
   puma (~> 6.0)
   rack (>= 3.1.14)
   rack-test
   rake
   rbnacl (~> 7.1)
+  reline
   rerun
   roda (~> 3.0)
   rubocop
@@ -144,6 +150,9 @@ DEPENDENCIES
   sequel (~> 5.55)
   sequel-seed
   sqlite3 (~> 2.6)
+
+RUBY VERSION
+   ruby 3.4.3p32
 
 BUNDLED WITH
    2.6.7
