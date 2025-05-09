@@ -17,7 +17,7 @@ describe 'Test Account Handling' do
       get "api/v1/accounts/#{account.username}"
       _(last_response.status).must_equal 200
 
-      result = JSON.parse last_response.body
+      result = JSON.parse(last_response.body)['attributes']
       _(result['id']).must_equal account.id
       _(result['username']).must_equal account.username
       _(result['salt']).must_be_nil
@@ -37,7 +37,7 @@ describe 'Test Account Handling' do
       _(last_response.status).must_equal 201
       _(last_response.headers['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']
+      created = JSON.parse(last_response.body)['data']['attributes']
       account = UCCMe::Account.first
 
       _(created['id']).must_equal account.id

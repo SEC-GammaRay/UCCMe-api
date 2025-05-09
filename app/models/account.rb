@@ -52,10 +52,12 @@ module UCCMe
     def to_json(options = {})
       JSON.generate( # Changed JSON() to JSON.generate for proper JSON serialization
         {
-          type: 'owner',
-          id: id,
-          username: username,
-          email: email
+          type: 'account',
+          attributes: {
+            id: id,
+            username: username,
+            email: email
+          }
         }, options
       )
     end

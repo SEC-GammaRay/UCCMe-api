@@ -21,7 +21,7 @@ describe 'Test Authentication Routes' do
                       password: @account_data['password'] }
       post 'api/v1/auth/authenticate', credentials.to_json, @req_header
 
-      auth_account = JSON.parse(last_response.body)
+      auth_account = JSON.parse(last_response.body)['attributes']
       _(last_response.status).must_equal 200
       _(auth_account['username']).must_equal(@account_data['username'])
       _(auth_account['email']).must_equal(@account_data['email'])
@@ -55,9 +55,7 @@ describe 'Test Authentication Routes' do
 
       _(last_response.status).must_equal 403
       _(result['message']).wont_be_nil
-      _(result['username']).must_be_nil
-      _(result['email']).must_be_nil
-      _(result['id']).must_be_nil
+      _(result['attributes']).must_be_nil
     end
   end
 end
