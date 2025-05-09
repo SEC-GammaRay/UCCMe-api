@@ -2,23 +2,15 @@
   description: "Detailed project plan for Q2"
   content: "Base64 encoded PDF content here"
   cc_types: ["pdf", "document"]
-  created_at: "2025-04-17T10:15:00Z"
-  updated_at: "2025-04-17T10:15:00Z"
 - filename: "budget.xlsx"
   description: "Project budget spreadsheet"
   content: "Base64 encoded XLSX content here"
   cc_types: ["xlsx", "spreadsheet"]
-  created_at: "2025-04-17T10:20:00Z"
-  updated_at: "2025-04-17T10:20:00Z"
 - filename: "meeting_2025-04-10.txt"
   description: "Notes from April 10 meeting"
   content: "Text content of meeting notes"
   cc_types: ["txt", "notes"]
-  created_at: "2025-04-17T10:25:00Z"
-  updated_at: "2025-04-17T10:25:00Z"
 - filename: "meeting_2025-05-01.txt"
   description: "Notes from May 1 meeting"
   content: "Text content of meeting notes"
   cc_types: ["txt", "notes"]
-  created_at: "2025-05-02T11:57:00Z"
-  updated_at: "2025-05-02T11:57:00Z"

@@ -8,7 +8,7 @@ Sequel.migration do
       primary_key :id
       foreign_key :owner_id, :accounts
       # String :id, primary_key: true
-      String :foldername_secure, null: false
+      String :foldername, null: false
       String :description_secure, null: false
       DateTime :created_at, default: Sequel::CURRENT_TIMESTAMP
     end

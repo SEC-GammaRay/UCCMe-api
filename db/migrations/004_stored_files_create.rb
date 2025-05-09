@@ -10,7 +10,7 @@ Sequel.migration do
       foreign_key :folder_id, :folders
       foreign_key :owner_id, :accounts
       String :filename, unique: true, null: false
-      String :description, null: false
+      String :description_secure, null: false
       String :content, null: false
       String :cc_types_secure, null: false
       DateTime :created_at, default: Sequel::CURRENT_TIMESTAMP

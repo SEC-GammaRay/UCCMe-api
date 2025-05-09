@@ -37,6 +37,14 @@ module UCCMe
     #   SecureDB.decrypt(filename_secure)
     # end
 
+    def description=(plaintext)
+      self.description_secure = SecureDB.encrypt(plaintext)
+    end
+
+    def description
+      SecureDB.decrypt(description_secure)
+    end
+
     def cc_types=(types)
       self.cc_types_secure = SecureDB.encrypt(types.join(','))
     end

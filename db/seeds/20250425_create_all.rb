@@ -13,7 +13,7 @@ end
 require 'yaml'
 DIR = File.dirname(__FILE__)
 ACCOUNTS_INFO = YAML.load_file("#{DIR}/accounts_seeds.yml")
-OWNERS_INFO = YAML.load_file("#{DIR}/owners_folders_seeds.yml")
+OWNERS_INFO = YAML.load_file("#{DIR}/owners_folders.yml")
 FOLDERS_INFO = YAML.load_file("#{DIR}/folders_seeds.yml")
 FILES_INFO = YAML.load_file("#{DIR}/stored_files_seeds.yml")
 CONTRIB_INFO = YAML.load_file("#{DIR}/folders_collaborators.yml")

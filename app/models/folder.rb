@@ -31,13 +31,13 @@ module UCCMe
     #   super
     # end
 
-    def foldername=(name)
-      self.foldername_secure = SecureDB.encrypt(name)
-    end
+    # def foldername=(name)
+    #   self.foldername_secure = SecureDB.encrypt(name)
+    # end
 
-    def foldername
-      SecureDB.decrypt(foldername_secure)
-    end
+    # def foldername
+    #   SecureDB.decrypt(foldername_secure)
+    # end
 
     def description=(plaintext)
       self.description_secure = SecureDB.encrypt(plaintext)
