@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
+ruby File.read('.ruby-version').strip
 
 # web API
 gem 'base64'
@@ -19,27 +20,42 @@ gem 'rbnacl', '~> 7.1'
 # Database
 gem 'hirb'
 gem 'sequel', '~>5.55'
+group :production do
+  gem 'pg'
+end
+
+# debugging
+gem 'pry' # necessary for rake console
+gem 'reline'
+
+# development
+group :development do
+  # debugging
+  gem 'rerun'
+
+  # quality
+  gem 'rubocop'
+  gem 'rubocop-minitest'
+  gem 'rubocop-performance'
+  gem 'rubocop-rake'
+  gem 'rubocop-sequel'
+
+  # audit
+  gem 'bundler-audit'
+end
+
 group :development, :test do
+  # api testing
+  gem 'rack', '>= 3.1.14'
+  gem 'rack-test'
+
+  # database
   gem 'sequel-seed'
   gem 'sqlite3', '~> 2.6'
 end
-
-# Performance
-gem 'rubocop-performance'
 
 # testing
 group :test do
   gem 'minitest'
   gem 'minitest-rg'
-  gem 'rack', '>= 3.1.14'
-  gem 'rack-test'
 end
-
-# development
-gem 'bundler-audit'
-gem 'pry'
-gem 'rerun'
-gem 'rubocop'
-gem 'rubocop-minitest'
-gem 'rubocop-rake'
-gem 'rubocop-sequel'
