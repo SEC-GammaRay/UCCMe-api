@@ -70,8 +70,10 @@ module UCCMe
 
       # GET api/v1/folders
       routing.get do
-        output = { data: Folder.all }
-        JSON.pretty_generate(output)
+        # account = Account.first(username: @auth_account['username'])
+        account = Account.first(username: 'shou')
+        folders = account.folders
+        JSON.pretty_generate(data: folders)
       rescue StandardError
         routing.halt 404, { message: 'Could not find folders' }.to_json
       end

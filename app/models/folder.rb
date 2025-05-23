@@ -47,23 +47,18 @@ module UCCMe
       SecureDB.decrypt(description_secure)
     end
 
-    # rubocop:disable Metrics/MethodLength
     def to_json(options = {})
       JSON(
         {
-          data: {
-            type: 'folder',
-            attributes: {
-              id: id,
-              foldername: foldername,
-              description: description,
-              owner_id: owner_id
-            }
+          type: 'folder',
+          attributes: {
+            id:,
+            foldername:,
+            description:
           }
         }, options
       )
     end
-    # rubocop:enable Metrics/MethodLength
 
     def self.setup
       Dir.mkdir_p(UCCMe::STORE_DIR)
