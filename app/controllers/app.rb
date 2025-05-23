@@ -10,6 +10,7 @@ module UCCMe
     # plugin :environments
     plugin :halt
     plugin :multi_route
+    plugin :request_headers
 
     # Add a class variable for the logger
     class << self

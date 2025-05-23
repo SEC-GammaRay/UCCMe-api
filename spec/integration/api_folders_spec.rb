@@ -52,9 +52,9 @@ describe 'Test Folder API' do
       _(last_response.status).must_equal 200
 
       result = JSON.parse(last_response.body)
-      _(result['data']['attributes']['id']).must_equal id
-      _(result['data']['attributes']['foldername']).must_equal folder_data[:foldername]
-      _(result['data']['attributes']['description']).must_equal folder_data[:description]
+      _(result['attributes']['id']).must_equal id
+      _(result['attributes']['foldername']).must_equal folder_data[:foldername]
+      _(result['attributes']['description']).must_equal folder_data[:description]
     end
 
     it 'SAD: should return error if unknown folder requested' do
@@ -111,7 +111,7 @@ describe 'Test Folder API' do
       _(last_response.headers['Location']).wont_be_nil
       _(last_response.headers['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      created = JSON.parse(last_response.body)['data']['attributes']
       folder = UCCMe::Folder.first
 
       _(created['id']).must_equal folder.id
