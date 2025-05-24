@@ -4,8 +4,7 @@ require 'roda'
 require 'figaro'
 require 'sequel'
 require 'logger'
-
-require_relative '../app/lib/secure_db'
+require_app('lib')
 
 # Configuration for the API
 module UCCMe
@@ -35,6 +34,7 @@ module UCCMe
 
       # Load cryto key
       SecureDB.setup(ENV.delete('DB_KEY'))
+      AuthToken.setup(ENV.fetch('MSG_KEY'))
 
       # Custom events Logger
       LOGGER = Logger.new($stdout)
