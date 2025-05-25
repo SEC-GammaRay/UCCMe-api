@@ -13,7 +13,7 @@ class SecureDB
     Base64.strict_encode64(ciphertext)
   end
 
-  def self.decrypt(ciphertext)
+  def self.decrypt(ciphertext64)
     return nil unless ciphertext64
 
     ciphertext = Base64.strict_decode64(ciphertext64)

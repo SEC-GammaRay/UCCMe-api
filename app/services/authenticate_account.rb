@@ -29,8 +29,8 @@ module UCCMe
         type: 'authenticated_account',
         attributes: {
           account:,
-          # auth_token: AuthToken.create(account)
-          auth_token: 1
+          auth_token: AuthToken.create(account)
+          # auth_token: 1
         }
       }
     end

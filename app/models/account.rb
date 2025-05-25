@@ -37,7 +37,7 @@ module UCCMe
     plugin :timestamps, update_on_create: true
 
     def folders
-      owned_folders + collaborations
+      owned_folders + folder_collaborations
     end
 
     def password=(new_password)

@@ -4,7 +4,9 @@ require 'roda'
 require 'figaro'
 require 'sequel'
 require 'logger'
-require_app('lib')
+
+require_relative '../require_app'
+require_app(['lib'])
 
 # Configuration for the API
 module UCCMe
