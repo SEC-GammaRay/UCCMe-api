@@ -6,6 +6,7 @@ describe 'Test Account Handling' do
   include Rack::Test::Methods
 
   before do
+    @req_header = { 'CONTENT_TYPE' => 'application/json' }
     wipe_database
   end
 
@@ -28,7 +29,6 @@ describe 'Test Account Handling' do
 
   describe 'Account Creation' do
     before do
-      @req_header = { 'CONTENT_TYPE' => 'application/json' }
       @owner_data = DATA[:accounts][1]
     end
 
