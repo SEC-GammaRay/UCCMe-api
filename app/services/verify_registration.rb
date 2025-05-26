@@ -1,23 +1,17 @@
 # frozen_string_literal: true
 
-require 'http'
+require 'mailjet'
 
 module UCCMe
-  ## Send email verification email
-  # params:
-  #   - registration: hash with keys :username :email :verification_url
+  # Send email verification email
   class VerifyRegistration
     # Error for invalid registration details
     class InvalidRegistration < StandardError; end
-    class EmailProviderError < StandardError; end
 
-    def initialize(registration)
+    def initialize(config, registration)
+      @config = config
       @registration = registration
     end
-
-    def from_email = ENV.fetch('SENDER_EMAIL')
-    def mail_api_key = ENV.fetch('MJ_APIKEY_PRIVATE')
-    def mail_url = ENV.fetch('MJ_APIKEY_PUBLIC')
 
     def call
       raise(InvalidRegistration, 'Username exists') unless username_available?
@@ -34,40 +28,56 @@ module UCCMe
       Account.first(email: @registration[:email]).nil?
     end
 
-    # rubocop:disable Style/RedundantStringEscape
-    def html_email
-      <<~END_EMAIL
-        <H1>Credence App Registration Received</H1>
-        <p>Please <a href=\"#{@registration[:verification_url]}\">click here</a>
-        to validate your email.
-        You will be asked to set a password to activate your account.</p>
-      END_EMAIL
-    end
-    # rubocop:enable Style/RedundantStringEscape
-
-    def mail_json # rubocop:disable Metrics/MethodLength
-      {
-        personalizations: [{
-          to: [{ 'email' => @registration[:email] }]
-        }],
-        from: { 'email' => from_email },
-        subject: 'Credence Registration Verification',
-        content: [
-          { type: 'text/html',
-            value: html_email }
-        ]
-      }
-    end
-
     def send_email_verification
-      res = HTTP.auth("Bearer #{mail_api_key}")
-                .post(mail_url, json: mail_json)
-      raise EmailProviderError if res.status >= 300
-    rescue EmailProviderError
-      raise EmailProviderError
-    rescue StandardError
-      raise(InvalidRegistration,
-            'Could not send verification email; please check email address')
+      # Configure Mailjet with API keys
+      Mailjet.configure do |config|
+        config.api_key = @config.MJ_APIKEY_PUBLIC
+        config.secret_key = @config.MJ_APIKEY_PRIVATE
+        config.api_version = 'v3.1'
+      end
+
+      # Define the email message in Mailjet's format
+      message = {
+        'From' => {
+          'Email' => 'sharon.lin@iss.nthu.edu.tw',
+          'Name' => 'UCCMe Team'
+        },
+        'To' => [
+          {
+            'Email' => @registration[:email],
+            'Name' => '' 
+          }
+        ],
+        'Subject' => 'UCCMe Registration Verification',
+        'HTMLPart' => email_body
+      }
+
+      # Send the email and handle the response
+      begin
+        response = Mailjet::Send.create(messages: [message])
+        # Check if the email was sent successfully
+        if response.attributes['Messages'][0]['Status'] != 'success'
+          error_info = response.attributes['Messages'][0]['Errors']&.first || {}
+          error_message = error_info['ErrorMessage'] || 'Unknown error'
+          puts "EMAIL ERROR: #{error_message}"
+          raise InvalidRegistration, 'Could not send verification email; please check email address'
+        end
+      rescue StandardError => e
+        puts "EMAIL ERROR: #{e.inspect}"
+        raise InvalidRegistration, 'Could not send verification email; please check email address'
+      end
+    end
+
+    private
+
+    def email_body
+      verification_url = @registration[:verification_url]
+
+      <<~END_EMAIL
+        <H1>Credentia Registration Received<H1>
+        <p>Please <a href=\"#{verification_url}\">click here</a> to validate your
+        email. You will be asked to set a password to activate your account.</p>
+      END_EMAIL
     end
   end
 end

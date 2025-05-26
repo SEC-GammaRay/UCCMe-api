@@ -59,3 +59,15 @@ group :test do
   gem 'minitest'
   gem 'minitest-rg'
 end
+
+# development
+gem 'bundler-audit'
+gem 'pry'
+gem 'rerun'
+gem 'rubocop'
+gem 'rubocop-minitest'
+gem 'rubocop-rake'
+gem 'rubocop-sequel'
+
+# mail 
+gem 'mailjet'
