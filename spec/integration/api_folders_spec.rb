@@ -46,7 +46,7 @@ describe 'Test Folder API' do
         header 'AUTHORIZATION', 'Bearer bad_token'
         get 'api/v1/folders'
         _(last_response.status).must_equal 403
-        
+
         result = JSON.parse(last_response.body)
         _(result['data']).must_be_nil
       end

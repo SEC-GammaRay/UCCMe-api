@@ -30,7 +30,7 @@ module UCCMe
 
       request.secure? ||
         routing.halt(403, { message: 'TLS/SSL Required' }).to_json
-      
+
       begin
         @auth_account = request.authenticated_account
       rescue AuthToken::InvalidTokenError
