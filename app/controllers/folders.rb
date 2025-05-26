@@ -1,108 +1,117 @@
 # frozen_string_literal: true
 
-require 'roda'
-require_relative 'app'
+require_relative './app'
 
 module UCCMe
-  # Web controller for UCCMe API
+  # Web controller for UCCMe API 
   class Api < Roda
+    # rubocop:disable Metrics/BlockLength
     route('folders') do |routing|
-      @folder_route = "#{@api_root}/folders"
+      unauthorized_message = { message: 'Unauthorized Request' }.to_json
+      routing.halt(403, unauthorized_message) unless @auth_account
 
-      routing.on String do |folder_id|
-        routing.on 'files' do
-          @file_route = "#{@folder_route}/#{folder_id}/files"
-          # GET api/v1/folders/:folder_id/files/:file_id
-          routing.get String do |file_id|
-            file = StoredFile.where(folder_id: folder_id, id: file_id).first
-            file ? file.to_json : raise('File not found')
-          rescue StandardError => e
-            routing.halt 404, { message: e.message }.to_json
-          end
+      @proj_route = "#{@api_root}/folders"
+      routing.on String do |proj_id|
+        # GET api/v1/folders/[ID]
+        routing.get do
+          folder = GetProjectQuery.call(
+            account: @auth_account,
+            folder_id: proj_id
+          )
 
-          # GET api/v1/folders/:folder_id/files
-          routing.get do
-            output = { data: Folder.first(id: folder_id).stored_files }
-            JSON.pretty_generate(output)
-          rescue StandardError
-            routing.halt 404, { message: 'File not found' }.to_json
-          end
+          { data: folder }.to_json
+        rescue GetProjectQuery::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue GetProjectQuery::NotFoundError => e
+          routing.halt 404, { message: e.message }.to_json
+        rescue StandardError => e
+          puts "FIND PROJECT ERROR: #{e.inspect}"
+          routing.halt 500, { message: 'API server error' }.to_json
+        end
 
-          # POST api/v1/folders/:folder_id/files
+        routing.on('documents') do
+          # POST api/v1/folders/[proj_id]/documents
           routing.post do
-            new_data = JSON.parse(routing.body.read)
-            folder = Folder.first(id: folder_id)
-
-            unless folder
-              Api.logger.warn "Folder not found: #{folder_id}"
-              routing.halt 404, { message: 'Folder not found' }.to_json
-            end
-
-            new_file = folder.add_stored_file(new_data)
-            raise 'Could not save document' unless new_file
-
-            # new_file = UCCMe::CreateFileForFolder.call(
-            #   folder_id: folder_id,
-            #   file_data: new_data
-            # )
+            new_document = CreateDocument.call(
+              account: @auth_account,
+              folder_id: proj_id,
+              document_data: HttpRequest.new(routing).body_data
+            )
 
             response.status = 201
-            { message: 'Document saved', id: new_file.id }.to_json
-          # rescue UCCMe::CreateFileForFolder::FolderNotFoundError => e
-          #   routing.halt 404, { message: e.message }.to_json
-          rescue Sequel::MassAssignmentRestriction
-            Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
-            routing.halt 400, { message: 'Illegal Attributes' }.to_json
+            response['Location'] = "#{@doc_route}/#{new_document.id}"
+            { message: 'Document saved', data: new_document }.to_json
+          rescue CreateDocument::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue CreateDocument::IllegalRequestError => e
+            routing.halt 400, { message: e.message }.to_json
           rescue StandardError => e
-            Api.logger.error "UNKNOWN ERROR: #{e.message}"
-            routing.halt 500, { message: 'Unknown server error' }.to_json
+            Api.logger.warn "DOCUMENT SAVING ERROR: #{e.message}"
+            routing.halt 500, { message: 'Error creating document' }.to_json
           end
         end
 
-        # GET api/v1/folders/:folder_id
-        routing.get do
-          folder = Folder.first(id: folder_id)
-          folder ? folder.to_json : raise('Folder not found')
-        rescue StandardError => e
-          routing.halt 404, { message: e.message }.to_json
+        routing.on('collaborators') do
+          # PUT api/v1/folders/[proj_id]/collaborators
+          routing.put do
+            req_data = JSON.parse(routing.body.read)
+
+            collaborator = AddCollaborator.call(
+              account: @auth_account,
+              folder_id: proj_id,
+              collab_email: req_data['email']
+            )
+
+            { data: collaborator }.to_json
+          rescue AddCollaborator::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API server error' }.to_json
+          end
+
+          # DELETE api/v1/folders/[proj_id]/collaborators
+          routing.delete do
+            req_data = JSON.parse(routing.body.read)
+            collaborator = RemoveCollaborator.call(
+              req_username: @auth_account.username,
+              collab_email: req_data['email'],
+              folder_id: proj_id
+            )
+
+            { message: "#{collaborator.username} removed from projet",
+              data: collaborator }.to_json
+          rescue RemoveCollaborator::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API server error' }.to_json
+          end
         end
       end
 
-      # GET api/v1/folders
-      routing.get do
-        account = Account.first(username: @auth_account['username'])
-        # account = Account.first(username: 'shou')
-        folders = account.folders
-        JSON.pretty_generate(data: folders)
-      rescue StandardError
-        routing.halt 403, { message: 'Could not find any folders' }.to_json
-      end
+      routing.is do
+        # GET api/v1/folders
+        routing.get do
+          folders = ProjectPolicy::AccountScope.new(@auth_account).viewable
 
-      # POST api/v1/folders
-      routing.post do
-        # new_data = JSON.parse(routing.body.read)
-        new_data = HttpRequest.new(routing).body_data
-        new_folder = Folder.new(new_data)
-        raise('Could not save project') unless new_folder.save_changes
+          JSON.pretty_generate(data: folders)
+        rescue StandardError
+          routing.halt 403, { message: 'Could not find any folders' }.to_json
+        end
 
-        # new_folder = UCCMe::CreateFolderForOwner.call(new_data)
-        # owner_id = new_data.delete('owner_id')
+        # POST api/v1/folders
+        routing.post do
+          new_data = HttpRequest.new(routing).body_data
+          new_proj = @auth_account.add_owned_folder(new_data)
 
-        # new_folder = UCCMe::CreateFolderForOwner.call(
-        #   owner_id: owner_id,
-        #   folder_data: new_data
-        # )
-
-        response.status = 201
-        response['Location'] = "#{@folder_route}/#{new_folder.id}"
-        { message: 'Folder created', data: new_folder }.to_json
-      rescue Sequel::MassAssignmentRestriction
-        Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
-        routing.halt 400, { message: 'Illegal Attributes' }.to_json
-      rescue StandardError => e
-        Api.logger.error "FOLDER SAVING ERROR: #{e.message}"
-        routing.halt 500, { message: 'Unknown server error' }.to_json
+          response.status = 201
+          response['Location'] = "#{@proj_route}/#{new_proj.id}"
+          { message: 'Project saved', data: new_proj }.to_json
+        rescue Sequel::MassAssignmentRestriction
+          Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+          routing.halt 400, { message: 'Illegal Attributes' }.to_json
+        end
       end
     end
+    # rubocop:enable Metrics/BlockLength
   end
 end
