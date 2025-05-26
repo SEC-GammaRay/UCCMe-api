@@ -16,7 +16,7 @@ module UCCMe
           response.status = 202 
           { message: 'Verification email sent'}.to_json
         rescue VerifyRegistration::InvalidRegistration => e
-          routing.hait 400, { message: e.message }.to_json
+          routing.halt 400, { message: e.message }.to_json
         rescue VerifyRegistration::EmailProviderError => e
           Api.logger.error "Could not send email to: #{e.inspect}"
           routing.halt 500, { message: 'Error sending email'}.to_json
