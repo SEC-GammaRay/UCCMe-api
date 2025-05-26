@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'mailjet'
+require 'active_support/core_ext/object/blank'
 
 module UCCMe
   # Send email verification email
@@ -28,7 +29,7 @@ module UCCMe
       Account.first(email: @registration[:email]).nil?
     end
 
-    def send_email_verification
+    def send_email_verification # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
       # Configure Mailjet with API keys
       Mailjet.configure do |config|
         config.api_key = @config.MJ_APIKEY_PUBLIC
@@ -45,7 +46,7 @@ module UCCMe
         'To' => [
           {
             'Email' => @registration[:email],
-            'Name' => '' 
+            'Name' => @registration[:username]
           }
         ],
         'Subject' => 'UCCMe Registration Verification',
@@ -70,6 +71,7 @@ module UCCMe
 
     private
 
+    # rubocop:disable Style/RedundantStringEscape
     def email_body
       verification_url = @registration[:verification_url]
 
@@ -79,5 +81,6 @@ module UCCMe
         email. You will be asked to set a password to activate your account.</p>
       END_EMAIL
     end
+    # rubocop:enable Style/RedundantStringEscape
   end
 end
