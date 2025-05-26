@@ -34,6 +34,7 @@ module UCCMe
       Account.first(email: @registration[:email]).nil?
     end
 
+    # rubocop:disable Style/RedundantStringEscape
     def html_email
       <<~END_EMAIL
         <H1>Credence App Registration Received</H1>
@@ -42,6 +43,7 @@ module UCCMe
         You will be asked to set a password to activate your account.</p>
       END_EMAIL
     end
+    # rubocop:enable Style/RedundantStringEscape
 
     def mail_json # rubocop:disable Metrics/MethodLength
       {
