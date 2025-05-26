@@ -70,17 +70,18 @@ module UCCMe
 
       # GET api/v1/folders
       routing.get do
-        # account = Account.first(username: @auth_account['username'])
-        account = Account.first(username: 'shou')
+        account = Account.first(username: @auth_account['username'])
+        # account = Account.first(username: 'shou')
         folders = account.folders
         JSON.pretty_generate(data: folders)
       rescue StandardError
-        routing.halt 404, { message: 'Could not find folders' }.to_json
+        routing.halt 403, { message: 'Could not find any folders' }.to_json
       end
 
       # POST api/v1/folders
       routing.post do
-        new_data = JSON.parse(routing.body.read)
+        # new_data = JSON.parse(routing.body.read)
+        new_data = HttpRequest.new(routing).body_data
         new_folder = Folder.new(new_data)
         raise('Could not save project') unless new_folder.save_changes
 
@@ -99,7 +100,7 @@ module UCCMe
         Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
         routing.halt 400, { message: 'Illegal Attributes' }.to_json
       rescue StandardError => e
-        Api.logger.error "UNKNOWN ERROR: #{e.message}"
+        Api.logger.error "FOLDER SAVING ERROR: #{e.message}"
         routing.halt 500, { message: 'Unknown server error' }.to_json
       end
     end

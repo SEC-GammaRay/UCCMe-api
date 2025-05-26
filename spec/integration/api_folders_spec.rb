@@ -12,25 +12,44 @@ describe 'Test Folder API' do
   end
 
   describe 'Getting folders' do
-    it 'HAPPY: should be able to get list of all folders' do
-      # Create owner first
-      owner = UCCMe::Account.create(DATA[:accounts][0])
+    describe 'Getting list of folders' do
+      before do
+        @account_data = DATA[:accounts][0]
+        @req_header = { 'CONTENT_TYPE' => 'application/json' }
+        account = UCCMe::Account.create(@account_data)
 
-      DATA[:folders].each do |folder_data|
-        UCCMe::CreateFolderForOwner.call(
-          owner_id: owner.id,
-          folder_data: {
-            foldername: folder_data['foldername'] || folder_data[:foldername],
-            description: folder_data['description'] || folder_data[:description]
-          }
-        )
+        DATA[:folders].each do |folder_data|
+          UCCMe::CreateFolderForOwner.call(
+            owner_id: account.id,
+            folder_data: {
+              foldername: folder_data['foldername'] || folder_data[:foldername],
+              description: folder_data['description'] || folder_data[:description]
+            }
+          )
+        end
       end
 
-      get 'api/v1/folders'
-      _(last_response.status).must_equal 200
+      it 'HAPPY: should get list for authorized account' do
+        auth = UCCMe::AuthenticateAccount.call(
+          username: @account_data['username'],
+          password: @account_data['password']
+        )
+        header 'AUTHORIZATION', "Bearer #{auth[:attributes][:auth_token]}"
+        get 'api/v1/folders'
+        _(last_response.status).must_equal 200
 
-      result = JSON.parse(last_response.body)
-      _(result['data'].count).must_equal 3
+        result = JSON.parse(last_response.body)
+        _(result['data'].count).must_equal 3
+      end
+
+      it 'BAD: should not process for unauthorized account' do
+        header 'AUTHORIZATION', 'Bearer bad_token'
+        get 'api/v1/folders'
+        _(last_response.status).must_equal 403
+
+        result = JSON.parse(last_response.body)
+        _(result['data']).must_be_nil
+      end
     end
 
     it 'HAPPY: should be able to get details of a single folder' do
