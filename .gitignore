@@ -1,6 +1,8 @@
 _*
-db/local/*
+_snippets/
 .bundle/
+
+db/local/*
 
 # Ignore secrets file
 config/secrets.yml

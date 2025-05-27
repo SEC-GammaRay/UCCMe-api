@@ -60,4 +60,5 @@ end
 
 # mail
 gem 'activesupport'
+gem 'erb'
 gem 'mailjet'
