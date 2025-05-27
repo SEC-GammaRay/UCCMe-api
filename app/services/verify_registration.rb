@@ -71,16 +71,15 @@ module UCCMe
 
     private
 
-    # rubocop:disable Style/RedundantStringEscape
     def email_body
       verification_url = @registration[:verification_url]
 
-      <<~END_EMAIL
-        <H1>UCCMe Registration Received<H1>
-        <p>Please <a href=\"#{verification_url}\">click here</a> to validate your
-        email. You will be asked to set a password to activate your account.</p>
-      END_EMAIL
+      EmailHelper.render(
+        body_name: 'registration_email.erb',
+        variables: {
+          'verification_url' => verification_url
+        }
+      )
     end
-    # rubocop:enable Style/RedundantStringEscape
   end
 end
