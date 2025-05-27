@@ -30,7 +30,6 @@ module UCCMe
         attributes: {
           account:,
           auth_token: AuthToken.create(account)
-          # auth_token: 1
         }
       }
     end
