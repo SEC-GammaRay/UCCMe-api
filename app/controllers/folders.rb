@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative './app'
+require_relative 'app'
 
 module UCCMe
-  # Web controller for UCCMe API 
+  # Web controller for UCCMe API
   class Api < Roda
     # rubocop:disable Metrics/BlockLength
     route('folders') do |routing|
