@@ -10,31 +10,31 @@ module UCCMe
       unauthorized_message = { message: 'Unauthorized Request' }.to_json
       routing.halt(403, unauthorized_message) unless @auth_account
 
-      @proj_route = "#{@api_root}/folders"
-      routing.on String do |proj_id|
+      @folder_route = "#{@api_root}/folders"
+      routing.on String do |folder_id|
         # GET api/v1/folders/[ID]
         routing.get do
-          folder = GetProjectQuery.call(
+          folder = GetFolderQuery.call(
             account: @auth_account,
-            folder_id: proj_id
+            folder_id: folder_id
           )
 
           { data: folder }.to_json
-        rescue GetProjectQuery::ForbiddenError => e
+        rescue GetFolderQuery::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
-        rescue GetProjectQuery::NotFoundError => e
+        rescue GetFolderQuery::NotFoundError => e
           routing.halt 404, { message: e.message }.to_json
         rescue StandardError => e
-          puts "FIND PROJECT ERROR: #{e.inspect}"
+          puts "FIND FOLDER ERROR: #{e.inspect}"
           routing.halt 500, { message: 'API server error' }.to_json
         end
 
         routing.on('documents') do
-          # POST api/v1/folders/[proj_id]/documents
+          # POST api/v1/folders/[folder_id]/documents
           routing.post do
             new_document = CreateDocument.call(
               account: @auth_account,
-              folder_id: proj_id,
+              folder_id: folder_id,
               document_data: HttpRequest.new(routing).body_data
             )
 
@@ -52,13 +52,13 @@ module UCCMe
         end
 
         routing.on('collaborators') do
-          # PUT api/v1/folders/[proj_id]/collaborators
+          # PUT api/v1/folders/[folder_id]/collaborators
           routing.put do
             req_data = JSON.parse(routing.body.read)
 
             collaborator = AddCollaborator.call(
               account: @auth_account,
-              folder_id: proj_id,
+              folder_id: folder_id,
               collab_email: req_data['email']
             )
 
@@ -69,16 +69,16 @@ module UCCMe
             routing.halt 500, { message: 'API server error' }.to_json
           end
 
-          # DELETE api/v1/folders/[proj_id]/collaborators
+          # DELETE api/v1/folders/[folder_id]/collaborators
           routing.delete do
             req_data = JSON.parse(routing.body.read)
             collaborator = RemoveCollaborator.call(
               req_username: @auth_account.username,
               collab_email: req_data['email'],
-              folder_id: proj_id
+              folder_id: folder_id
             )
 
-            { message: "#{collaborator.username} removed from projet",
+            { message: "#{collaborator.username} removed from folder",
               data: collaborator }.to_json
           rescue RemoveCollaborator::ForbiddenError => e
             routing.halt 403, { message: e.message }.to_json
@@ -91,7 +91,7 @@ module UCCMe
       routing.is do
         # GET api/v1/folders
         routing.get do
-          folders = ProjectPolicy::AccountScope.new(@auth_account).viewable
+          folders = FolderPolicy::AccountScope.new(@auth_account).viewable
 
           JSON.pretty_generate(data: folders)
         rescue StandardError
@@ -101,11 +101,11 @@ module UCCMe
         # POST api/v1/folders
         routing.post do
           new_data = HttpRequest.new(routing).body_data
-          new_proj = @auth_account.add_owned_folder(new_data)
+          new_folder = @auth_account.add_owned_folder(new_data)
 
           response.status = 201
-          response['Location'] = "#{@proj_route}/#{new_proj.id}"
-          { message: 'Project saved', data: new_proj }.to_json
+          response['Location'] = "#{@folder_route}/#{new_folder.id}"
+          { message: 'Folder saved', data: new_folder }.to_json
         rescue Sequel::MassAssignmentRestriction
           Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
           routing.halt 400, { message: 'Illegal Attributes' }.to_json
