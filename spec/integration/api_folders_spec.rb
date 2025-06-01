@@ -8,7 +8,7 @@ describe 'Test Folder API' do
   include Rack::Test::Methods
 
   before do
-    wipe_database
+    DatabaseHelper.wipe_database
   end
 
   describe 'Getting folders' do

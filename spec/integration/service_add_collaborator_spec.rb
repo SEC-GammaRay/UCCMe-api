@@ -5,7 +5,7 @@ require_relative '../spec_helper'
 
 describe 'Test AddCollaboratorToFolder service' do
   before do
-    wipe_database
+    DatabaseHelper.wipe_database
 
     DATA[:accounts].each do |account_data|
       UCCMe::Account.create(account_data)

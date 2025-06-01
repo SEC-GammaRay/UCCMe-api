@@ -40,7 +40,7 @@ module UCCMe
       # Define the email message in Mailjet's format
       message = {
         'From' => {
-          'Email' => 'sharon.lin@iss.nthu.edu.tw',
+          'Email' => @config.SENDER_EMAIL,
           'Name' => 'UCCMe Team'
         },
         'To' => [
@@ -63,24 +63,23 @@ module UCCMe
           puts "EMAIL ERROR: #{error_message}"
           raise InvalidRegistration, 'Could not send verification email; please check email address'
         end
-      rescue StandardError => e
-        puts "EMAIL ERROR: #{e.inspect}"
+      rescue StandardError => error
+        puts "EMAIL ERROR: #{error.inspect}"
         raise InvalidRegistration, 'Could not send verification email; please check email address'
       end
     end
 
     private
 
-    # rubocop:disable Style/RedundantStringEscape
     def email_body
       verification_url = @registration[:verification_url]
 
-      <<~END_EMAIL
-        <H1>UCCMe Registration Received<H1>
-        <p>Please <a href=\"#{verification_url}\">click here</a> to validate your
-        email. You will be asked to set a password to activate your account.</p>
-      END_EMAIL
+      EmailHelper.render(
+        body_name: 'registration_email.erb',
+        variables: {
+          'verification_url' => verification_url
+        }
+      )
     end
-    # rubocop:enable Style/RedundantStringEscape
   end
 end

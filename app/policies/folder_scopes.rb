@@ -7,7 +7,7 @@ module UCCMe
     class AccountScope
       def initialize(current_account, target_account = nil)
         target_account ||= current_account
-        @full_scope = all_projects(target_account)
+        @full_scope = all_folders(target_account)
         @current_account = current_account
         @target_account = target_account
       end

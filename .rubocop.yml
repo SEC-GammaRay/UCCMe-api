@@ -26,3 +26,7 @@ Metrics/ClassLength:
   Max: 200
   Exclude: 
     - app/controllers/*.rb # Roda's nested controllers require large classes
+
+Naming/RescuedExceptionsVariableName:
+  Enabled: true
+  PreferredName: error

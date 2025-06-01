@@ -6,7 +6,7 @@ describe 'Test Folder Handling' do
   include Rack::Test::Methods
 
   before do
-    wipe_database
+    DatabaseHelper.wipe_database
     FileUtils.rm_rf(UCCMe::STORE_DIR)
     # puts Sequel::Model.db.schema(:folders).inspect
     # puts DATA[:folders].inspect
