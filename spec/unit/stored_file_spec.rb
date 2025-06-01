@@ -4,7 +4,7 @@ require_relative '../spec_helper'
 
 describe 'Test Stored File Handling' do
   before do
-    wipe_database
+    DatabaseHelper.wipe_database
 
     DATA[:stored_files].each do |file_data|
       print(file_data)

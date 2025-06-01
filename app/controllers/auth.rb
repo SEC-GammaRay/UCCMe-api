@@ -15,13 +15,13 @@ module UCCMe
 
           response.status = 202
           { message: 'Verification email sent' }.to_json
-        rescue VerifyRegistration::InvalidRegistration => e
-          routing.halt 400, { message: e.message }.to_json
-        rescue VerifyRegistration::EmailProviderError => e
-          Api.logger.error "Could not send email to: #{e.inspect}"
+        rescue VerifyRegistration::InvalidRegistration => error
+          routing.halt 400, { message: error.message }.to_json
+        rescue VerifyRegistration::EmailProviderError => error
+          Api.logger.error "Could not send email to: #{error.inspect}"
           routing.halt 500, { message: 'Error sending email' }.to_json
-        rescue StandardError => e
-          Api.logger.error "Could not verify registeration: #{e.inspect}"
+        rescue StandardError => error
+          Api.logger.error "Could not verify registeration: #{error.inspect}"
           routing.halt 500
         end
       end

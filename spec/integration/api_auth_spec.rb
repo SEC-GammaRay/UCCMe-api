@@ -7,7 +7,7 @@ describe 'Test Authentication Routes' do
 
   before do
     @req_header = { 'CONTENT_TYPE' => 'application/json' }
-    wipe_database
+    DatabaseHelper.wipe_database
   end
 
   describe 'Account Authentication' do

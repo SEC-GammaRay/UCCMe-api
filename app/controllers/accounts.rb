@@ -31,9 +31,9 @@ module UCCMe
       rescue Sequel::MassAssignmentRestriction
         Api.logger.warn "MASS-ASSIGNMENT:: #{new_data.keys}"
         routing.halt 400, { message: 'Illegal Request' }.to_json
-      rescue StandardError => e
+      rescue StandardError => error
         Api.logger.error 'Unknown error saving account'
-        routing.halt 500, { message: e.message }.to_json
+        routing.halt 500, { message: error.message }.to_json
       end
     end
   end

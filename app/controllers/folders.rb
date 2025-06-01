@@ -20,12 +20,12 @@ module UCCMe
           )
 
           { data: folder }.to_json
-        rescue GetFolderQuery::ForbiddenError => e
-          routing.halt 403, { message: e.message }.to_json
-        rescue GetFolderQuery::NotFoundError => e
-          routing.halt 404, { message: e.message }.to_json
-        rescue StandardError => e
-          puts "FIND FOLDER ERROR: #{e.inspect}"
+        rescue GetFolderQuery::ForbiddenError => error
+          routing.halt 403, { message: error.message }.to_json
+        rescue GetFolderQuery::NotFoundError => error
+          routing.halt 404, { message: error.message }.to_json
+        rescue StandardError => error
+          puts "FIND FOLDER ERROR: #{error.inspect}"
           routing.halt 500, { message: 'API server error' }.to_json
         end
 
@@ -41,12 +41,12 @@ module UCCMe
             response.status = 201
             response['Location'] = "#{@doc_route}/#{new_document.id}"
             { message: 'Document saved', data: new_document }.to_json
-          rescue CreateDocument::ForbiddenError => e
-            routing.halt 403, { message: e.message }.to_json
-          rescue CreateDocument::IllegalRequestError => e
-            routing.halt 400, { message: e.message }.to_json
-          rescue StandardError => e
-            Api.logger.warn "DOCUMENT SAVING ERROR: #{e.message}"
+          rescue CreateDocument::ForbiddenError => error
+            routing.halt 403, { message: error.message }.to_json
+          rescue CreateDocument::IllegalRequestError => error
+            routing.halt 400, { message: error.message }.to_json
+          rescue StandardError => error
+            Api.logger.warn "DOCUMENT SAVING ERROR: #{error.message}"
             routing.halt 500, { message: 'Error creating document' }.to_json
           end
         end
@@ -63,8 +63,8 @@ module UCCMe
             )
 
             { data: collaborator }.to_json
-          rescue AddCollaborator::ForbiddenError => e
-            routing.halt 403, { message: e.message }.to_json
+          rescue AddCollaborator::ForbiddenError => error
+            routing.halt 403, { message: error.message }.to_json
           rescue StandardError
             routing.halt 500, { message: 'API server error' }.to_json
           end
@@ -80,8 +80,8 @@ module UCCMe
 
             { message: "#{collaborator.username} removed from folder",
               data: collaborator }.to_json
-          rescue RemoveCollaborator::ForbiddenError => e
-            routing.halt 403, { message: e.message }.to_json
+          rescue RemoveCollaborator::ForbiddenError => error
+            routing.halt 403, { message: error.message }.to_json
           rescue StandardError
             routing.halt 500, { message: 'API server error' }.to_json
           end

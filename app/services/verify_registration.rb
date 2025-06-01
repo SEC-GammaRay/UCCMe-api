@@ -40,7 +40,7 @@ module UCCMe
       # Define the email message in Mailjet's format
       message = {
         'From' => {
-          'Email' => 'sharon.lin@iss.nthu.edu.tw',
+          'Email' => @config.SENDER_EMAIL,
           'Name' => 'UCCMe Team'
         },
         'To' => [
@@ -63,8 +63,8 @@ module UCCMe
           puts "EMAIL ERROR: #{error_message}"
           raise InvalidRegistration, 'Could not send verification email; please check email address'
         end
-      rescue StandardError => e
-        puts "EMAIL ERROR: #{e.inspect}"
+      rescue StandardError => error
+        puts "EMAIL ERROR: #{error.inspect}"
         raise InvalidRegistration, 'Could not send verification email; please check email address'
       end
     end

@@ -8,10 +8,17 @@ require 'yaml'
 
 require_relative 'test_load_all'
 
-def wipe_database
-  UCCMe::Folder.map(&:destroy)
-  UCCMe::StoredFile.map(&:destroy)
-  UCCMe::Account.map(&:destroy)
+# Helper to clean database during test runs
+module DatabaseHelper
+  def self.wipe_database
+    db = UCCMe::Api.DB
+    # Ignore foreign key constraints when wiping tables
+    db.run('PRAGMA foreign_keys = OFF')
+    UCCMe::Folder.map(&:destroy)
+    UCCMe::StoredFile.map(&:destroy)
+    UCCMe::Account.map(&:destroy)
+    db.run('PRAGMA foreign_keys = ON')
+  end
 end
 
 DATA = {

@@ -17,7 +17,8 @@ def filter_file_data(data)
 
   keys = %i[filename description content cc_types]
   keys.each_with_object({}) do |key, result|
-    result[key] = data[key.to_s] || data[key] if data.key?(key.to_s) || data.key?(key)
+    key_string = key.to_s
+    result[key] = data[key_string] || data[key] if data.key?(key_string) || data.key?(key)
   end
 end
 
@@ -25,7 +26,7 @@ describe 'Test File Handling' do
   include Rack::Test::Methods
 
   before do
-    wipe_database
+    DatabaseHelper.wipe_database
     # Create folders first since files belong to folders
     owner = UCCMe::Account.create(DATA[:accounts][0])
 
