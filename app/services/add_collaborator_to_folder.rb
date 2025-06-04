@@ -2,25 +2,22 @@
 
 module UCCMe
   # Add a collaborator to another owner's existing folder
-  class AddCollaboratorToFolder
+  class AddCollaborator
     # Error for owner cannot be collaborator
-    class OwnerNotCollaboratorError < StandardError
-      def message = 'Owner cannot be collaborator of folder'
+    class ForbiddenError < StandardError
+      def message
+        'You are not allowed to invite that person as collaborator'
+      end
     end
 
-    # Error for folder not found
-    class FolderNotFoundError < StandardError
-      def message = 'Folder not found'
-    end
-
-    def self.call(email:, folder_id:)
-      collaborator = Account.first(email:)
+    def self.call(account:, folder_id:, collab_email:)
+      invitee = Account.first(email: collab_email)
       folder = Folder.first(id: folder_id)
+      policy = CollaborationRequestPolicy.new(folder, account, invitee)
+      raise ForbiddenError unless policy.can_invite?
 
-      raise FolderNotFoundError unless folder
-      raise(OwnerNotCollaboratorError) if folder.owner&.id == collaborator.id
-
-      folder.add_collaborator(collaborator)
+      folder.add_collaborator(invitee)
+      invitee
     end
   end
 end
