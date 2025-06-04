@@ -42,10 +42,10 @@ module UCCMe
     end
 
     def can_collaborate?
-      not (account_is_owner? or account_is_collaborator?)
+      !(account_is_owner? or account_is_collaborator?)
     end
 
-    def summary
+    def summary # rubocop:disable Metrics/MethodLength
       {
         can_view: can_view?,
         can_edit: can_edit?,

@@ -54,7 +54,7 @@ module UCCMe
       value&.include?(',') ? value.split(',') : value
     end
 
-    def to_h
+    def to_h # rubocop:disable Metrics/MethodLength
       {
         type: 'file',
         attributes: {
