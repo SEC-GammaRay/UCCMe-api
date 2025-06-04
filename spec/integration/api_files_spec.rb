@@ -27,18 +27,16 @@ describe 'Test File Handling' do
 
   before do
     DatabaseHelper.wipe_database
-    # Create folders first since files belong to folders
-    owner = UCCMe::Account.create(DATA[:accounts][0])
 
-    DATA[:folders].each do |folder_data|
-      UCCMe::CreateFolderForOwner.call(
-        owner_id: owner.id,
-        folder_data: {
-          foldername: folder_data['foldername'] || folder_data[:foldername],
-          description: folder_data['description'] || folder_data[:description]
-        }
-      )
-    end
+    @account_data = DATA[:accounts][0]
+    @wrong_account_data = DATA[:accounts][1]
+
+    @account = UCCMe::Account.create(@account_data)
+    @account.add_owned_folder(DATA[:folders][0])
+    @account.add_owned_folder(DATA[:folders][1])
+    UCCMe::Account.create(@wrong_account_data)
+
+    header 'CONTENT_TYPE', 'application/json'
   end
 
   it 'HAPPY: should be able to get list of all files in a folder' do
