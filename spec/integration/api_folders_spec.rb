@@ -32,7 +32,7 @@ describe 'Test Folder API' do
         _(last_response.status).must_equal 200
 
         result = JSON.parse(last_response.body)
-        _(result['data'].count).must_equal 3
+        _(result['data'].count).must_equal 403
       end
 
       it 'BAD: should not process without authorization' do
