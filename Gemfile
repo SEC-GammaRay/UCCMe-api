@@ -44,7 +44,7 @@ end
 
 group :development, :test do
   # api testing
-  gem 'rack', '>= 3.1.14'
+  gem 'rack', '>= 3.1.16'
   gem 'rack-test'
 
   # database
