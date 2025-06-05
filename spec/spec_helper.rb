@@ -21,6 +21,15 @@ module DatabaseHelper
   end
 end
 
+def auth_header(account_data)
+  auth = UCCMe::AuthenticateAccount.call(
+    username: account_data['username'],
+    password: account_data['password']
+  )
+
+  "Bearer #{auth[:attributes][:auth_token]}"
+end
+
 DATA = {
   accounts: YAML.load_file('db/seeds/accounts_seeds.yml'),
   stored_files: YAML.safe_load_file('db/seeds/stored_files_seeds.yml'),

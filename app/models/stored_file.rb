@@ -54,24 +54,25 @@ module UCCMe
       value&.include?(',') ? value.split(',') : value
     end
 
-    # rubocop:disable Metrics/MethodLength
-    def to_json(options = {})
-      JSON(
-        {
-          data: {
-            type: 'file',
-            attributes: {
-              id:,
-              filename:,
-              description:,
-              content:,
-              cc_types:
-            }
-          }
-        }, options
-      )
+    def to_h # rubocop:disable Metrics/MethodLength
+      {
+        type: 'file',
+        attributes: {
+          id:,
+          filename:,
+          description:,
+          content:,
+          cc_types:
+        },
+        include: {
+          folder:
+        }
+      }
     end
-    # rubocop:enable Metrics/MethodLength
+
+    def to_json(options = {})
+      JSON(to_h, options)
+    end
 
     def self.setup
       Dir.mkdir_p(UCCMe::STORE_DIR)
@@ -80,51 +81,5 @@ module UCCMe
     def self.locate
       FileUtils.mkdir_p(UCCMe::STORE_DIR)
     end
-
-    # CREATE (Create a new file)
-    # def self.create(file_data = {})
-    #   # Initialize new file with provided or default values
-    #   new_file = new
-    #   new_file.filename = file_data[:filename]
-    #   new_file.description = file_data[:description]
-    #   new_file.content = file_data[:content]
-    #   new_file.cc_types = file_data[:cc_types]
-    #   new_file.folder_id = file_data[:folder_id]
-    #   # Save and return the file
-    #   new_file.save_changes
-    #   new_file
-    # end
-
-    # INDEX (optional filter by foldername)
-    # def self.all(foldername = nil)
-    #   if foldername
-    #     where(foldername: foldername)
-    #   else
-    #     where(foldername: nil)
-    #   end
-    # end
-
-    # READ (get file by id)
-    # def self.read(id)
-    #   find(id: id)
-    # end
-
-    # UPDATE (Update file attributes)
-    # def update(filename: nil, cc_types: nil, description: nil, content: nil)
-    #   self.filename = filename if filename
-    #   self.cc_types = cc_types if cc_types
-    #   self.description = description if description
-    #   self.content = content if content
-    #   save_changes
-    # end
-
-    # DESTROY (Delete file)
-
-    # private
-
-    # def new_id
-    #   timestamp = Time.now.to_f.to_s
-    #   Base64.urlsafe_encode64(RbNaCl::Hash.sha256(timestamp))[0..9]
-    # end
   end
 end

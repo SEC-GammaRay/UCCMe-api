@@ -5,7 +5,6 @@ require_relative 'app'
 module UCCMe
   # Web controller for UCCMe API
   class Api < Roda
-    # rubocop:disable Metrics/BlockLength
     route('folders') do |routing|
       unauthorized_message = { message: 'Unauthorized Request' }.to_json
       routing.halt(403, unauthorized_message) unless @auth_account
@@ -112,6 +111,5 @@ module UCCMe
         end
       end
     end
-    # rubocop:enable Metrics/BlockLength
   end
 end

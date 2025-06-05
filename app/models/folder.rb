@@ -47,17 +47,15 @@ module UCCMe
       SecureDB.decrypt(description_secure)
     end
 
-    def to_json(options = {})
-      JSON(
-        {
-          type: 'folder',
-          attributes: {
-            id:,
-            foldername:,
-            description:
-          }
-        }, options
-      )
+    def to_h
+      {
+        type: 'folder',
+        attributes: {
+          id:,
+          foldername:,
+          description:
+        }
+      }
     end
 
     def self.setup
@@ -68,58 +66,18 @@ module UCCMe
       FileUtils.mkdir_p(UCCMe::STORE_DIR)
     end
 
-    # CREATE (Create a new folder)
-    # def self.create(attributes = nil)
-    #   folder = new
-    #   folder.foldername = attributes[:foldername] || attributes['foldername']
-    #   folder.description = attributes[:description] || attributes['description']
-    #   folder.save_changes
-    #   folder
-    # end
+    def full_details
+      to_h.merge(
+        relationships: {
+          owner:,
+          collaborators:,
+          stored_files:
+        }
+      )
+    end
 
-    # CREATE (Add a file to a folder)
-    # def add_stored_file(data = {})
-    #   # StoredFile.create(
-    #   #   # id: data[:id],
-    #   #   filename: data[:filename],
-    #   #   description: data[:description],
-    #   #   content: data[:content],
-    #   #   cc_types: data[:cc_types],
-    #   #   folder_id: id,
-    #   #   # created_at: data[:created_at],
-    #   #   # updated_at: data[:updated_at]
-    #   # )
-    #   file = StoredFile.new
-    #   file.set(data)
-    #   file.folder_id = id
-    #   file.save_changes
-    #   file
-    # end
-
-    # # INDEX (Get all folders)
-    # def self.index
-    #   all
-    # end
-
-    # # READ (Get a folder by ID)
-    # def self.read(id)
-    #   find(id: id)
-    # end
-
-    # # UPDATE (Update a folder)
-    # def update(foldername: nil, description: nil)
-    #   self.foldername = foldername if foldername
-    #   self.description = description if description
-    #   save_changes
-    # end
-
-    # DESTROY (Delete a folder)
-
-    # private
-
-    # def new_id
-    #   timestamp = Time.now.to_f.to_s
-    #   Base64.urlsafe_encode64(RbNaCl::Hash.sha256(timestamp))[0..9]
-    # end
+    def to_json(options = {})
+      JSON(to_h, options)
+    end
   end
 end

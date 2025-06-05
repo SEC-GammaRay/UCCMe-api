@@ -18,7 +18,7 @@ module UCCMe
     end
 
     def self.call(account:, folder_id:)
-      folder = folder.first(id: folder_id)
+      folder = Folder.first(id: folder_id)
       raise NotFoundError unless folder
 
       policy = FolderPolicy.new(account, folder)

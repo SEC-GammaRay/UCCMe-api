@@ -10,6 +10,7 @@ module UCCMe
   class Api < Roda
     # plugin :environments
     plugin :halt
+    plugin :all_verbs
     plugin :multi_route
     plugin :request_headers
 

@@ -9,7 +9,6 @@ module UCCMe
   class Account < Sequel::Model
     one_to_many :owned_storedfiles, class: :'UCCMe::StoredFile', key: :owner_id
     one_to_many :owned_folders, class: :'UCCMe::Folder', key: :owner_id
-    # one_to_many :shared_storedfiles, class: :'UCCMe::ShareFile', key: :sharer_id, conditions: { sharer_type: 'Account'} # rubocop:disable Layout/LineLength
     # many_to_many :teams, class: :'UCCMe::Team', join_table: :team_members, left_key: :owner_id, right_key: :team_id
     many_to_many :collaborations, # Removed extra colon after many_to_many
                  class: :'UCCMe::StoredFile',
