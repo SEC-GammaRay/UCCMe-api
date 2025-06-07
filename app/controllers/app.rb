@@ -45,6 +45,7 @@ module UCCMe
       routing.on 'api' do
         routing.on 'v1' do
           @api_root = 'api/v1'
+          routing.multi_route('account')
           routing.multi_route
         end
       end
