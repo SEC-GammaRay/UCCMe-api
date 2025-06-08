@@ -10,20 +10,20 @@ class FilePolicy
 
   def can_view?
     (account_owns_file? || account_is_folder_collaborator? || has_active_share?) &&
-     @auth_scope.can_read?('file')
+     @auth_scope.can_view?('file')
   end
 
   def can_edit?
     (account_owns_file? || account_is_folder_collaborator?) &&
-     @auth_scope.can_share?('file')
+     @auth_scope.can_copy?('file')
   end
 
   def can_delete?
-    account_owns_file? && @auth_scope.can_share?('file')
+    account_owns_file? && @auth_scope.can_copy?('file')
   end
   
   def can_share?
-    account_owns_file? && @auth_scope.can_share?('file')
+    account_owns_file? && @auth_scope.can_copy?('file')
   end
 
   def can_copy?

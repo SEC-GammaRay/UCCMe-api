@@ -62,7 +62,7 @@ class AuthToken
   end
 
   # Create a sharing token with read-only scope
-  def self.create_share_token(payload, expiration = ONE_WEEK, scope = AuthScope.new(AuthScope::READ_ONLY))
+  def self.create_share_token(payload, expiration = ONE_WEEK, scope = AuthScope.new(AuthScope::VIEW_ONLY))
     create(payload, expiration, scope)
   end
 

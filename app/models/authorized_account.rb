@@ -21,7 +21,7 @@ module UCCMe
     end
 
     def to_h
-      if scope.can_share?('account')
+      if scope.can_copy?('account')
         # Full access - return complete account info
         {
           type: 'authorized_account',

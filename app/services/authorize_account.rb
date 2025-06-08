@@ -23,10 +23,10 @@ module UCCMe
       raise ForbiddenError unless policy.can_view?
 
       # Check auth scope permissions
-      raise ForbiddenError unless auth_scope.can_read?('account')
+      raise ForbiddenError unless auth_scope.can_view?('account')
 
       # Return account data based on scope
-      if auth_scope.can_share?('account')
+      if auth_scope.can_copy?('account')
         # Full access - return complete account info
         target_account
       else

@@ -3,11 +3,11 @@
 # Scopes for AuthTokens - handles authorization permissions
 class AuthScope
   ALL = '*'
-  READ = 'read'
-  SHARE = 'share'
+  VIEW = 'view'
+  COPY = 'copy'
   
-  EVERYTHING = '*:share'  # share includes read permissions
-  READ_ONLY = '*:read'
+  EVERYTHING = '*:copy'  # share includes read permissions
+  VIEW_ONLY = '*:view'
   
   SEPARATOR = ' '
   DIVIDER = ':'
@@ -18,12 +18,12 @@ class AuthScope
     @scopes_str.split(SEPARATOR).each { |scope| add_scope(scope) }
   end
 
-  def can_read?(resource)
-    readable?(ALL) || readable?(resource)
+  def can_view?(resource)
+    viewable?(ALL) || viewable?(resource)
   end
 
-  def can_share?(resource)
-    shareable?(ALL) || shareable?(resource)
+  def can_copy?(resource)
+    copyable?(ALL) || copyable?(resource)
   end
 
   def to_s
@@ -32,12 +32,12 @@ class AuthScope
 
   private
 
-  def readable?(resource)
-    shareable?(resource) || permission_granted?(resource, READ)
+  def viewable?(resource)
+    copyable?(resource) || permission_granted?(resource, VIEW)
   end
 
-  def shareable?(resource)
-    permission_granted?(resource, SHARE)
+  def copyable?(resource)
+    permission_granted?(resource, COPY)
   end
 
   def permission_granted?(resource, permission)
