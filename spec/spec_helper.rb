@@ -51,3 +51,10 @@ DATA = {
   stored_files: YAML.safe_load_file('db/seeds/stored_files_seeds.yml'),
   folders: YAML.safe_load_file('db/seeds/folders_seeds.yml')
 }.freeze
+
+## SSO fixtures
+GH_ACCOUNT_RESPONSE = YAML.load(
+  File.read('spec/fixtures/github_token_response.yml')
+)
+GOOD_GH_ACCESS_TOKEN = GH_ACCOUNT_RESPONSE.keys.first
+SSO_ACCOUNT = YAML.load(File.read('spec/fixtures/sso_account.yml'))
