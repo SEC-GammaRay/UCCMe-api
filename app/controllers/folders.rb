@@ -5,6 +5,7 @@ require_relative 'app'
 module UCCMe
   # Web controller for UCCMe API
   class Api < Roda
+    # rubocop:disable Metrics/BlockLength
     route('folders') do |routing|
       unauthorized_message = { message: 'Unauthorized Request' }.to_json
       routing.halt(403, unauthorized_message) unless @auth_account
@@ -31,7 +32,7 @@ module UCCMe
         routing.on('documents') do
           # POST api/v1/folders/[folder_id]/documents
           routing.post do
-            new_document = CreateDocument.call(
+            new_document = CreateFileForFolder.call(
               account: @auth_account,
               folder_id: folder_id,
               document_data: HttpRequest.new(routing).body_data
@@ -40,9 +41,9 @@ module UCCMe
             response.status = 201
             response['Location'] = "#{@doc_route}/#{new_document.id}"
             { message: 'Document saved', data: new_document }.to_json
-          rescue CreateDocument::ForbiddenError => error
+          rescue CreateFileForFolder::ForbiddenError => error
             routing.halt 403, { message: error.message }.to_json
-          rescue CreateDocument::IllegalRequestError => error
+          rescue CreateFileForFolder::IllegalRequestError => error
             routing.halt 400, { message: error.message }.to_json
           rescue StandardError => error
             Api.logger.warn "DOCUMENT SAVING ERROR: #{error.message}"
@@ -111,5 +112,6 @@ module UCCMe
         end
       end
     end
+    # rubocop:disable Metrics/BlockLength
   end
 end

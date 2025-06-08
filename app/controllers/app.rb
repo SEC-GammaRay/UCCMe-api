@@ -14,6 +14,8 @@ module UCCMe
     plugin :multi_route
     plugin :request_headers
 
+    UNAUTH_MSG = { message: 'Unauthorized Request' }.to_json
+
     # Add a class variable for the logger
     class << self
       attr_accessor :logger

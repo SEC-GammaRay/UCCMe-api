@@ -21,6 +21,13 @@ module DatabaseHelper
   end
 end
 
+def authenticate(account_data)
+  UCCMe::AuthenticateAccount.call(
+    username: account_data['username'],
+    password: account_data['password']
+  )
+end
+
 def auth_header(account_data)
   auth = UCCMe::AuthenticateAccount.call(
     username: account_data['username'],
@@ -28,6 +35,15 @@ def auth_header(account_data)
   )
 
   "Bearer #{auth[:attributes][:auth_token]}"
+end
+
+def authorization(account_data)
+  authenticated_account = authenticate(account_data)
+
+  token = AuthToken.new(authenticated_account[:attributes][:auth_token])
+  account_data = token.payload['attributes']
+  account = UCCMe::Account.first(username: account_data['username'])
+  UCCMe::AuthorizedAccount.new(account, token.scope)
 end
 
 DATA = {
