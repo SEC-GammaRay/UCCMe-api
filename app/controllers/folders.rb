@@ -5,6 +5,7 @@ require_relative 'app'
 module UCCMe
   # Web controller for UCCMe API
   class Api < Roda
+    # rubocop:disable Metrics/BlockLength
     route('folders') do |routing|
       unauthorized_message = { message: 'Unauthorized Request' }.to_json
       routing.halt(403, unauthorized_message) unless @auth_account
@@ -28,10 +29,10 @@ module UCCMe
           routing.halt 500, { message: 'API server error' }.to_json
         end
 
-        routing.on('documents') do
-          # POST api/v1/folders/[folder_id]/documents
+        routing.on('files') do
+          # POST api/v1/folders/[folder_id]/files
           routing.post do
-            new_document = CreateDocument.call(
+            new_document = CreateFileForFolder.call(
               account: @auth_account,
               folder_id: folder_id,
               document_data: HttpRequest.new(routing).body_data
@@ -40,13 +41,13 @@ module UCCMe
             response.status = 201
             response['Location'] = "#{@doc_route}/#{new_document.id}"
             { message: 'Document saved', data: new_document }.to_json
-          rescue CreateDocument::ForbiddenError => error
+          rescue CreateFileForFolder::ForbiddenError => error
             routing.halt 403, { message: error.message }.to_json
-          rescue CreateDocument::IllegalRequestError => error
+          rescue CreateFileForFolder::IllegalRequestError => error
             routing.halt 400, { message: error.message }.to_json
           rescue StandardError => error
-            Api.logger.warn "DOCUMENT SAVING ERROR: #{error.message}"
-            routing.halt 500, { message: 'Error creating document' }.to_json
+            Api.logger.warn "FILE SAVING ERROR: #{error.message}"
+            routing.halt 500, { message: 'Error creating files' }.to_json
           end
         end
 
@@ -108,8 +109,14 @@ module UCCMe
         rescue Sequel::MassAssignmentRestriction
           Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
           routing.halt 400, { message: 'Illegal Attributes' }.to_json
+        rescue CreateFolderForOwner::ForbiddenError => e 
+          routing.halt 403, {message: e.message}.to_json
+        rescue StandardError 
+          Api.logger.error "Unknown error: #{e.message}"
+          routing.halt 500, { message: 'API server error' }.to_json
         end
       end
     end
+    # rubocop:disable Metrics/BlockLength
   end
 end

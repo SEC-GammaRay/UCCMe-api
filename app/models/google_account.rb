@@ -3,12 +3,12 @@
 module UCCMe 
     # Maps Google details to attributes 
     class GoogleAccount 
-        def initilize(google_account)
+        def initialize(google_account)
             @google_account = google_account
         end 
         
         def username 
-            @google_account['login'] + @google
+            @google_account['name'] || @google_account['given_name'] || 'Unknown'
         end 
 
         def email 

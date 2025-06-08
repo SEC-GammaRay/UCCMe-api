@@ -35,6 +35,12 @@ module UCCMe
 
     plugin :timestamps, update_on_create: true
 
+    def self.create_sso_account(google_account)
+      create(username: google_account[:username],
+             email: google_account[:email], 
+             provider: 'google')
+    end
+
     def folders
       owned_folders + folder_collaborations
     end

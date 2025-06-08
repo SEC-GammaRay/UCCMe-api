@@ -42,6 +42,7 @@ task release?: %i[spec style audit] do
   puts "\nReady for release!"
 end
 
+# Helper task for other task to print environment
 task :print_env do
   puts "Environment: #{ENV['RACK_ENV'] || 'development'}"
 end

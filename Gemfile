@@ -19,12 +19,20 @@ gem 'rbnacl', '~> 7.1'
 gem 'hirb'
 gem 'sequel', '~>5.55'
 group :production do
+  # gem 'libpq-dev'
   gem 'pg'
 end
+
+# Data Encoding and Formatting
+gem 'base64'
+gem 'json'
 
 # debugging
 gem 'pry' # necessary for rake console
 gem 'reline'
+
+# External Services
+gem 'http'
 
 # development
 group :development do

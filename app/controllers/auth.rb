@@ -26,28 +26,33 @@ module UCCMe
         end
       end
 
-      routing.is 'authenticate' do
-        # POST /api/v1/auth/authenticate
-        routing.post do
-          credentials = HttpRequest.new(routing).body_data
-          auth_account = AuthenticateAccount.call(credentials)
-          auth_account.to_json
-        rescue AuthenticateAccount::UnauthorizedError
-          routing.halt '403', { message: 'Invalid credentials' }.to_json
+      routing.on 'authenticate' do
+        routing.is do
+          # POST /api/v1/auth/authenticate
+          routing.post do
+            credentials = HttpRequest.new(routing).body_data
+            auth_account = AuthenticateAccount.call(credentials)
+            auth_account.to_json
+          rescue AuthenticateAccount::UnauthorizedError
+            routing.halt '403', { message: 'Invalid credentials' }.to_json
+          end
         end
+
+          # POST /api/v1/auth/authenticate/sso
+          routing.post 'sso' do 
+            auth_request = HttpRequest.new(routing).body_data
+
+            puts "Auth request: #{auth_request.inspect}"
+            puts "Access token: #{auth_request[:access_token].inspect}"
+
+            auth_account = AuthenticateSSO.new.call(auth_request[:access_token])
+            { data: auth_account }.to_json
+
+          rescue StandardError => e 
+            Api.logger.warn "Fail to validate Google account: #{e.inspect}" 
+            routing.halt 400
+          end
       end
-
-        # POST /api/v1/auth/authenticate/sso
-        routing.post 'sso' do 
-          auth_request = HttpRequest.new(routing).body_data
-
-          auth_account = AuthenticateSSO.new.call(auth_request[:access_token])
-          { data: auth_account }.to_json
-        rescue Standard => e 
-          Api.logger.warn "Fail to validate Github account: #{e.inspect}" \
-                          "\n #{e.traceback}"
-          routing.halt 400
-        end 
     end
   end
 end

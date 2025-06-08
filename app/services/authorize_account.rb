@@ -10,7 +10,7 @@ module UCCMe
             end 
         end 
 
-        def self.call(auth; username:, auth_scope:)
+        def self.call(auth:, username:, auth_scope:)
             account = Account.first(username: username)
             policy = AccountPolicy.new(auth.account, account)
             raise ForbiddenError unless policy.can_view? 

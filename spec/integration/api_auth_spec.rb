@@ -55,4 +55,51 @@ describe 'Test Authentication Routes' do
       _(result['attributes']).must_be_nil
     end
   end
+
+
+  describe 'SSO Authorization' do
+    before do
+      WebMock.enable!
+      WebMock.stub_request(:get, app.config.GOOGLE_ACCOUNT_URL)
+              .to_return(body: GOOGLE_ACCOUNT_RESPONSE[GOOD_GOOGLE_ACCESS_TOKEN],
+                        status: 200,
+                        headers: { 'content-type' => 'application/json' })
+    end
+
+    after do
+      WebMock.disable!
+    end
+
+    it 'HAPPY AUTH SSO: should authenticate+authorize new valid SSO account' do
+      google_access_token = { access_token: GOOD_GOOGLE_ACCESS_TOKEN }
+
+      post 'api/v1/auth/sso', google_access_token.to_json, @req_header
+
+      auth_account = JSON.parse(last_response.body)['data']
+      account = auth_account['attributes']['account']['attributes']
+
+      _(last_response.status).must_equal 200
+      _(account['username']).must_equal(SSO_ACCOUNT['sso_username'])
+      _(account['email']).must_equal(SSO_ACCOUNT['email'])
+      _(account['id']).must_be_nil
+    end
+
+    it 'HAPPY AUTH SSO: should authorize existing SSO account' do
+      Credence::Account.create(
+        username: SSO_ACCOUNT['sso_username'],
+        email: SSO_ACCOUNT['email']
+      )
+
+      google_access_token = { access_token: GOOD_GOOGLE_ACCESS_TOKEN }
+      post 'api/v1/auth/sso', gh_access_token.to_json, @req_header
+
+      auth_account = JSON.parse(last_response.body)['data']
+      account = auth_account['attributes']['account']['attributes']
+
+      _(last_response.status).must_equal 200
+      _(account['username']).must_equal(SSO_ACCOUNT['sso_username'])
+      _(account['email']).must_equal(SSO_ACCOUNT['email'])
+      _(account['id']).must_be_nil
+    end
+  end
 end

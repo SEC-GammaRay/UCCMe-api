@@ -14,6 +14,8 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
+    addressable (2.8.7)
+      public_suffix (>= 2.0.2, < 7.0)
     ast (2.4.3)
     base64 (0.2.0)
     benchmark (0.4.0)
@@ -24,6 +26,7 @@ GEM
     coderay (1.1.3)
     concurrent-ruby (1.3.5)
     connection_pool (2.5.3)
+    domain_name (0.6.20240107)
     drb (2.2.3)
     erb (5.0.1)
     faraday (2.13.1)
@@ -42,9 +45,21 @@ GEM
     ffi (1.17.2-x86_64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     ffi (1.17.2-x86_64-linux-musl)
+    ffi-compiler (1.3.2)
+      ffi (>= 1.15.5)
+      rake
     figaro (1.2.0)
       thor (>= 0.14.0, < 2)
     hirb (0.7.3)
+    http (5.2.0)
+      addressable (~> 2.8)
+      base64 (~> 0.1)
+      http-cookie (~> 1.0)
+      http-form_data (~> 2.2)
+      llhttp-ffi (~> 0.5.0)
+    http-cookie (1.0.8)
+      domain_name (~> 0.5)
+    http-form_data (2.3.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     io-console (0.8.0)
@@ -54,6 +69,9 @@ GEM
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
+    llhttp-ffi (0.5.1)
+      ffi-compiler (~> 1.0)
+      rake (~> 13.0)
     logger (1.7.0)
     mailjet (1.8.0)
       activesupport (>= 5.0.0)
@@ -71,11 +89,11 @@ GEM
     parser (3.3.8.0)
       ast (~> 2.4.1)
       racc
-    pg (1.5.9)
     prism (1.4.0)
     pry (0.15.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
+    public_suffix (6.0.2)
     puma (6.6.0)
       nio4r (~> 2.0)
     racc (1.8.1)
@@ -163,15 +181,17 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport
+  base64
   bundler-audit
   erb
   figaro (~> 1.2)
   hirb
+  http
+  json
   logger (~> 1.0)
   mailjet
   minitest
   minitest-rg
-  pg
   pry
   puma (~> 6.0)
   rack (>= 3.1.16)
