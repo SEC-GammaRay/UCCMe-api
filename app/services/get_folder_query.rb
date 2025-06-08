@@ -21,7 +21,7 @@ module UCCMe
       folder = Folder.first(id: folder_id)
       raise NotFoundError unless folder
 
-      policy = FolderPolicy.new(account, folder)
+      policy = UCCMe::FolderPolicy.new(account, folder)
       raise ForbiddenError unless policy.can_view?
 
       folder.full_details.merge(policies: policy.summary)

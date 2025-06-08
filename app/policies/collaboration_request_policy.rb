@@ -7,8 +7,8 @@ module UCCMe
       @folder = folder
       @requestor_account = requestor_account
       @target_account = target_account
-      @requestor = FolderPolicy.new(requestor_account, folder)
-      @target = FolderPolicy.new(target_account, folder)
+      @requestor = UCCMe::FolderPolicy.new(requestor_account, folder)
+      @target = UCCMe::FolderPolicy.new(target_account, folder)
     end
 
     def can_invite?

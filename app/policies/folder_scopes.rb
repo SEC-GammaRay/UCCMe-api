@@ -7,7 +7,7 @@ module UCCMe
     class AccountScope
       def initialize(current_account, target_account = nil)
         target_account ||= current_account
-        @full_scope = all_projects(target_account)
+        @full_scope = all_folders(target_account)
         @current_account = current_account
         @target_account = target_account
       end
@@ -16,8 +16,8 @@ module UCCMe
         if @current_account == @target_account
           @full_scope
         else
-          @full_scope.select do |proj|
-            includes_collaborator?(proj, @current_account)
+          @full_scope.select do |folder|
+            includes_collaborator?(folder, @current_account)
           end
         end
       end
@@ -25,7 +25,7 @@ module UCCMe
       private
 
       def all_folders(account)
-        account.owned_folders + account.collaborations
+        account.owned_folders + account.folder_collaborations
       end
 
       def includes_collaborator?(folder, account)

@@ -8,26 +8,35 @@ require 'yaml'
 
 require_relative 'test_load_all'
 
-# Helper to clean database during test runs
-module DatabaseHelper
-  def self.wipe_database
-    db = UCCMe::Api.DB
-    # Ignore foreign key constraints when wiping tables
-    db.run('PRAGMA foreign_keys = OFF')
-    UCCMe::Folder.map(&:destroy)
-    UCCMe::StoredFile.map(&:destroy)
-    UCCMe::Account.map(&:destroy)
-    db.run('PRAGMA foreign_keys = ON')
-  end
+def authenticate(account_data)
+  credentials = {
+    username: account_data['username'],
+    password: account_data['password']
+  }
+  UCCMe::AuthenticateAccount.call(credentials)
 end
 
 def auth_header(account_data)
-  auth = UCCMe::AuthenticateAccount.call(
-    username: account_data['username'],
-    password: account_data['password']
-  )
+  authenticated_account = authenticate(account_data)
+  "Bearer #{authenticated_account[:attributes][:auth_token]}"
+end
 
-  "Bearer #{auth[:attributes][:auth_token]}"
+def authorization(account_data)
+  authenticated_account = authenticate(account_data)
+  token = AuthToken.new(authenticated_account[:attributes][:auth_token])
+  account_data = token.payload['attributes']
+  account = UCCMe::Account.first(username: account_data['username'])
+  UCCMe::AuthorizedAccount.new(account, token.scope)
+end
+
+# Helper to clean database during test runs
+module DatabaseHelper
+  def self.wipe_database
+    UCCMe::FileShare.map(&:destroy)
+    UCCMe::StoredFile.map(&:destroy)
+    UCCMe::Folder.map(&:destroy)
+    UCCMe::Account.map(&:destroy)
+  end
 end
 
 DATA = {

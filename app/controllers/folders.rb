@@ -10,6 +10,7 @@ module UCCMe
       routing.halt(403, unauthorized_message) unless @auth_account
 
       @folder_route = "#{@api_root}/folders"
+      @file_route = "#{@api_root}/files"
       routing.on String do |folder_id|
         # GET api/v1/folders/[ID]
         routing.get do
@@ -83,6 +84,28 @@ module UCCMe
             routing.halt 403, { message: error.message }.to_json
           rescue StandardError
             routing.halt 500, { message: 'API server error' }.to_json
+          end
+        end
+        
+        routing.on('files') do
+          # POST api/v1/folders/[folder_id]/files
+          routing.post do
+            new_file = CreateFile.call(
+              account: @auth_account,
+              folder_id: folder_id,
+              file_data: HttpRequest.new(routing).body_data
+            )
+
+            response.status = 201
+            response['Location'] = "#{@file_route}/#{new_file.id}"
+            { message: 'File saved', data: new_file }.to_json
+          rescue CreateFile::ForbiddenError => error
+            routing.halt 403, { message: error.message }.to_json
+          rescue CreateFile::IllegalRequestError => error
+            routing.halt 400, { message: error.message }.to_json
+          rescue StandardError => error
+            Api.logger.warn "FILE SAVING ERROR: #{error.message}"
+            routing.halt 500, { message: 'Error creating file' }.to_json
           end
         end
       end

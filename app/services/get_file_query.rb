@@ -18,13 +18,19 @@ module UCCMe
     end
 
     # File for given requestor account
-    def self.call(auth:, file:) # rubocop:disable Lint/UnusedMethodArgument
+    def self.call(auth:, file:, account:) # rubocop:disable Lint/UnusedMethodArgument
       raise NotFoundError unless file
 
-      # policy = FilePolicy.new(auth.account, file, auth.scope)
-      # raise ForbiddenError unless policy.can_view?
+      # Extract auth_scope from auth token
+      auth_scope = AuthScope.new(auth.scope)
+      
+      policy = FilePolicy.new(account, file, auth_scope)
+      raise ForbiddenError unless policy.can_view?
 
-      file
+      # Return file data with permissions info
+      file_data = file.to_h
+      file_data[:policies] = policy.summary
+      file_data
     end
   end
 end

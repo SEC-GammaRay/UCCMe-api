@@ -8,7 +8,6 @@ require_relative 'http_request'
 module UCCMe
   # main entry point
   class Api < Roda
-    # plugin :environments
     plugin :halt
     plugin :all_verbs
     plugin :multi_route
@@ -18,6 +17,9 @@ module UCCMe
     class << self
       attr_accessor :logger
     end
+
+    # Unauthorized message constant
+    UNAUTH_MSG = { message: 'Unauthorized Request' }.to_json
 
     # Initialize the logger
     configure do
@@ -30,12 +32,15 @@ module UCCMe
       request = HttpRequest.new(routing)
 
       request.secure? ||
-        routing.halt(403, { message: 'TLS/SSL Required' }).to_json
+        routing.halt(403, { message: 'TLS/SSL Required' }.to_json)
 
       begin
         @auth_account = request.authenticated_account
+        @auth = request.auth_token
       rescue AuthToken::InvalidTokenError
         routing.halt 403, { message: 'Invalid auth token' }.to_json
+      rescue AuthToken::ExpiredTokenError
+        routing.halt 403, { message: 'Expired auth token' }.to_json
       end
 
       routing.root do
@@ -45,7 +50,6 @@ module UCCMe
       routing.on 'api' do
         routing.on 'v1' do
           @api_root = 'api/v1'
-          routing.multi_route('account')
           routing.multi_route
         end
       end

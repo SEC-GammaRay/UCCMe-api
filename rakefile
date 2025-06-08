@@ -88,7 +88,7 @@ namespace :db do
   end
 
   task reset_seeds: :load_models do
-    @app.DB[:schema_seeds].delete if @app.DB.tables.includes?(:schema_seeds)
+    @app.DB[:schema_seeds].delete if @app.DB.tables.include?(:schema_seeds)
     UCCMe::Account.dataset.destroy
   end
 

@@ -15,8 +15,10 @@ module UCCMe
       folder = Folder.first(id: folder_id)
       collaborator = Account.first(email: collab_email)
 
-      policy = CollaborationRequestPolicy.new(folder, account, collaborator)
-      raise ForbiddenError unless policy.can_remove?
+      # policy = UCCMe::CollaborationRequestPolicy.new(folder, account, collaborator)
+      # aise ForbiddenError unless policy.can_remove?
+      raise ForbiddenError unless folder.owner == account  # Must be owner
+      raise ForbiddenError unless folder.collaborators.include?(collaborator)  # Must be a collaborator
 
       folder.remove_collaborator(collaborator)
       collaborator

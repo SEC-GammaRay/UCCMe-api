@@ -13,8 +13,11 @@ module UCCMe
     def self.call(account:, folder_id:, collab_email:)
       invitee = Account.first(email: collab_email)
       folder = Folder.first(id: folder_id)
-      policy = CollaborationRequestPolicy.new(folder, account, invitee)
-      raise ForbiddenError unless policy.can_invite?
+      # policy = UCCMe::CollaborationRequestPolicy.new(folder, account, invitee)
+      # raise ForbiddenError unless policy.can_invite?
+      raise ForbiddenError if account == invitee  # Can't add yourself
+      raise ForbiddenError unless folder.owner == account  # Must be owner
+      raise ForbiddenError if folder.collaborators.include?(invitee)  # Already a collaborator
 
       folder.add_collaborator(invitee)
       invitee

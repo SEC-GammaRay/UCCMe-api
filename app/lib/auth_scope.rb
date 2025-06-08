@@ -13,9 +13,9 @@ class AuthScope
   DIVIDER = ':'
 
   def initialize(scopes = EVERYTHING)
-    @scopes_str = scopes
+    @scopes_str = scopes.to_s # Ensure it's a string
     @scopes = {}
-    scopes.split(SEPARATOR).each { |scope| add_scope(scope) }
+    @scopes_str.split(SEPARATOR).each { |scope| add_scope(scope) }
   end
 
   def can_read?(resource)

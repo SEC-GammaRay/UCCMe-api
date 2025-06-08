@@ -23,6 +23,15 @@ module UCCMe
       Account.first(username: account_payload['attributes']['username'])
     end
 
+    def auth_token
+      return nil unless @routing.headers['AUTHORIZATION']
+
+      scheme, token_str = @routing.headers['AUTHORIZATION'].split
+      return nil unless scheme.match?(/^Bearer$/i)
+
+      AuthToken.new(token_str)
+    end
+
     def body_data
       JSON.parse(@routing.body.read, symbolize_names: true)
     end

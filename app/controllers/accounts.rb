@@ -14,10 +14,12 @@ module UCCMe
         
         # GET api/v1/accounts/[username]
         routing.get do
+          auth_scope = AuthScope.new(@auth.scope)
+          
           auth = AuthorizeAccount.call(
             auth: @auth, 
             username: username,
-            auth_scope: AuthScope::READ_ONLY
+            auth_scope: auth_scope
           )
           
           { data: auth }.to_json
