@@ -18,6 +18,8 @@ module UCCMe
           file = GetFileQuery.call(
             auth: @auth, file: @req_file
           )
+          s3_path = file.s3_path
+          file.s3_path = FileStorageHelper.presigned_url(s3_path: s3_path)
           { data: file }.to_json
         rescue GetFileQuery::ForbiddenError => error
           routing.halt 403, { message: error.message }.to_json

@@ -30,6 +30,13 @@ def auth_header(account_data)
   "Bearer #{auth[:attributes][:auth_token]}"
 end
 
+def get_s3_path(filename, config)
+  region = config.AWS_REGION
+  bucket = config.AWS_BUCKET
+  prefix = config.AWS_PREFIX
+  "https://#{bucket}.s3.#{region}.amazonaws.com/#{prefix}/#{filename}"
+end
+
 DATA = {
   accounts: YAML.load_file('db/seeds/accounts_seeds.yml'),
   stored_files: YAML.safe_load_file('db/seeds/stored_files_seeds.yml'),

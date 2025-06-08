@@ -20,7 +20,7 @@ module UCCMe
     plugin :timestamps, update_on_create: true
     plugin :whitelist_security
     plugin :prepared_statements # Add prepared statement support for extra security
-    set_allowed_columns :filename, :description, :content, :cc_types, :owner_id
+    set_allowed_columns :filename, :description, :s3_path, :cc_types, :owner_id
 
     # def_column_accessor :filename_secure, :cc_types_secure
 
@@ -61,7 +61,7 @@ module UCCMe
           id:,
           filename:,
           description:,
-          content:,
+          s3_path:,
           cc_types:
         },
         include: {
