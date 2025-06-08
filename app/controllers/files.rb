@@ -16,8 +16,8 @@ module UCCMe
 
         routing.get do
           # Get auth token from header
-          auth_header = routing.headers['AUTHORIZATION']
-          auth_token = AuthToken.new(auth_header.split[1]) if auth_header
+          # auth_header = routing.headers['AUTHORIZATION']
+          # auth_token = AuthToken.new(auth_header.split[1]) if auth_header
 
           file = GetFileQuery.call(
             auth: @auth, 
@@ -36,9 +36,9 @@ module UCCMe
 
         # DELETE api/v1/files/[file_id]
         routing.delete do
-          auth_header = routing.headers['AUTHORIZATION']
-          auth_token = AuthToken.new(auth_header.split[1]) if auth_header
-          auth_scope = AuthScope.new(auth_token.scope)
+          # auth_header = routing.headers['AUTHORIZATION']
+          # auth_token = AuthToken.new(auth_header.split[1]) if auth_header
+          auth_scope = AuthScope.new(@auth.scope)
           
           policy = FilePolicy.new(@auth_account, @req_file, auth_scope)
           

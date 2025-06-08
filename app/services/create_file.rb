@@ -32,7 +32,8 @@ module UCCMe
       
       raise IllegalRequestError if existing_file
 
-      folder.add_stored_file(file_data)
+      file_data_with_owner = file_data.merge(owner_id: account.id)
+      folder.add_stored_file(file_data_with_owner)
     rescue Sequel::MassAssignmentRestriction
       raise IllegalRequestError
     end

@@ -22,7 +22,7 @@ module UCCMe
 
       # Extract auth_scope and pass to policy
       if auth
-        auth_scope = auth.scope
+        auth_scope = AuthScope.new(auth.scope)
         file_policy = FilePolicy.new(account, file, auth_scope)
         raise ForbiddenError unless file_policy.can_view?
       end
@@ -52,7 +52,7 @@ module UCCMe
       
       # Extract auth_scope and pass to policy
       if auth
-        auth_scope = auth.scope
+        auth_scope = AuthScope.new(auth.scope)
         file_policy = FilePolicy.new(account, file, auth_scope)
         raise ForbiddenError unless file_policy.can_share?
       end
@@ -70,7 +70,7 @@ module UCCMe
 
       # Extract auth_scope and pass to policy
       if auth
-        auth_scope = auth.scope
+        auth_scope = AuthScope.new(auth.scope)
         file_policy = FilePolicy.new(account, file, auth_scope)
         raise ForbiddenError unless file_policy.can_share?
       end

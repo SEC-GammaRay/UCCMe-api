@@ -23,7 +23,11 @@ describe 'Test File Handling' do
     it 'HAPPY: should be able to get details of a single file' do
       file_data = DATA[:stored_files][0]
       folder = @account.folders.first
-      file = folder.add_stored_file(file_data)
+      file = UCCMe::CreateFile.call(
+        account: @account,
+        folder_id: folder.id,
+        file_data: file_data
+      )
 
       header 'AUTHORIZATION', auth_header(@account_data)
       get "/api/v1/files/#{file.id}"
@@ -37,7 +41,10 @@ describe 'Test File Handling' do
     it 'SAD AUTHORIZATION: should not get file details without authorization' do
       file_data = DATA[:stored_files][0]
       folder = UCCMe::Folder.first
-      file = folder.add_stored_file(file_data)
+      file = UCCMe::CreateFileForFolder.call(
+        folder_id: folder.id,
+        file_data: file_data
+      )
 
       get "/api/v1/files/#{file.id}"
 
@@ -105,7 +112,8 @@ describe 'Test File Handling' do
     it 'should correctly build file route paths' do
       folder = UCCMe::Folder.first
       # file = folder.add_stored_file(filter_file_data(DATA[:stored_files][0]))
-      file = UCCMe::CreateFileForFolder.call(
+      file = UCCMe::CreateFile.call(
+        account: @account,
         folder_id: folder.id,
         file_data: DATA[:stored_files][0]
       )

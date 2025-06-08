@@ -15,6 +15,7 @@ module UCCMe
       new_file = StoredFile.new
       new_file.set(file_data)
       new_file.folder_id = folder.id
+      new_file.owner_id = folder.owner_id
       new_file.save_changes
       new_file
     end

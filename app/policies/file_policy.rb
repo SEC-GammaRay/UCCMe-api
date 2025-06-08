@@ -67,6 +67,9 @@ class FilePolicy
     @active_share ||= UCCMe::FileShare.where(
       stored_file_id: @file.id,
       shared_with_id: @account.id
-    ).where { expires_at > Time.now || expires_at.nil? }.first
+    ).where { 
+      # Handle both cases: no expiration (nil) or future expiration
+      Sequel.expr(expires_at: nil) | (expires_at > Time.now) 
+    }.first
   end
 end

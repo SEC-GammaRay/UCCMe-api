@@ -17,8 +17,8 @@ module UCCMe
             share_data = HttpRequest.new(routing).body_data
             
             # Extract auth_scope from the token
-            auth_token = AuthToken.new(routing.headers['AUTHORIZATION'].split[1])
-            auth_scope = AuthScope.new(auth_token.scope)
+            # auth_token = AuthToken.new(routing.headers['AUTHORIZATION'].split[1])
+            auth_scope = AuthScope.new(@auth.scope)
 
             new_share = ShareFile.call(
               account: @auth_account,
@@ -42,12 +42,12 @@ module UCCMe
 
           # GET api/v1/shares/files/[file_id]
           routing.get do
-            auth_token = AuthToken.new(routing.headers['AUTHORIZATION'].split[1])
+            # auth_token = AuthToken.new(routing.headers['AUTHORIZATION'].split[1])
             
             shares = ManageFileShares.get_file_shares(
               file_id: file_id,
               account: @auth_account,
-              auth: auth_token
+              auth: @auth
             )
 
             { data: shares }.to_json
@@ -65,12 +65,12 @@ module UCCMe
       # DELETE api/v1/shares/[share_id]
       routing.on String do |share_id|
         routing.delete do
-          auth_token = AuthToken.new(routing.headers['AUTHORIZATION'].split[1])
+          # auth_token = AuthToken.new(routing.headers['AUTHORIZATION'].split[1])
           
           deleted_share = ManageFileShares.delete_share(
             share_id: share_id,
             account: @auth_account,
-            auth: auth_token
+            auth: @auth
           )
 
           { message: 'Share deleted successfully', data: deleted_share }.to_json

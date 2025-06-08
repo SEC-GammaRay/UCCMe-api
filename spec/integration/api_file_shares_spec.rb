@@ -17,7 +17,11 @@ describe 'Test File Sharing' do
     @other = UCCMe::Account.create(@other_data)
 
     @folder = @owner.add_owned_folder(DATA[:folders][0])
-    @file = @folder.add_stored_file(DATA[:stored_files][0])
+    @file = UCCMe::CreateFile.call(
+      account: @owner,
+      folder_id: @folder.id,
+      file_data: DATA[:stored_files][0]
+      )
 
     header 'CONTENT_TYPE', 'application/json'
   end

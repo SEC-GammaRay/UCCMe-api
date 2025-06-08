@@ -25,7 +25,7 @@ module UCCMe
       raise NotFoundError unless share_with
 
       # Use default auth_scope if not provided
-      auth_scope ||= AuthScope.new
+      auth_scope ||= AuthScope.new(AuthScope::EVERYTHING)
 
       policy = FilePolicy.new(account, file, auth_scope)
       raise ForbiddenError unless policy.can_share?

@@ -15,12 +15,14 @@ describe 'Test Account Handling' do
       account_data = DATA[:accounts][1]
       account = UCCMe::Account.create(account_data)
 
+      header 'AUTHORIZATION', auth_header(account_data)
       get "api/v1/accounts/#{account.username}"
       _(last_response.status).must_equal 200
 
-      result = JSON.parse(last_response.body)['attributes']
-      _(result['id']).must_equal account.id
-      _(result['username']).must_equal account.username
+      response_body = JSON.parse(last_response.body)
+      result = response_body['data']  # 改為使用 'data' key
+      _(result['attributes']['id']).must_equal account.id
+      _(result['attributes']['username']).must_equal account.username
       _(result['salt']).must_be_nil
       _(result['password']).must_be_nil
       _(result['password_hash']).must_be_nil
