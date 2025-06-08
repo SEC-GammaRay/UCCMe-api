@@ -3,7 +3,6 @@
 require 'securerandom'
 
 module UCCMe
-  # Service to share a file with another user
   class ShareFile
     class ForbiddenError < StandardError
       def message
@@ -17,48 +16,93 @@ module UCCMe
       end
     end
 
-    def self.call(account:, file_id:, share_with_email:, permissions:, expires_at: nil, auth_scope: nil)
-      file = StoredFile.first(id: file_id)
-      raise NotFoundError unless file
+    # Refactored: Reduce parameter count by using a data object
+    def self.call(params)
+      new(params).execute
+    end
 
-      share_with = Account.first(email: share_with_email)
-      raise NotFoundError unless share_with
+    def initialize(params)
+      @account = params[:account]
+      @file_id = params[:file_id]
+      @share_with_email = params[:share_with_email]
+      @permissions = params[:permissions]
+      @expires_at = params[:expires_at]
+      @auth_scope = params[:auth_scope] || AuthScope.new(AuthScope::EVERYTHING)
+    end
 
-      # Use default auth_scope if not provided
-      auth_scope ||= AuthScope.new(AuthScope::EVERYTHING)
+    def execute
+      validate_resources
+      validate_permissions
+      validate_sharing_rules
 
+      create_or_update_share
+    end
+
+    private
+
+    attr_reader :account, :file_id, :share_with_email, :permissions, :expires_at, :auth_scope
+
+    def validate_resources
+      raise NotFoundError unless file && share_with_user
+    end
+
+    def validate_permissions
       policy = FilePolicy.new(account, file, auth_scope)
       raise ForbiddenError unless policy.can_share?
+    end
 
-      # Don't allow sharing with self
-      raise ForbiddenError if account == share_with
+    def validate_sharing_rules
+      raise ForbiddenError if sharing_with_self?
+    end
 
-      # Check if share already exists
-      existing_share = FileShare.where(
-        stored_file_id: file.id,
-        shared_with_id: share_with.id
-      ).first
-
+    def create_or_update_share
       if existing_share
-        # Update existing share
-        existing_share.update(
-          permissions: JSON.generate(permissions),
-          expires_at: expires_at
-        )
-        existing_share
+        update_existing_share
       else
-        # Create new share
-        share_token = SecureRandom.urlsafe_base64(32)
-        
-        FileShare.create(
-          stored_file_id: file.id,
-          owner_id: account.id,
-          shared_with_id: share_with.id,
-          permissions: JSON.generate(permissions),
-          expires_at: expires_at,
-          share_token: share_token
-        )
+        create_new_share
       end
+    end
+
+    def file
+      @file ||= StoredFile.first(id: file_id)
+    end
+
+    def share_with_user
+      @share_with_user ||= Account.first(email: share_with_email)
+    end
+
+    def sharing_with_self?
+      account == share_with_user
+    end
+
+    def existing_share
+      @existing_share ||= FileShare.where(
+        stored_file_id: file.id,
+        shared_with_id: share_with_user.id
+      ).first
+    end
+
+    def update_existing_share
+      existing_share.update(
+        permissions: JSON.generate(permissions),
+        expires_at: expires_at
+      )
+      existing_share
+    end
+
+    def create_new_share
+      FileShare.create(
+        stored_file_id: file.id,
+        owner_id: account.id,
+        shared_with_id: share_with_user.id,
+        permissions: JSON.generate(permissions),
+        expires_at: expires_at,
+        share_token: generate_share_token
+      )
+    end
+
+    def generate_share_token
+      SecureRandom.urlsafe_base64(32)
     end
   end
 end

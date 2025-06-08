@@ -12,8 +12,8 @@ module UCCMe
 
     plugin :timestamps, update_on_create: true
     plugin :whitelist_security
-    set_allowed_columns :stored_file_id, :owner_id, :shared_with_id, 
-                       :expires_at, :permissions, :share_token
+    set_allowed_columns :stored_file_id, :owner_id, :shared_with_id,
+                        :expires_at, :permissions, :share_token
 
     def expired?
       expires_at && Time.now > expires_at

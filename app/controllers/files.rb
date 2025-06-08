@@ -20,7 +20,7 @@ module UCCMe
           # auth_token = AuthToken.new(auth_header.split[1]) if auth_header
 
           file = GetFileQuery.call(
-            auth: @auth, 
+            auth: @auth,
             file: @req_file,
             account: @auth_account
           )
@@ -39,11 +39,11 @@ module UCCMe
           # auth_header = routing.headers['AUTHORIZATION']
           # auth_token = AuthToken.new(auth_header.split[1]) if auth_header
           auth_scope = AuthScope.new(@auth.scope)
-          
+
           policy = FilePolicy.new(@auth_account, @req_file, auth_scope)
-          
+
           routing.halt 403, { message: 'Not authorized to delete this file' }.to_json unless policy.can_delete?
-          
+
           @req_file.destroy
           { message: 'File deleted successfully' }.to_json
         rescue StandardError => error

@@ -73,7 +73,7 @@ def create_file_shares
     # Find owner and shared_with accounts
     owner = UCCMe::Account.first(username: share_info['owner_username'])
     shared_with = UCCMe::Account.first(email: share_info['shared_with_email'])
-    
+
     next unless owner && shared_with
     next unless file.owner == owner # Verify ownership
 
@@ -91,8 +91,8 @@ def create_file_shares
         auth_scope: UCCMe::AuthScope.new(UCCMe::AuthScope::EVERYTHING)
       )
       puts "  Created file share: #{file.filename} -> #{shared_with.email}"
-    rescue StandardError => e
-      puts "  Failed to create file share: #{e.message}"
+    rescue StandardError => error
+      puts "  Failed to create file share: #{error.message}"
     end
   end
 end

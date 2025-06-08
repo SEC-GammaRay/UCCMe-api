@@ -11,22 +11,22 @@ module UCCMe
 
       routing.on String do |username|
         routing.halt(403, UNAUTH_MSG) unless @auth_account
-        
+
         # GET api/v1/accounts/[username]
         routing.get do
           auth_scope = AuthScope.new(@auth.scope)
-          
+
           auth = AuthorizeAccount.call(
-            auth: @auth, 
+            auth: @auth,
             username: username,
             auth_scope: auth_scope
           )
-          
+
           { data: auth }.to_json
-        rescue AuthorizeAccount::ForbiddenError => e
-          routing.halt 404, { message: e.message }.to_json
-        rescue StandardError => e
-          Api.logger.error "GET ACCOUNT ERROR: #{e.inspect}"
+        rescue AuthorizeAccount::ForbiddenError => error
+          routing.halt 404, { message: error.message }.to_json
+        rescue StandardError => error
+          Api.logger.error "GET ACCOUNT ERROR: #{error.inspect}"
           routing.halt 500, { message: 'API Server Error' }.to_json
         end
       end

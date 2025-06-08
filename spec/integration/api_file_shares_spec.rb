@@ -21,7 +21,7 @@ describe 'Test File Sharing' do
       account: @owner,
       folder_id: @folder.id,
       file_data: DATA[:stored_files][0]
-      )
+    )
 
     header 'CONTENT_TYPE', 'application/json'
   end
@@ -37,10 +37,10 @@ describe 'Test File Sharing' do
       post "api/v1/shares/files/#{@file.id}", share_data.to_json
 
       _(last_response.status).must_equal 201
-      
+
       result = JSON.parse(last_response.body)
       _(result['message']).must_equal 'File shared successfully'
-      
+
       # Verify share was created
       share = UCCMe::FileShare.last
       _(share.stored_file_id).must_equal @file.id
@@ -51,14 +51,14 @@ describe 'Test File Sharing' do
     it 'HAPPY: should share a file with view and copy permissions' do
       share_data = {
         share_with_email: @share_with.email,
-        permissions: ['view', 'copy']
+        permissions: %w[view copy]
       }
 
       header 'AUTHORIZATION', auth_header(@owner_data)
       post "api/v1/shares/files/#{@file.id}", share_data.to_json
 
       _(last_response.status).must_equal 201
-      
+
       share = UCCMe::FileShare.last
       _(JSON.parse(share.permissions)).must_include 'view'
       _(JSON.parse(share.permissions)).must_include 'copy'
@@ -76,7 +76,7 @@ describe 'Test File Sharing' do
       post "api/v1/shares/files/#{@file.id}", share_data.to_json
 
       _(last_response.status).must_equal 201
-      
+
       share = UCCMe::FileShare.last
       _(share.expires_at).wont_be_nil
       _(share.active?).must_equal true
@@ -134,7 +134,7 @@ describe 'Test File Sharing' do
       get "api/v1/shares/files/#{@file.id}"
 
       _(last_response.status).must_equal 200
-      
+
       result = JSON.parse(last_response.body)
       _(result['data'].count).must_equal 1
       _(result['data'][0]['attributes']['shared_with_username']).must_equal @share_with.username
@@ -164,7 +164,7 @@ describe 'Test File Sharing' do
       delete "api/v1/shares/#{@share.id}"
 
       _(last_response.status).must_equal 200
-      
+
       # Verify share was deleted
       _(UCCMe::FileShare.first(id: @share.id)).must_be_nil
     end
@@ -174,7 +174,7 @@ describe 'Test File Sharing' do
       delete "api/v1/shares/#{@share.id}"
 
       _(last_response.status).must_equal 403
-      
+
       # Verify share still exists
       _(UCCMe::FileShare.first(id: @share.id)).wont_be_nil
     end
@@ -186,7 +186,7 @@ describe 'Test File Sharing' do
         stored_file_id: @file.id,
         owner_id: @owner.id,
         shared_with_id: @share_with.id,
-        permissions: JSON.generate(['view', 'copy']),
+        permissions: JSON.generate(%w[view copy]),
         share_token: SecureRandom.urlsafe_base64(32)
       )
     end
@@ -196,7 +196,7 @@ describe 'Test File Sharing' do
       get "api/v1/files/#{@file.id}"
 
       _(last_response.status).must_equal 200
-      
+
       result = JSON.parse(last_response.body)
       _(result['data']['policies']['can_view']).must_equal true
       _(result['data']['policies']['can_copy']).must_equal true
@@ -223,7 +223,7 @@ describe 'Test File Sharing' do
       delete "api/v1/files/#{@file.id}"
 
       _(last_response.status).must_equal 200
-      
+
       # Verify file and shares were deleted
       _(UCCMe::StoredFile.first(id: @file.id)).must_be_nil
       _(UCCMe::FileShare.where(stored_file_id: @file.id).count).must_equal 0

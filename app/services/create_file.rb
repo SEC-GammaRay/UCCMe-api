@@ -29,7 +29,7 @@ module UCCMe
         folder_id: folder_id,
         filename: file_data[:filename]
       ).first
-      
+
       raise IllegalRequestError if existing_file
 
       file_data_with_owner = file_data.merge(owner_id: account.id)

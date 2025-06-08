@@ -31,9 +31,9 @@ module UCCMe
       raise ForbiddenError unless file.owner == account
 
       shares = FileShare.where(stored_file_id: file_id)
-                       .order(:created_at)
-                       .all
-      
+                        .order(:created_at)
+                        .all
+
       # Add status information
       shares.map do |share|
         share_hash = share.to_h
@@ -49,7 +49,7 @@ module UCCMe
       raise NotFoundError unless share
 
       file = share.stored_file
-      
+
       # Extract auth_scope and pass to policy
       if auth
         auth_scope = AuthScope.new(auth.scope)
@@ -79,24 +79,24 @@ module UCCMe
       raise ForbiddenError unless file.owner == account
 
       expired_shares = FileShare.where(stored_file_id: file_id)
-                               .where { expires_at < Time.now }
-      
+                                .where { expires_at < Time.now }
+
       count = expired_shares.count
-      expired_shares.destroy if count > 0
-      
+      expired_shares.destroy if count.positive?
+
       count
     end
 
     # Clean up all expired shares for an account's files
     def self.cleanup_all_expired_shares(account:, auth: nil)
       file_ids = account.owned_storedfiles.map(&:id)
-      
+
       expired_shares = FileShare.where(stored_file_id: file_ids)
-                               .where { expires_at < Time.now }
-      
+                                .where { expires_at < Time.now }
+
       count = expired_shares.count
-      expired_shares.destroy if count > 0
-      
+      expired_shares.destroy if count.positive?
+
       count
     end
   end

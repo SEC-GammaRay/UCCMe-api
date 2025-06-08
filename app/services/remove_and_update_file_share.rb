@@ -15,12 +15,10 @@ module UCCMe
       end
     end
 
-
     def self.call(account:, file_id:, user_email:)
-
       target_user = Account.first(email: user_email)
       file = StoredFile.first(id: file_id)
-      
+
       raise ForbiddenError unless target_user
       raise ForbiddenError unless file
       raise ForbiddenError unless file.owner == account
@@ -32,7 +30,7 @@ module UCCMe
       raise ShareNotFoundError if active_shares.empty?
 
       file.remove_share(user_email)
-      
+
       {
         message: 'Share removed successfully',
         removed_user: user_email,
@@ -62,7 +60,6 @@ module UCCMe
     end
 
     def self.call(account:, file_id:, user_email:, new_permission:)
-
       target_user = Account.first(email: user_email)
       file = StoredFile.first(id: file_id)
 
@@ -74,13 +71,13 @@ module UCCMe
       raise ForbiddenError unless policy.can_update_permission?
 
       normalized_permission = new_permission.to_s.downcase
-      raise InvalidPermissionError unless ['view', 'copy'].include?(normalized_permission)
+      raise InvalidPermissionError unless %w[view copy].include?(normalized_permission)
 
       active_shares = file.active_shares_for_user(target_user)
       raise ShareNotFoundError if active_shares.empty?
 
       file.update_share_permission(user_email, normalized_permission)
-      
+
       {
         message: 'Share permission updated successfully',
         updated_user: user_email,

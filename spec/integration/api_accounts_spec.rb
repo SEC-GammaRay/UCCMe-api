@@ -20,7 +20,7 @@ describe 'Test Account Handling' do
       _(last_response.status).must_equal 200
 
       response_body = JSON.parse(last_response.body)
-      result = response_body['data']  # 改為使用 'data' key
+      result = response_body['data'] # 改為使用 'data' key
       _(result['attributes']['id']).must_equal account.id
       _(result['attributes']['username']).must_equal account.username
       _(result['salt']).must_be_nil

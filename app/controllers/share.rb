@@ -15,7 +15,7 @@ module UCCMe
         routing.on String do |file_id|
           routing.post do
             share_data = HttpRequest.new(routing).body_data
-            
+
             # Extract auth_scope from the token
             # auth_token = AuthToken.new(routing.headers['AUTHORIZATION'].split[1])
             auth_scope = AuthScope.new(@auth.scope)
@@ -31,19 +31,19 @@ module UCCMe
 
             response.status = 201
             { message: 'File shared successfully', data: new_share }.to_json
-          rescue ShareFile::ForbiddenError => e
-            routing.halt 403, { message: e.message }.to_json
-          rescue ShareFile::NotFoundError => e
-            routing.halt 404, { message: e.message }.to_json
-          rescue StandardError => e
-            Api.logger.error "SHARE FILE ERROR: #{e.inspect}"
+          rescue ShareFile::ForbiddenError => error
+            routing.halt 403, { message: error.message }.to_json
+          rescue ShareFile::NotFoundError => error
+            routing.halt 404, { message: error.message }.to_json
+          rescue StandardError => error
+            Api.logger.error "SHARE FILE ERROR: #{error.inspect}"
             routing.halt 500, { message: 'Error sharing file' }.to_json
           end
 
           # GET api/v1/shares/files/[file_id]
           routing.get do
             # auth_token = AuthToken.new(routing.headers['AUTHORIZATION'].split[1])
-            
+
             shares = ManageFileShares.get_file_shares(
               file_id: file_id,
               account: @auth_account,
@@ -51,12 +51,12 @@ module UCCMe
             )
 
             { data: shares }.to_json
-          rescue ManageFileShares::ForbiddenError => e
-            routing.halt 403, { message: e.message }.to_json
-          rescue ManageFileShares::NotFoundError => e
-            routing.halt 404, { message: e.message }.to_json
-          rescue StandardError => e
-            Api.logger.error "GET SHARES ERROR: #{e.inspect}"
+          rescue ManageFileShares::ForbiddenError => error
+            routing.halt 403, { message: error.message }.to_json
+          rescue ManageFileShares::NotFoundError => error
+            routing.halt 404, { message: error.message }.to_json
+          rescue StandardError => error
+            Api.logger.error "GET SHARES ERROR: #{error.inspect}"
             routing.halt 500, { message: 'Error retrieving shares' }.to_json
           end
         end
@@ -66,7 +66,7 @@ module UCCMe
       routing.on String do |share_id|
         routing.delete do
           # auth_token = AuthToken.new(routing.headers['AUTHORIZATION'].split[1])
-          
+
           deleted_share = ManageFileShares.delete_share(
             share_id: share_id,
             account: @auth_account,
@@ -74,12 +74,12 @@ module UCCMe
           )
 
           { message: 'Share deleted successfully', data: deleted_share }.to_json
-        rescue ManageFileShares::ForbiddenError => e
-          routing.halt 403, { message: e.message }.to_json
-        rescue ManageFileShares::NotFoundError => e
-          routing.halt 404, { message: e.message }.to_json
-        rescue StandardError => e
-          Api.logger.error "DELETE SHARE ERROR: #{e.inspect}"
+        rescue ManageFileShares::ForbiddenError => error
+          routing.halt 403, { message: error.message }.to_json
+        rescue ManageFileShares::NotFoundError => error
+          routing.halt 404, { message: error.message }.to_json
+        rescue StandardError => error
+          Api.logger.error "DELETE SHARE ERROR: #{error.inspect}"
           routing.halt 500, { message: 'Error deleting share' }.to_json
         end
       end

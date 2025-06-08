@@ -11,16 +11,16 @@ module UCCMe
   class StoredFile < Sequel::Model
     many_to_one :owner, class: :'UCCMe::Account'
     many_to_one :folder
-    
+
     many_to_many :collaborators,
                  class: :'UCCMe::Account',
                  join_table: :accounts_stored_files,
                  left_key: :file_id, right_key: :collaborator_id
 
     one_to_many :file_shares, key: :stored_file_id
-           
+
     plugin :association_dependencies,
-            file_shares: :destroy
+           file_shares: :destroy
     plugin :timestamps, update_on_create: true
     plugin :whitelist_security
     plugin :prepared_statements
@@ -43,7 +43,7 @@ module UCCMe
     def cc_types
       value = SecureDB.decrypt(cc_types_secure)
       return [] unless value
-      
+
       value.include?(',') ? value.split(',').map(&:strip) : [value.strip]
     end
 
@@ -51,9 +51,9 @@ module UCCMe
     def shareable?
       file_types = cc_types
       return false unless file_types
-      
+
       # Check if file contains txt or pdf type
-      allowed_types = ['txt', 'pdf', 'text', 'document']
+      allowed_types = %w[txt pdf text document]
       file_types.any? { |type| allowed_types.include?(type.downcase) }
     end
 
@@ -64,14 +64,14 @@ module UCCMe
 
     # Get all share entries from cc_types
     def share_entries
-      cc_types.select { |type| type.downcase.start_with?('share:') }.map do |share_str|
+      cc_types.select { |type| type.downcase.start_with?('share:') }.filter_map do |share_str|
         parse_share_entry(share_str)
-      end.compact
+      end
     end
 
     # Get only active (non-expired) shares
     def active_shares
-      share_entries.select { |share| !share[:expired] }
+      share_entries.reject { |share| share[:expired] }
     end
 
     # Get expired shares
@@ -87,7 +87,7 @@ module UCCMe
 
     # Get active shares for a specific user
     def active_shares_for_user(user)
-      shares_for_user(user).select { |share| !share[:expired] }
+      shares_for_user(user).reject { |share| share[:expired] }
     end
 
     # Check if file is shared with specific user (with any permission)
@@ -99,16 +99,16 @@ module UCCMe
     def user_can_view?(user)
       return true if owner == user
       return true if folder&.collaborators&.include?(user)
-      
+
       user_shares = active_shares_for_user(user)
-      user_shares.any? { |share| ['view', 'copy'].include?(share[:permission]) }
+      user_shares.any? { |share| %w[view copy].include?(share[:permission]) }
     end
 
     # Check if user has copy permission
     def user_can_copy?(user)
       return true if owner == user
       return true if folder&.collaborators&.include?(user)
-      
+
       user_shares = active_shares_for_user(user)
       user_shares.any? { |share| share[:permission] == 'copy' }
     end
@@ -116,26 +116,26 @@ module UCCMe
     # Add a new share
     def add_share(email, permission, expires_at)
       raise 'File is not shareable' unless shareable?
-      raise 'Invalid permission' unless ['view', 'copy'].include?(permission)
-      
+      raise 'Invalid permission' unless %w[view copy].include?(permission)
+
       # Validate user exists
       target_user = Account.first(email: email)
       raise 'User not found' unless target_user
       raise 'Cannot share with owner' if target_user == owner
-      
+
       # Check if user already has an active share
       existing_active = active_shares_for_user(target_user)
       if existing_active.any?
         raise "User already has active share with #{existing_active.first[:permission]} permission"
       end
-      
+
       # Add new share info to cc_types
       share_info = "share:#{email}:#{permission}:#{expires_at.iso8601}"
       new_types = cc_types + [share_info]
-      
+
       self.cc_types = new_types
       save_changes
-      
+
       # Generate access token for the shared user
       generate_share_token(target_user, permission, expires_at)
     end
@@ -144,7 +144,7 @@ module UCCMe
     def remove_share(email)
       target_user = Account.first(email: email)
       raise 'User not found' unless target_user
-      
+
       # Find and remove active shares for this user
       new_types = cc_types.reject do |type|
         if type.downcase.start_with?('share:')
@@ -154,25 +154,25 @@ module UCCMe
           false
         end
       end
-      
+
       # Add removal record
       removal_info = "share:#{email}:removed:#{Time.now.iso8601}"
       new_types << removal_info
-      
+
       self.cc_types = new_types
       save_changes
     end
 
     # Update permission for existing share
     def update_share_permission(email, new_permission)
-      raise 'Invalid permission' unless ['view', 'copy'].include?(new_permission)
-      
+      raise 'Invalid permission' unless %w[view copy].include?(new_permission)
+
       target_user = Account.first(email: email)
       raise 'User not found' unless target_user
-      
+
       existing_shares = active_shares_for_user(target_user)
       raise 'No active share found for user' if existing_shares.empty?
-      
+
       # Remove old share and add new one with updated permission
       old_share = existing_shares.first
       remove_share(email)
@@ -189,10 +189,10 @@ module UCCMe
         permission: permission,
         expires_file_share: expires_at.iso8601
       }
-      
+
       # Create token that expires when share expires
       expiration_seconds = [(expires_at - Time.now).to_i, AuthToken::ONE_WEEK].min
-      
+
       # Different scopes based on permission
       scope = case permission
               when 'view'
@@ -202,7 +202,7 @@ module UCCMe
               else
                 AuthScope.new(AuthScope::READ_ONLY)
               end
-      
+
       AuthToken.create(
         payload,
         expiration_seconds,
@@ -248,12 +248,10 @@ module UCCMe
           owner: owner&.to_json
         }
       }
-      
+
       # Add sharing info if file has shares
-      if has_shares?
-        base_attrs[:sharing] = sharing_info
-      end
-      
+      base_attrs[:sharing] = sharing_info if has_shares?
+
       base_attrs
     end
 
@@ -279,13 +277,13 @@ module UCCMe
     # Get sharing statistics across all files
     def self.sharing_statistics
       total_files = count
-      shareable_files = all.select(&:shareable?).count
-      files_with_shares = all.select(&:has_shares?).count
-      
+      shareable_files = all.count(&:shareable?)
+      files_with_shares = all.count(&:has_shares?)
+
       total_shares = all.sum { |f| f.share_entries.count }
       active_shares = all.sum { |f| f.active_shares.count }
       expired_shares = all.sum { |f| f.expired_shares.count }
-      
+
       {
         total_files: total_files,
         shareable_files: shareable_files,
@@ -302,15 +300,15 @@ module UCCMe
     def parse_share_entry(share_str)
       parts = share_str.split(':')
       return nil unless parts.length >= 4 && parts[0].downcase == 'share'
-      
+
       email = parts[1]
       permission = parts[2]
       expires_at_str = parts[3]
-      
+
       begin
         expires_at = Time.parse(expires_at_str)
         expired = Time.now > expires_at
-        
+
         {
           email: email,
           permission: permission,
@@ -324,25 +322,23 @@ module UCCMe
     end
 
     def time_remaining_description(expires_at_str)
-      begin
-        expires_at = Time.parse(expires_at_str)
-        return 'Expired' if Time.now > expires_at
-        
-        seconds_remaining = (expires_at - Time.now).to_i
-        
-        if seconds_remaining < 3600 # Less than 1 hour
-          minutes = seconds_remaining / 60
-          "#{minutes} minutes"
-        elsif seconds_remaining < 86400 # Less than 1 day  
-          hours = seconds_remaining / 3600
-          "#{hours} hours"
-        else
-          days = seconds_remaining / 86400
-          "#{days} days"
-        end
-      rescue ArgumentError
-        'Invalid expiration'
+      expires_at = Time.parse(expires_at_str)
+      return 'Expired' if Time.now > expires_at
+
+      seconds_remaining = (expires_at - Time.now).to_i
+
+      if seconds_remaining < 3600 # Less than 1 hour
+        minutes = seconds_remaining / 60
+        "#{minutes} minutes"
+      elsif seconds_remaining < 86_400 # Less than 1 day
+        hours = seconds_remaining / 3600
+        "#{hours} hours"
+      else
+        days = seconds_remaining / 86_400
+        "#{days} days"
       end
+    rescue ArgumentError
+      'Invalid expiration'
     end
   end
 end

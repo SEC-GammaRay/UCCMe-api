@@ -10,25 +10,25 @@ class FilePolicy
 
   def can_view?
     (account_owns_file? || account_is_folder_collaborator? || has_active_share?) &&
-     @auth_scope.can_view?('file')
+      @auth_scope.can_view?('file')
   end
 
   def can_edit?
     (account_owns_file? || account_is_folder_collaborator?) &&
-     @auth_scope.can_copy?('file')
+      @auth_scope.can_copy?('file')
   end
 
   def can_delete?
     account_owns_file? && @auth_scope.can_copy?('file')
   end
-  
+
   def can_share?
     account_owns_file? && @auth_scope.can_copy?('file')
   end
 
   def can_copy?
     return false unless can_view?
-      
+
     # Check if user has copy permission through share
     if has_active_share?
       share = active_share
@@ -67,9 +67,9 @@ class FilePolicy
     @active_share ||= UCCMe::FileShare.where(
       stored_file_id: @file.id,
       shared_with_id: @account.id
-    ).where { 
+    ).where do
       # Handle both cases: no expiration (nil) or future expiration
-      Sequel.expr(expires_at: nil) | (expires_at > Time.now) 
-    }.first
+      Sequel.expr(expires_at: nil) | (expires_at > Time.now)
+    end.first
   end
 end

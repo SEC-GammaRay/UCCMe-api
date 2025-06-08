@@ -13,7 +13,7 @@ module UCCMe
       # Get the requesting account from auth token
       requesting_account_username = auth.payload['attributes']['username']
       requesting_account = Account.first(username: requesting_account_username)
-      
+
       # Find the target account
       target_account = Account.first(username: username)
       raise ForbiddenError unless target_account

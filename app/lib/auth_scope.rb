@@ -5,10 +5,10 @@ class AuthScope
   ALL = '*'
   VIEW = 'view'
   COPY = 'copy'
-  
-  EVERYTHING = '*:copy'  # share includes read permissions
+
+  EVERYTHING = '*:copy' # share includes read permissions
   VIEW_ONLY = '*:view'
-  
+
   SEPARATOR = ' '
   DIVIDER = ':'
 
@@ -41,7 +41,7 @@ class AuthScope
   end
 
   def permission_granted?(resource, permission)
-    @scopes[resource]&.include?(permission) ? true : false
+    @scopes[resource]&.include?(permission) || false
   end
 
   def add_scope(scope)

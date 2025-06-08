@@ -86,7 +86,7 @@ module UCCMe
             routing.halt 500, { message: 'API server error' }.to_json
           end
         end
-        
+
         routing.on('files') do
           # POST api/v1/folders/[folder_id]/files
           routing.post do
