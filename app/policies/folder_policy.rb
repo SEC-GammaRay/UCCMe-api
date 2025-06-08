@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module UCCMe
-  # Policy to determine if an account can view a particular project
+  # Policy to determine if an account can view a particular folder
   class FolderPolicy
     def initialize(account, folder)
       @account = account
