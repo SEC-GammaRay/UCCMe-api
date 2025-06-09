@@ -14,6 +14,7 @@ gem 'rake'
 
 # securirty
 gem 'rbnacl', '~> 7.1'
+gem 'http'
 
 # Database
 gem 'hirb'
