@@ -13,20 +13,15 @@ describe 'Test AddCollaborator service' do
 
     folder_data = DATA[:folders].first
 
+    @owner_data  = DATA[:accounts][0]
     @owner = UCCMe::Account.all[0]
     @collaborator = UCCMe::Account.all[1]
-
-    # Create folder with owner - fixed parameter structure
-    @folder = UCCMe::CreateFolderForOwner.call(
-      owner_id: @owner.id,
-      folder_data: {
-        foldername: folder_data['foldername'] || folder_data[:foldername],
-        description: folder_data['description'] || folder_data[:description]
-      }
-    )
+    @folder = @owner.add_owned_folder(folder_data)
   end
 
   it 'HAPPY: should be able to add a collaborator to a folder' do
+    auth = authorization(@owner_data)
+
     UCCMe::AddCollaborator.call(
       account: @owner,
       folder_id: @folder.id,
@@ -38,6 +33,8 @@ describe 'Test AddCollaborator service' do
   end
 
   it 'BAD: should not add owner as a collaborator' do
+    auth = authorization(@owner_data)
+
     _(proc {
       UCCMe::AddCollaborator.call(
         account: @owner,

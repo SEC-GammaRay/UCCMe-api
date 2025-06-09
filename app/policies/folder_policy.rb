@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module UCCMe
-  # Policy to determine if an account can view a particular project
+  # Policy to determine if an account can view a particular folder
   class FolderPolicy
     def initialize(account, folder)
       @account = account
@@ -25,11 +25,11 @@ module UCCMe
       account_is_collaborator?
     end
 
-    def can_add_files?
+    def can_add_documents?
       account_is_owner? || account_is_collaborator?
     end
 
-    def can_remove_files?
+    def can_remove_documents?
       account_is_owner? || account_is_collaborator?
     end
 
@@ -42,17 +42,17 @@ module UCCMe
     end
 
     def can_collaborate?
-      !(account_is_owner? or account_is_collaborator?)
+      not (account_is_owner? or account_is_collaborator?)
     end
 
-    def summary # rubocop:disable Metrics/MethodLength
+    def summary
       {
         can_view: can_view?,
         can_edit: can_edit?,
         can_delete: can_delete?,
         can_leave: can_leave?,
-        can_add_files: can_add_files?,
-        can_delete_files: can_remove_files?,
+        can_add_documents: can_add_documents?,
+        can_delete_documents: can_remove_documents?,
         can_add_collaborators: can_add_collaborators?,
         can_remove_collaborators: can_remove_collaborators?,
         can_collaborate: can_collaborate?

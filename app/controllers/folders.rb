@@ -5,6 +5,7 @@ require_relative 'app'
 module UCCMe
   # Web controller for UCCMe API
   class Api < Roda
+    # rubocop:disable Metrics/BlockLength
     route('folders') do |routing|
       unauthorized_message = { message: 'Unauthorized Request' }.to_json
       routing.halt(403, unauthorized_message) unless @auth_account
@@ -27,10 +28,12 @@ module UCCMe
           puts "FIND FOLDER ERROR: #{error.inspect}"
           routing.halt 500, { message: 'API server error' }.to_json
         end
-
+         
+        @file_route = "#{@api_root}/files"
         routing.on('files') do
           # POST api/v1/folders/[folder_id]/files
           routing.post do
+
             file_info = HttpRequest.new(routing).form_data
             file = file_info[:file][:tempfile]
             filename = file_info[:filename]
@@ -52,6 +55,7 @@ module UCCMe
             response.status = 201
             response['Location'] = "#{@file_route}/#{new_file.id}"
             { message: 'File saved', data: new_file }.to_json
+
           rescue CreateFileForFolder::ForbiddenError => error
             routing.halt 403, { message: error.message }.to_json
           rescue CreateFileForFolder::IllegalRequestError => error
@@ -123,5 +127,6 @@ module UCCMe
         end
       end
     end
+    # rubocop:disable Metrics/BlockLength
   end
 end

@@ -12,10 +12,16 @@ module UCCMe
       routing.on String do |username|
         # GET api/v1/accounts/[username]
         routing.get do
-          account = Account.first(username:)
-          account ? account.to_json : raise('Account not found')
-        rescue StandardError
-          routing.halt 404, { message: error.message }.to_json
+          auth = AuthorizeAccount.call(
+            auth: @auth, username: username,
+            auth_scope: AuthScope::READ_ONLY
+          )
+          { data: auth }.to_json
+        rescue AuthorizeAccount::ForbiddenError => e
+          routing.halt 404, { message: e.message }.to_json
+        rescue StandardError => e
+          Api.logger.error "GET ACCOUNT ERROR: #{e.inspect}"
+          routing.halt 500, { message: 'API Server Error' }.to_json
         end
       end
 
