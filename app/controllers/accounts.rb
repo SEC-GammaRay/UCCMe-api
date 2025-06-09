@@ -3,18 +3,18 @@
 require 'roda'
 require_relative 'app'
 
+
 module UCCMe
   # Web controller for UCCMe API
   class Api < Roda
     route('accounts') do |routing|
       @account_route = "#{@api_root}/accounts"
-
       routing.on String do |username|
         # GET api/v1/accounts/[username]
         routing.get do
           auth = AuthorizeAccount.call(
-            auth: @auth, username: username,
-            auth_scope: AuthScope::READ_ONLY
+            auth: @auth_account, username: username,
+            auth_scope: AuthScope::ALL
           )
           { data: auth }.to_json
         rescue AuthorizeAccount::ForbiddenError => e
