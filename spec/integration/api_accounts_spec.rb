@@ -11,6 +11,7 @@ describe 'Test Account Handling' do
   end
 
   describe 'Account Information' do
+
     it 'HAPPY: should be able to get details of a single owner' do
       account_data = DATA[:accounts][1]
       account = UCCMe::Account.create(account_data)

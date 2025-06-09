@@ -26,6 +26,7 @@ class AuthToken
     @token = token
     contents = AuthToken.detokenize(@token)
     @expiration = contents['exp']
+    @scope = contents['scope']
     @payload = contents['payload']
     @scope = contents['scope']
   end
@@ -45,7 +46,9 @@ class AuthToken
     expired? ? raise(ExpiredTokenError) : @payload
   end
 
+
   # Get authorization scope
+
   def scope
     expired? ? raise(ExpiredTokenError) : @scope
   end
@@ -88,5 +91,9 @@ class AuthToken
     JSON.parse(message_json)
   rescue StandardError
     raise InvalidTokenError
+  end
+
+  def self.expires(expiration)
+    (Time.now + expiration).to_i
   end
 end

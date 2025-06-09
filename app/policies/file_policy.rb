@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+
 # Policy to determine if account can view a file
 class FilePolicy
   def initialize(account, file, auth_scope = AuthScope.new)
@@ -37,6 +38,7 @@ class FilePolicy
 
     # Owners and collaborators can always copy
     account_owns_file? || account_is_folder_collaborator?
+
   end
 
   def summary
@@ -71,5 +73,6 @@ class FilePolicy
       # Handle both cases: no expiration (nil) or future expiration
       Sequel.expr(expires_at: nil) | (expires_at > Time.now)
     end.first
+
   end
 end

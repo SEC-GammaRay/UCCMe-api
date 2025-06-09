@@ -20,6 +20,7 @@ module UCCMe
       raise unless account.password?(credentials[:password])
 
       AuthorizedAccount.new(account, AuthScope::EVERYTHING).to_h
+
     rescue StandardError
       raise UnauthorizedError
     end

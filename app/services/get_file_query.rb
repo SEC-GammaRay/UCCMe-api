@@ -18,6 +18,7 @@ module UCCMe
     end
 
     # File for given requestor account
+
     def self.call(auth:, file:, account:)
       raise NotFoundError unless file
 

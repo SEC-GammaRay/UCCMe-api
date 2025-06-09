@@ -50,6 +50,7 @@ module UCCMe
 
     def to_json(options = {})
       JSON.generate(to_h, options)
+
     end
   end
 end

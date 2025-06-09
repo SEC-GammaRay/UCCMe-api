@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+
 # Scopes for AuthTokens - handles authorization permissions
 class AuthScope
   ALL = '*'
@@ -24,6 +25,7 @@ class AuthScope
 
   def can_copy?(resource)
     copyable?(ALL) || copyable?(resource)
+
   end
 
   def to_s
@@ -32,12 +34,14 @@ class AuthScope
 
   private
 
+
   def viewable?(resource)
     copyable?(resource) || permission_granted?(resource, VIEW)
   end
 
   def copyable?(resource)
     permission_granted?(resource, COPY)
+
   end
 
   def permission_granted?(resource, permission)

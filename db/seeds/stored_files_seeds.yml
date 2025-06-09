@@ -1,16 +1,12 @@
 - filename: "project_plan.pdf"
   description: "Detailed project plan for Q2"
-  content: "Base64 encoded PDF content here"
   cc_types: ["pdf", "document"]
 - filename: "budget.xlsx"
   description: "Project budget spreadsheet"
-  content: "Base64 encoded XLSX content here"
   cc_types: ["xlsx", "spreadsheet"]
 - filename: "meeting_2025-04-10.txt"
   description: "Notes from April 10 meeting"
-  content: "Text content of meeting notes"
   cc_types: ["txt", "notes"]
 - filename: "meeting_2025-05-01.txt"
   description: "Notes from May 1 meeting"
-  content: "Text content of meeting notes"
   cc_types: ["txt", "notes"]

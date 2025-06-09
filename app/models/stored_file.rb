@@ -26,6 +26,7 @@ module UCCMe
     plugin :prepared_statements
     set_allowed_columns :filename, :description, :content, :cc_types, :owner_id, :folder_id
 
+
     def description=(plaintext)
       self.description_secure = SecureDB.encrypt(plaintext)
     end
@@ -242,6 +243,7 @@ module UCCMe
           shareable: shareable?,
           created_at: created_at,
           updated_at: updated_at
+
         },
         relationships: {
           folder: folder&.to_h,

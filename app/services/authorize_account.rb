@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 module UCCMe
-  # Service to authorize account access with scoped tokens
+  # Authorize an account
   class AuthorizeAccount
+    # Error if requesting to see forbidden account
     class ForbiddenError < StandardError
       def message
-        'You are not allowed to access this account'
+        'You are not allowed to access that account'
       end
     end
 

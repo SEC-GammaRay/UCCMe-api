@@ -3,14 +3,25 @@
 module UCCMe
   # Service to add a file to a folder
   class CreateFileForFolder
-    # Folder not found error
-    class FolderNotFoundError < StandardError
-      def message = 'Folder not found'
+    # Error for not allowed to add files
+    class ForbiddenError < StandardError
+      def message
+        'You are not allowed to add more files'
+      end
     end
 
-    def self.call(folder_id:, file_data:)
+    # Error for requested with illegal attributes
+    class IllegalRequestError < StandardError
+      def message
+        'Cannot create a file with those attributes'
+      end
+    end
+
+    def self.call(auth:, folder_id:, file_data:)
       folder = Folder.first(id: folder_id)
-      raise FolderNotFoundError unless folder
+      policy = FolderPolicy.new(auth.account, folder, auth.scope)
+      raise ForbiddenError unless policy.can_add_files?
+
 
       new_file = StoredFile.new
       new_file.set(file_data)

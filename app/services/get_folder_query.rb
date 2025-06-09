@@ -17,7 +17,7 @@ module UCCMe
       end
     end
 
-    def self.call(account:, folder_id:)
+    def self.call(auth:, folder_id:)
       folder = Folder.first(id: folder_id)
       raise NotFoundError unless folder
 

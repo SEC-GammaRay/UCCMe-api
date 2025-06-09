@@ -13,6 +13,8 @@ module UCCMe
     plugin :multi_route
     plugin :request_headers
 
+    UNAUTH_MSG = { message: 'Unauthorized Request' }.to_json
+
     # Add a class variable for the logger
     class << self
       attr_accessor :logger
@@ -37,6 +39,7 @@ module UCCMe
       begin
         @auth_account = request.authenticated_account
         @auth = request.auth_token
+
       rescue AuthToken::InvalidTokenError
         routing.halt 403, { message: 'Invalid auth token' }.to_json
       rescue AuthToken::ExpiredTokenError

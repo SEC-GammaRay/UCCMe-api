@@ -22,6 +22,8 @@ describe 'Test File Handling' do
   describe 'Getting a single file' do
     it 'HAPPY: should be able to get details of a single file' do
       file_data = DATA[:stored_files][0]
+      s3_path = get_s3_path(file_data['filename'], UCCMe::Api.config)
+      file_data = file_data.merge('s3_path' => s3_path)
       folder = @account.folders.first
       file = UCCMe::CreateFile.call(
         account: @account,
@@ -40,6 +42,8 @@ describe 'Test File Handling' do
 
     it 'SAD AUTHORIZATION: should not get file details without authorization' do
       file_data = DATA[:stored_files][0]
+      s3_path = get_s3_path(file_data['filename'], UCCMe::Api.config)
+      file_data = file_data.merge('s3_path' => s3_path)
       folder = UCCMe::Folder.first
       file = UCCMe::CreateFileForFolder.call(
         folder_id: folder.id,
