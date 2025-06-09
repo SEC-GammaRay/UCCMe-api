@@ -13,8 +13,8 @@ gem 'figaro', '~>1.2'
 gem 'rake'
 
 # securirty
-gem 'rbnacl', '~> 7.1'
 gem 'http'
+gem 'rbnacl', '~> 7.1'
 
 # Database
 gem 'hirb'

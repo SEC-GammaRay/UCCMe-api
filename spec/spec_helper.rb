@@ -60,8 +60,6 @@ DATA = {
 }.freeze
 
 ## SSO fixtures
-GH_ACCOUNT_RESPONSE = YAML.load(
-  File.read('spec/fixtures/github_token_response.yml')
-)
+GH_ACCOUNT_RESPONSE = YAML.load_file('spec/fixtures/github_token_response.yml')
 GOOD_GH_ACCESS_TOKEN = GH_ACCOUNT_RESPONSE.keys.first
-SSO_ACCOUNT = YAML.load(File.read('spec/fixtures/sso_account.yml'))
+SSO_ACCOUNT = YAML.load_file('spec/fixtures/sso_account.yml')

@@ -3,23 +3,30 @@
 module UCCMe
   # Policy to determine if an account can view a particular folder
   class CollaborationRequestPolicy
-    def initialize(folder, requestor_account, target_account)
+    def initialize(folder, requestor_account, target_account, auth_scope = nil)
       @folder = folder
       @requestor_account = requestor_account
       @target_account = target_account
-      @requestor = FolderPolicy.new(requestor_account, folder)
-      @target = FolderPolicy.new(target_account, folder)
+      @auth_scope = auth_scope
+      @requestor = FolderPolicy.new(requestor_account, folder, auth_scope)
+      @target = FolderPolicy.new(target_account, folder, auth_scope)
     end
 
     def can_invite?
-      @requestor.can_add_collaborators? && @target.can_collaborate?
+      can_write? &&
+        @requestor.can_add_collaborators? && @target.can_collaborate?
     end
 
     def can_remove?
-      @requestor.can_remove_collaborators? && target_is_collaborator?
+      can_write? &&
+        @requestor.can_remove_collaborators? && target_is_collaborator?
     end
 
     private
+
+    def can_write?
+      @auth_scope ? @auth_scope.can_write?('folders') : false
+    end
 
     def target_is_collaborator?
       @folder.collaborators.include?(@target_account)

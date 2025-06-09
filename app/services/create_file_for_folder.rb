@@ -17,10 +17,10 @@ module UCCMe
       end
     end
 
-    def self.call(account:, folder_id:, file_data:) # rubocop:disable Lint/UnusedMethodArgument
+    def self.call(auth:, folder_id:, file_data:)
       folder = Folder.first(id: folder_id)
-      # policy = FilePolicy.new(auth.account, folder, auth.scope)
-      # raise ForbiddenError unless policy.can_add_files?
+      policy = FolderPolicy.new(auth.account, folder, auth.scope)
+      raise ForbiddenError unless policy.can_add_files?
 
       folder.add_stored_file(file_data)
     rescue Sequel::MassAssignmentRestriction
