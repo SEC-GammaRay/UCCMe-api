@@ -37,6 +37,13 @@ def auth_header(account_data)
   "Bearer #{auth[:attributes][:auth_token]}"
 end
 
+def get_s3_path(filename, config)
+  region = config.AWS_REGION
+  bucket = config.AWS_BUCKET
+  prefix = config.AWS_PREFIX
+  "https://#{bucket}.s3.#{region}.amazonaws.com/#{prefix}/#{filename}"
+end
+
 def authorization(account_data)
   authenticated_account = authenticate(account_data)
 

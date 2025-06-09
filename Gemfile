@@ -62,3 +62,6 @@ end
 gem 'activesupport'
 gem 'erb'
 gem 'mailjet'
+
+# aws
+gem 'aws-sdk-s3'
