@@ -8,7 +8,7 @@ module UCCMe
       def message = 'Owner not found'
     end
 
-     def self.call(auth:, folder_data:)
+    def self.call(auth:, folder_data:)
       raise ForbiddenError unless auth.scope.can_write?('folders')
 
       auth.account.add_owned_folder(folder_data)
