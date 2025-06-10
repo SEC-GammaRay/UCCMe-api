@@ -33,17 +33,10 @@ module UCCMe
           # POST api/v1/folders/[folder_id]/files
           routing.post do
             file_info = HttpRequest.new(routing).form_data
-            file = file_info[:file][:tempfile]
-            filename = file_info[:filename]
-            description = file_info[:description]
-            cc_types = %w[pdf document]
-            s3_url = FileStorageHelper.upload(file: file, filename: filename)
-            file_data = {
-              'filename' => filename,
-              'description' => description,
-              'cc_types' => cc_types,
-              's3_path' => s3_url
-            }
+            file_info[:file] = file_info[:file][:tempfile]
+            s3_url = FileStorageHelper.upload(file: file_info[:file], filename: file_info[:filename])
+            file_info.transform_keys!(&:to_s)
+            file_data = file_info.except('file').merge('s3_path' => s3_url)
             new_file = CreateFileForFolder.call(
               auth: @auth,
               folder_id: folder_id,

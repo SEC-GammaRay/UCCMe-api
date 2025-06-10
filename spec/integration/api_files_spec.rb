@@ -93,6 +93,7 @@ describe 'Test File Handling' do
       post "api/v1/folders/#{@folder.id}/files", {
         filename: filename,
         description: @file_data['description'],
+        cc_types: @file_data['cc_types'],
         file: tempfile
       }
       _(last_response.status).must_equal 201
