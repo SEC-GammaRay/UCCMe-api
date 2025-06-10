@@ -29,8 +29,8 @@ module UCCMe
       JSON.parse(@routing.body.read, symbolize_names: true)
     end
 
-    def form_data
-      @routing.params.transform_keys(&:to_sym)
+    def signed_body_data
+      SignedRequest.parse(body_data)
     end
   end
 end

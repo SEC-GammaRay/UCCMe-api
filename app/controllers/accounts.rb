@@ -3,7 +3,6 @@
 require 'roda'
 require_relative 'app'
 
-
 module UCCMe
   # Web controller for UCCMe API
   class Api < Roda
@@ -27,7 +26,7 @@ module UCCMe
 
       # POST api/v1/accounts
       routing.post do
-        new_data = JSON.parse(routing.body.read)
+        account_data = HttpRequest.new(routing).signed_body_data
         new_account = Account.new(new_data)
         raise('Could not save account') unless new_account.save_changes
 
@@ -35,8 +34,10 @@ module UCCMe
         response['Location'] = "#{@account_route}/#{new_account.id}"
         { message: 'Account created', data: new_account }.to_json
       rescue Sequel::MassAssignmentRestriction
-        Api.logger.warn "MASS-ASSIGNMENT:: #{new_data.keys}"
+        Api.logger.warn "MASS-ASSIGNMENT:: #{account_data.keys}"
         routing.halt 400, { message: 'Illegal Request' }.to_json
+      rescue SignedRequest::VerificationError
+        routing.halt 403, { message: 'Must sign request' }.to_json
       rescue StandardError => error
         Api.logger.error 'Unknown error saving account'
         routing.halt 500, { message: error.message }.to_json
