@@ -47,4 +47,21 @@ Run this API using:
 puma
 ```
 
+## Heroku 
+
+```bash
+heroku run bundle install
+```
+
+```bash
+heroku config
+```
+
+```bash
+heroku run rake db:migrate
+```
+
+```bash
+git push heroku main
+```
 
