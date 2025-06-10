@@ -17,11 +17,11 @@ module UCCMe
       end
     end
 
-    def self.call(account:, folder_id:)
+    def self.call(auth:, folder_id:)
       folder = Folder.first(id: folder_id)
       raise NotFoundError unless folder
 
-      policy = FolderPolicy.new(account, folder)
+      policy = FolderPolicy.new(auth.account, folder, auth.scope)
       raise ForbiddenError unless policy.can_view?
 
       folder.full_details.merge(policies: policy.summary)

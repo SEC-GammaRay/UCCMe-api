@@ -40,7 +40,7 @@ class AuthScope
   end
 
   def permission_granted?(resource, permission)
-    @scopes[resource]&.include?(permission) ? true : false
+    @scopes[resource]&.include?(permission) || false
   end
 
   def add_scope(scope)

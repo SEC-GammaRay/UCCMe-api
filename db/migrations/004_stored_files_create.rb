@@ -9,9 +9,9 @@ Sequel.migration do
       primary_key :id
       foreign_key :folder_id, :folders
       foreign_key :owner_id, :accounts
-      String :filename, unique: true, null: false
+      String :filename, null: false
+      String :s3_path, null: false # s3 storage path
       String :description_secure, null: false
-      String :content, null: false
       String :cc_types_secure, null: false
       DateTime :created_at, default: Sequel::CURRENT_TIMESTAMP
       DateTime :updated_at, default: Sequel::CURRENT_TIMESTAMP, on_update: Sequel::CURRENT_TIMESTAMP
@@ -20,5 +20,6 @@ Sequel.migration do
     end
 
     add_index(:stored_files, :filename) # rubocop:disable Sequel/ConcurrentIndex
+    add_index(:stored_files, :s3_path) # rubocop:disable Sequel/ConcurrentIndex
   end
 end

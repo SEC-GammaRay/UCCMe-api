@@ -13,7 +13,7 @@ describe 'Test AddCollaborator service' do
 
     folder_data = DATA[:folders].first
 
-    @owner_data  = DATA[:accounts][0]
+    @owner_data = DATA[:accounts][0]
     @owner = UCCMe::Account.all[0]
     @collaborator = UCCMe::Account.all[1]
     @folder = @owner.add_owned_folder(folder_data)
@@ -23,7 +23,7 @@ describe 'Test AddCollaborator service' do
     auth = authorization(@owner_data)
 
     UCCMe::AddCollaborator.call(
-      account: @owner,
+      auth: auth,
       folder_id: @folder.id,
       collab_email: @collaborator.email
     )
@@ -37,7 +37,7 @@ describe 'Test AddCollaborator service' do
 
     _(proc {
       UCCMe::AddCollaborator.call(
-        account: @owner,
+        auth: auth,
         folder_id: @folder.id,
         collab_email: @owner.email
       )

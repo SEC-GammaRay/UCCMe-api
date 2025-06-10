@@ -5,6 +5,7 @@ ENV['RACK_ENV'] = 'test'
 require 'minitest/autorun'
 require 'minitest/rg'
 require 'yaml'
+require 'rack/mime'
 
 require_relative 'test_load_all'
 
@@ -37,6 +38,17 @@ def auth_header(account_data)
   "Bearer #{auth[:attributes][:auth_token]}"
 end
 
+def get_s3_path(filename, config)
+  region = config.AWS_REGION
+  bucket = config.AWS_BUCKET
+  prefix = config.AWS_PREFIX
+  "https://#{bucket}.s3.#{region}.amazonaws.com/#{prefix}/#{filename}"
+end
+
+def get_mime_type(filename)
+  Rack::Mime.mime_type(File.extname(filename))
+end
+
 def authorization(account_data)
   authenticated_account = authenticate(account_data)
 
@@ -53,8 +65,6 @@ DATA = {
 }.freeze
 
 ## SSO fixtures
-GH_ACCOUNT_RESPONSE = YAML.load(
-  File.read('spec/fixtures/github_token_response.yml')
-)
+GH_ACCOUNT_RESPONSE = YAML.load_file('spec/fixtures/github_token_response.yml')
 GOOD_GH_ACCESS_TOKEN = GH_ACCOUNT_RESPONSE.keys.first
-SSO_ACCOUNT = YAML.load(File.read('spec/fixtures/sso_account.yml'))
+SSO_ACCOUNT = YAML.load_file('spec/fixtures/sso_account.yml')

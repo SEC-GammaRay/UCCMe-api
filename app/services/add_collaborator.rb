@@ -10,10 +10,14 @@ module UCCMe
       end
     end
 
-    def self.call(account:, folder_id:, collab_email:)
+    def self.call(auth:, folder_id:, collab_email:)
       invitee = Account.first(email: collab_email)
       folder = Folder.first(id: folder_id)
-      policy = CollaborationRequestPolicy.new(folder, account, invitee)
+
+      policy = CollaborationRequestPolicy.new(
+        folder, auth.account, invitee, auth.scope
+      )
+
       raise ForbiddenError unless policy.can_invite?
 
       folder.add_collaborator(invitee)

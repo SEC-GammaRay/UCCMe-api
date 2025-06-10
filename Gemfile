@@ -13,6 +13,7 @@ gem 'figaro', '~>1.2'
 gem 'rake'
 
 # securirty
+gem 'http'
 gem 'rbnacl', '~> 7.1'
 
 # Database
@@ -62,3 +63,6 @@ end
 gem 'activesupport'
 gem 'erb'
 gem 'mailjet'
+
+# aws
+gem 'aws-sdk-s3'
