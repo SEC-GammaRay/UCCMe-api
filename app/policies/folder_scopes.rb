@@ -10,6 +10,7 @@ module UCCMe
         @full_scope = all_folders(target_account)
         @current_account = current_account
         @target_account = target_account
+        binding.irb
       end
 
       def viewable
@@ -25,7 +26,7 @@ module UCCMe
       private
 
       def all_folders(account)
-        account.owned_folders + account.collaborations
+        account.owned_folders + account.folder_collaborations
       end
 
       def includes_collaborator?(folder, account)
