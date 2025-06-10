@@ -3,7 +3,6 @@
 require 'roda'
 require_relative 'app'
 
-
 module UCCMe
   # Web controller for UCCMe API
   class Api < Roda

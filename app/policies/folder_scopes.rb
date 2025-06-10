@@ -10,7 +10,6 @@ module UCCMe
         @full_scope = all_folders(target_account)
         @current_account = current_account
         @target_account = target_account
-        binding.irb
       end
 
       def viewable
