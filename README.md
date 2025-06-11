@@ -50,6 +50,10 @@ puma
 ## Heroku 
 
 ```bash
+git push heroku main
+```
+
+```bash
 heroku run bundle install
 ```
 
@@ -61,7 +65,5 @@ heroku config
 heroku run rake db:migrate
 ```
 
-```bash
-git push heroku main
-```
+
 
