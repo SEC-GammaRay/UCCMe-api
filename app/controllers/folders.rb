@@ -91,6 +91,23 @@ module UCCMe
             routing.halt 500, { message: 'API server error' }.to_json
           end
         end
+
+        routing.on('leave') do
+          # DELETE api/v1/folders/[folder_id]/leave
+          routing.delete do
+            left_folder = LeaveFolder.call(
+              auth: @auth,
+              folder_id: folder_id
+            )
+
+            { message: "#{left_folder.id} removed from folder",
+              data: left_folder }.to_json
+          rescue LeaveFolder::ForbiddenError => error
+            routing.halt 403, { message: error.message }.to_json
+          rescue StandardError
+            routing.halt 500, { message: 'API server error' }.to_json
+          end
+        end
       end
 
       routing.is do
