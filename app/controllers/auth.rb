@@ -37,7 +37,7 @@ module UCCMe
         end
       end
 
-      # POST /api/v1/auth/authenticate/sso
+      # POST /api/v1/auth/sso
       routing.post 'sso' do
         auth_request = HttpRequest.new(routing).body_data
         auth_account = AuthenticateSso.new.call(auth_request[:access_token])

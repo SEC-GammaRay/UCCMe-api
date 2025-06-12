@@ -25,7 +25,7 @@ module UCCMe
       private
 
       def all_folders(account)
-        account.owned_folders + account.collaborations
+        account.owned_folders + account.folder_collaborations
       end
 
       def includes_collaborator?(folder, account)

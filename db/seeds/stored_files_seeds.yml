@@ -1,12 +1,12 @@
 - filename: "project_plan.pdf"
   description: "Detailed project plan for Q2"
-  cc_types: ["pdf", "document"]
-- filename: "budget.xlsx"
+  cc_types: "CC BY-NC-ND"
+- filename: "budget.pdf"
   description: "Project budget spreadsheet"
-  cc_types: ["xlsx", "spreadsheet"]
+  cc_types: "CC BY-NC-ND"
 - filename: "meeting_2025-04-10.txt"
   description: "Notes from April 10 meeting"
-  cc_types: ["txt", "notes"]
+  cc_types: "CC BY-NC-SA"
 - filename: "meeting_2025-05-01.txt"
   description: "Notes from May 1 meeting"
-  cc_types: ["txt", "notes"]
+  cc_types: "CC BY-NC-SA"

@@ -5,6 +5,7 @@ ENV['RACK_ENV'] = 'test'
 require 'minitest/autorun'
 require 'minitest/rg'
 require 'yaml'
+require 'rack/mime'
 
 require_relative 'test_load_all'
 
@@ -42,6 +43,10 @@ def get_s3_path(filename, config)
   bucket = config.AWS_BUCKET
   prefix = config.AWS_PREFIX
   "https://#{bucket}.s3.#{region}.amazonaws.com/#{prefix}/#{filename}"
+end
+
+def get_mime_type(filename)
+  Rack::Mime.mime_type(File.extname(filename))
 end
 
 def authorization(account_data)

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
+require 'aws-sdk-s3'
 
 describe 'Test File Handling' do
   include Rack::Test::Methods
@@ -51,19 +52,21 @@ describe 'Test File Handling' do
       _(result['attributes']).must_be_nil
     end
 
-    # it 'BAD AUTHORIZATION: should not get file details with wrong authorization' do
-    #   file_data = DATA[:stored_files][0]
-    #   folder = @account.folders.first
-    #   file = folder.add_stored_file(file_data)
+    it 'BAD AUTHORIZATION: should not get file details with wrong authorization' do
+      file_data = DATA[:stored_files][0]
+      folder = @account.folders.first
+      s3_path = get_s3_path(file_data['filename'], UCCMe::Api.config)
+      file_data = file_data.merge('s3_path' => s3_path)
+      file = folder.add_stored_file(file_data)
 
-    #   header 'AUTHORIZATION', auth_header(@wrong_account_data)
-    #   get "/api/v1/files/#{file.id}"
+      header 'AUTHORIZATION', auth_header(@wrong_account_data)
+      get "/api/v1/files/#{file.id}"
 
-    #   result = JSON.parse(last_response.body)
+      result = JSON.parse(last_response.body)
 
-    #   _(last_response.status).must_equal 403
-    #   _(result['attributes']).must_be_nil
-    # end
+      _(last_response.status).must_equal 403
+      _(result['attributes']).must_be_nil
+    end
 
     it 'SAD: should return error if unknown file requested' do
       header 'AUTHORIZATION', auth_header(@account_data)
@@ -73,54 +76,89 @@ describe 'Test File Handling' do
     end
   end
 
-  # describe 'Creating Files' do
-  #   before do
-  #     @folder = UCCMe::Folder.first
-  #     @file_data = DATA[:stored_files][0]
-  #     @req_header = { 'CONTENT_TYPE' => 'application/json' }
-  #   end
+  describe 'Creating Files' do
+    before do
+      @folder = UCCMe::Folder.first
+      @file_data = DATA[:stored_files][0]
+    end
 
-  #   it 'HAPPY: should be able to create new files' do
-  #     post 'api/v1/files',
-  #          filter_file_data(@file_data).to_json, @req_header
-  #     _(last_response.status).must_equal 201
+    it 'HAPPY: should be able to create new files' do
+      filename = @file_data['filename']
+      local_path = File.join('uploads', filename)
+      mime_type = get_mime_type(filename)
 
-  #     created = JSON.parse(last_response.body)
-  #     _(created['message']).must_equal 'Document saved'
-  #     _(created['id']).wont_be_nil
+      # Stub the S3 PUT request to prevent real HTTP connections
+      stub_request(:put, "https://uccme.s3.ap-northeast-1.amazonaws.com/test/#{filename}")
+        .with(headers: { 'Authorization' => /.*/ })
+        .to_return(status: 403, body: '', headers: {})
 
-  #     file = UCCMe::StoredFile.last
-  #     _(file.filename).must_equal @file_data['filename']
-  #   end
+      # get uploaded tempfile
+      tempfile = Rack::Test::UploadedFile.new(local_path, mime_type)
 
-  #   it 'SECURITY: should not create files with mass assignment' do
-  #     bad_data = @file_data.clone
-  #     bad_data['created_at'] = '1900-01-01'
-  #     bad_data['id'] = 'hacked_id'
+      header 'AUTHORIZATION', auth_header(@account_data)
+      post "api/v1/folders/#{@folder.id}/files", {
+        filename: filename,
+        description: @file_data['description'],
+        cc_types: @file_data['cc_types'],
+        file: tempfile
+      }
+      _(last_response.status).must_equal 201
+      _(last_response.headers['Location'].size).must_be :>, 0
 
-  #     post 'api/v1/files',
-  #          bad_data.to_json, @req_header
-  #     _(last_response.status).must_equal 400
-  #     _(last_response.headers['Location']).must_be_nil
-  #   end
-  # end
+      created = JSON.parse(last_response.body)['data']['attributes']
+      stored_file = UCCMe::StoredFile.first
 
-  # describe 'File Route Structures' do
-  #   it 'should correctly build file route paths' do
-  #     folder = UCCMe::Folder.first
-  #     # file = folder.add_stored_file(filter_file_data(DATA[:stored_files][0]))
-  #     file_data = DATA[:stored_files][0]
-  #     s3_path = get_s3_path(file_data['filename'], UCCMe::Api.config)
-  #     file_data = file_data.merge('s3_path' => s3_path)
-  #     file = UCCMe::CreateFileForFolder.call(
-  #       auth: auth,
-  #       folder_id: folder.id,
-  #       file_data: file_data
-  #     )
+      _(created['id']).must_equal stored_file.id
+      _(created['filename']).must_equal @file_data['filename']
+      _(created['description']).must_equal @file_data['description']
+    end
 
-  #     header 'AUTHORIZATION', auth_header(@account_data)
-  #     get "api/v1/files/#{file.id}"
-  #     _(last_response.status).must_equal 200
-  #   end
-  # end
+    it 'BAD AUTHORIZATION: should not create with incorrect authorization' do
+      filename = @file_data['filename']
+      local_path = File.join('uploads', filename)
+      mime_type = get_mime_type(filename)
+
+      # Stub the S3 PUT request to prevent real HTTP connections
+      stub_request(:put, "https://uccme.s3.ap-northeast-1.amazonaws.com/test/#{filename}")
+        .with(headers: { 'Authorization' => /.*/ })
+        .to_return(status: 403, body: '', headers: {})
+
+      # get uploaded tempfile
+      tempfile = Rack::Test::UploadedFile.new(local_path, mime_type)
+
+      header 'AUTHORIZATION', auth_header(@wrong_account_data)
+      post "api/v1/folders/#{@folder.id}/files", {
+        filename: filename,
+        description: @file_data['description'],
+        file: tempfile
+      }
+
+      data = JSON.parse(last_response.body)['data']
+
+      _(last_response.status).must_equal 403
+      _(last_response.headers['Location']).must_be_nil
+      _(data).must_be_nil
+    end
+
+    it 'SAD AUTHORIZATION: should not create without any authorization' do
+      filename = @file_data['filename']
+      local_path = File.join('uploads', filename)
+      mime_type = get_mime_type(filename)
+
+      # get uploaded tempfile
+      tempfile = Rack::Test::UploadedFile.new(local_path, mime_type)
+
+      post "api/v1/folders/#{@folder.id}/files", {
+        filename: filename,
+        description: @file_data['description'],
+        file: tempfile
+      }
+
+      data = JSON.parse(last_response.body)['data']
+
+      _(last_response.status).must_equal 403
+      _(last_response.headers['Location']).must_be_nil
+      _(data).must_be_nil
+    end
+  end
 end

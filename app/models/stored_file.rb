@@ -46,12 +46,11 @@ module UCCMe
     end
 
     def cc_types=(types)
-      self.cc_types_secure = SecureDB.encrypt(types.join(','))
+      self.cc_types_secure = SecureDB.encrypt(types)
     end
 
     def cc_types
-      value = SecureDB.decrypt(cc_types_secure)
-      value&.include?(',') ? value.split(',') : value
+      SecureDB.decrypt(cc_types_secure)
     end
 
     def to_h # rubocop:disable Metrics/MethodLength
