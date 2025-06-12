@@ -32,8 +32,8 @@ class SignedRequest
   # Signing for internal tests (should be same as client method)
   def self.sign(message)
     signature = RbNaCl::SigningKey.new(@signing_key)
-      .sign(message.to_json)
-      .then { |sig| Base64.strict_encode64(sig) }
+                                  .sign(message.to_json)
+                                  .then { |sig| Base64.strict_encode64(sig) }
     { data: message, signature: signature }
   end
 
@@ -41,11 +41,9 @@ class SignedRequest
     signature = Base64.strict_decode64(signature64)
     verifier = RbNaCl::VerifyKey.new(@verify_key)
     verifier.verify(signature, message.to_json)
-  rescue RbNaCl::BadSignatureError, RbNaCl::LengthError => e
-    raise SigningError, "Signature verification failed: #{e.message}"
-  rescue StandardError => e
-    raise VerificationError, "Unexpected error: #{e.message}"
+  rescue RbNaCl::BadSignatureError, RbNaCl::LengthError => error
+    raise SigningError, "Signature verification failed: #{error.message}"
+  rescue StandardError => error
+    raise VerificationError, "Unexpected error: #{error.message}"
   end
 end
-
-

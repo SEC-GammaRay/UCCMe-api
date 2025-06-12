@@ -106,7 +106,7 @@ end
 
 namespace :newkey do
   task(:load_libs) { require_app('lib', config: false) }
-  
+
   desc 'Create sample cryptographic key for database'
   task :db do
     require_app('lib', config: false)
@@ -120,7 +120,7 @@ namespace :newkey do
   end
 
   desc 'Create sample sign/verify keypair for signed communication'
-  task :signing => :load_libs do
+  task signing: :load_libs do
     keypair = SignedRequest.generate_keypair
 
     puts "SIGNING_KEY: #{keypair[:signing_key]}"

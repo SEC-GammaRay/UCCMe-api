@@ -5,7 +5,6 @@ require 'figaro'
 require 'sequel'
 require 'logger'
 
-
 require_relative '../require_app'
 require_app('lib')
 
