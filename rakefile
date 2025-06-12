@@ -60,7 +60,7 @@ namespace :db do
     @app = UCCMe::Api
   end
 
-  task load_models: :load do
+  task load_models: [:load] do
     require_app(%w[lib models policies services])
   end
 
@@ -71,12 +71,12 @@ namespace :db do
   end
 
   desc 'Destroy data in database; maintain tables'
-  task delete: :load_models do
+  task delete: [:load] do
     UCCMe::Account.dataset.destroy
   end
 
   desc 'Delete dev or test database file'
-  task drop: :load do
+  task drop: [:load] do
     if @app.environment == :production
       puts 'Cannot wipe production database!'
       return
@@ -105,6 +105,8 @@ namespace :db do
 end
 
 namespace :newkey do
+  task(:load_libs) { require_app('lib', config: false) }
+  
   desc 'Create sample cryptographic key for database'
   task :db do
     require_app('lib', config: false)
@@ -115,6 +117,14 @@ namespace :newkey do
   task :msg do
     require_app('lib', config: false)
     puts "MSG_KEY: #{AuthToken.generate_key}"
+  end
+
+  desc 'Create sample sign/verify keypair for signed communication'
+  task :signing => :load_libs do
+    keypair = SignedRequest.generate_keypair
+
+    puts "SIGNING_KEY: #{keypair[:signing_key]}"
+    puts "VERIFY_KEY: #{keypair[:verify_key]}"
   end
 end
 

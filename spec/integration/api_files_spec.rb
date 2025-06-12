@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
+require 'aws-sdk-s3'
 
 describe 'Test File Handling' do
   include Rack::Test::Methods
@@ -86,6 +87,11 @@ describe 'Test File Handling' do
       local_path = File.join('uploads', filename)
       mime_type = get_mime_type(filename)
 
+      # Stub the S3 PUT request to prevent real HTTP connections
+      stub_request(:put, "https://uccme.s3.ap-northeast-1.amazonaws.com/test/#{filename}")
+        .with(headers: { 'Authorization' => /.*/ })
+        .to_return(status: 403, body: '', headers: {})
+
       # get uploaded tempfile
       tempfile = Rack::Test::UploadedFile.new(local_path, mime_type)
 
@@ -111,6 +117,11 @@ describe 'Test File Handling' do
       filename = @file_data['filename']
       local_path = File.join('uploads', filename)
       mime_type = get_mime_type(filename)
+
+      # Stub the S3 PUT request to prevent real HTTP connections
+      stub_request(:put, "https://uccme.s3.ap-northeast-1.amazonaws.com/test/#{filename}")
+        .with(headers: { 'Authorization' => /.*/ })
+        .to_return(status: 403, body: '', headers: {})
 
       # get uploaded tempfile
       tempfile = Rack::Test::UploadedFile.new(local_path, mime_type)

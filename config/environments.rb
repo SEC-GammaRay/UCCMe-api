@@ -5,8 +5,9 @@ require 'figaro'
 require 'sequel'
 require 'logger'
 
+
 require_relative '../require_app'
-require_app(['lib'])
+require_app('lib')
 
 # Configuration for the API
 module UCCMe
@@ -37,6 +38,7 @@ module UCCMe
       # Load cryto key
       SecureDB.setup(ENV.delete('DB_KEY'))
       AuthToken.setup(ENV.fetch('MSG_KEY'))
+      SignedRequest.setup(ENV.fetch('VERIFY_KEY'), ENV.fetch('SIGNING_KEY'))
 
       # Custom events Logger
       LOGGER = Logger.new($stdout)
